@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node ./scripts/copyResources.mjs && npx vite",
-    "build": "node ./scripts/copyResources.mjs && bash ./build-all.sh"
+    "build": "node ./scripts/copyResources.mjs && bash ./build-all.sh && node ./scripts/generateDistIndex.mjs"
   },
   "dependencies": {
     "@coveo/atomic": "3.24.3",
