@@ -1,0 +1,17 @@
+{
+  "name": "qa-atomic-commerce",
+  "description": "A sample project for testing and validating the commerce use case in @coveo/atomic",
+  "type": "module",
+  "scripts": {
+    "dev": "node ./scripts/copyResources.mjs && npx vite",
+    "build": "npx vite build"
+  },
+  "dependencies": {
+    "@coveo/atomic": "3.24.3",
+    "@coveo/headless": "3.24.1"
+  },
+  "devDependencies": {
+    "vite": "6.3.5",
+    "fs-extra": "^11.2.0"
+  }
+}

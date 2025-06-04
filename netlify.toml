@@ -1,0 +1,31 @@
+[context.production]
+  VITE_LANGUAGE = "en"
+  VITE_COUNTRY = "US"
+  VITE_CURRENCY = "USD"
+
+# Specific branch context: all deploys from
+# this specific branch will inherit these settings.
+[context.barca-sports_dev_en-US-USD.environment]
+  VITE_LANGUAGE = "en"
+  VITE_COUNTRY = "US"
+  VITE_CURRENCY = "USD"
+
+[context.barca-sports_dev_fr-FR-EUR.environment]
+  VITE_LANGUAGE = "fr"
+  VITE_COUNTRY = "FR"
+  VITE_CURRENCY = "EUR"
+
+[context.barca-engineering_dev_en-US-USD.environment]
+  VITE_TRACKING_ID="engineering"
+  VITE_LANGUAGE = "en"
+  VITE_COUNTRY = "US"
+  VITE_CURRENCY = "USD"
+  VITE_SEARCH_URL = "https://engineering.barca.group/search"
+  VITE_LISTING_1_URL = "https://engineering.barca.group/barca-spa/Sonars/c/19500"
+  VITE_LISTING_2_URL = "https://engineering.barca.group/barca-spa/Software/c/19800"
+  VITE_LISTING_3_URL = "https://engineering.barca.group/barca-spa/GPS/c/19700"
+  VITE_RECS_1_URL = "https://engineering.barca.group/recs1"
+  VITE_RECS_2_URL = "https://engineering.barca.group/recs2"
+  VITE_SLOT_ID_POPULAR_BOUGHT = "cb8ba62c-7fca-4dfd-b52c-4cc42354a523"
+  VITE_SLOT_ID_POPULAR_VIEWED = "c4c569b0-ab3a-43a6-b80c-aae3f6d2bfc5"
+  VITE_SLOT_ID_CART_RECOMMENDATIONS = "4e845e3d-1851-4241-8387-d35ea157edb0"

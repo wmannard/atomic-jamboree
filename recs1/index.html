@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recs 1</title>
+
+    <script type="module">
+      import "@coveo/atomic/themes/coveo.css";
+      import { defineCustomElements } from "@coveo/atomic/loader";
+      defineCustomElements();
+    </script>
+
+    <script type="module">
+      import { commerceEngine } from "../engine.js";
+
+      (async () => {
+        await customElements.whenDefined(
+          "atomic-commerce-recommendation-interface"
+        );
+        const recommendationInterfaces = document.querySelectorAll(
+          "atomic-commerce-recommendation-interface"
+        );
+
+        for (const recommendationInterface of recommendationInterfaces) {
+          await recommendationInterface.initializeWithEngine(commerceEngine);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="nav-bar"></div>
+    <atomic-commerce-recommendation-interface>
+      <atomic-commerce-layout>
+        <atomic-layout-section section="main">
+          <atomic-commerce-recommendation-list
+            id="popular_bought"
+            slot-id="%%"
+            products-per-page="3"
+          >
+            <atomic-product-template>
+              <template>
+                <atomic-product-section-name>
+                  <atomic-product-link class="font-bold"></atomic-product-link>
+                </atomic-product-section-name>
+                <atomic-product-section-visual>
+                  <atomic-product-image
+                    field="ec_thumbnails"
+                  ></atomic-product-image>
+                </atomic-product-section-visual>
+                <atomic-product-section-metadata>
+                  <atomic-product-field-condition if-defined="ec_brand">
+                    <atomic-product-text
+                      field="ec_brand"
+                      class="text-neutral-dark block"
+                    ></atomic-product-text>
+                  </atomic-product-field-condition>
+                  <atomic-product-field-condition if-defined="ec_brand">
+                    <atomic-product-rating
+                      field="ec_rating"
+                    ></atomic-product-rating>
+                  </atomic-product-field-condition>
+                </atomic-product-section-metadata>
+                <atomic-product-section-emphasized>
+                  <atomic-product-price currency="USD"></atomic-product-price>
+                </atomic-product-section-emphasized>
+                <atomic-product-section-children>
+                  <atomic-product-children></atomic-product-children>
+                </atomic-product-section-children>
+              </template>
+            </atomic-product-template>
+          </atomic-commerce-recommendation-list>
+        </atomic-layout-section>
+      </atomic-commerce-layout>
+    </atomic-commerce-recommendation-interface>
+    <atomic-commerce-recommendation-interface>
+      <atomic-commerce-layout>
+        <atomic-layout-section section="main">
+          <atomic-commerce-recommendation-list
+            id="popular_viewed"
+            slot-id=""
+            products-per-page="3"
+          >
+          </atomic-commerce-recommendation-list>
+        </atomic-layout-section>
+      </atomic-commerce-layout>
+    </atomic-commerce-recommendation-interface>
+
+    <script type="module" src="/navbar.js"></script>
+    <script type="module">
+      const jamboree = import.meta.env.VITE_JAMBOREE;
+      const locale = import.meta.env.VITE_LOCALE;
+      const prefix = `VITE_${jamboree}_${locale}_`;
+
+      const boughtSlot = import.meta.env[`${prefix}SLOT_ID_POPULAR_BOUGHT`];
+      const viewedSlot = import.meta.env[`${prefix}SLOT_ID_POPULAR_VIEWED`];
+
+      document
+        .getElementById("popular_bought")
+        .setAttribute("slot-id", boughtSlot);
+      document
+        .getElementById("popular_viewed")
+        .setAttribute("slot-id", viewedSlot);
+    </script>
+  </body>
+</html>
