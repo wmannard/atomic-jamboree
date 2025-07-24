@@ -4,13 +4,15 @@ A test environment for Commerce jamborees
 
 ## Start
 
+# Mac/linux:
+
 ```sh
 npm install
 npm run build
 npm run preview
 ```
 
-Windows:
+# Windows:
 
 ```bat
 npm install
