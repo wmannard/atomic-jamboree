@@ -5,7 +5,6 @@ A test environment for Commerce jamborees
 ## Start
 
 ```sh
-cp .env.example .env
 npm install
 npm run build
 npm run preview
@@ -14,7 +13,6 @@ npm run preview
 Windows:
 
 ```bat
-copy .env.example .env
 npm install
 npm run build-on-windows
 npm run preview
