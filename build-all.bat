@@ -6,7 +6,7 @@ for /L %%J in (1,1,9) do (
     set "JAMBOREE=%%J"
     set "LOCALE=%%L"
     set "OUTDIR=dist/jamboree_!JAMBOREE!_!LOCALE!"
-    echo Building for jamboree !JAMBOREE! !LOCALE!  !OUTDIR!
+    echo Building for jamboree !JAMBOREE! !LOCALE! -> !OUTDIR!
     set "VITE_JAMBOREE=!JAMBOREE!"
     set "VITE_LOCALE=!LOCALE!"
     call npx vite build --outDir !OUTDIR!
