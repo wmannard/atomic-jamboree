@@ -24,9 +24,9 @@ const base = import.meta.env.BASE_URL || '/';
 document.querySelector("#nav-bar").innerHTML = `
   <div id="navbar-container">
     <a href="${base}">Search</a>
-    <a href="${base}listing1/">Listing 1</a> 
-    <a href="${base}listing2/">Listing 2</a> 
-    <a href="${base}listing3/">Listing 3</a>
+    <a href="${base}listing1/">Surf Accessories</a> 
+    <a href="${base}listing2/">Pants</a> 
+    <a href="${base}listing3/">Towels</a>
     <a href="${base}recs1/">Recs 1</a>
     <a href="${base}recs2/">Recs 2</a>
   </div>
