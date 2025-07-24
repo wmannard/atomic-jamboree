@@ -3,8 +3,9 @@
   "description": "A sample project for testing and validating the commerce use case in @coveo/atomic",
   "type": "module",
   "scripts": {
-    "dev": "node ./scripts/copyResources.mjs && npx vite",
-    "build": "node ./scripts/copyResources.mjs && bash ./build-all.sh && node ./scripts/generateDistIndex.mjs"
+    "preview": "npx vite preview",
+    "build": "node ./scripts/copyResources.mjs && bash ./build-all.sh && node ./scripts/generateDistIndex.mjs",
+    "build-on-windows": "node ./scripts/copyResources.mjs && call build-all.bat && node ./scripts/generateDistIndex.mjs"
   },
   "dependencies": {
     "@coveo/atomic": "3.29.1",

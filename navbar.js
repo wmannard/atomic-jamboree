@@ -29,10 +29,60 @@ document.querySelector("#nav-bar").innerHTML = `
     <a href="${base}listing3/">Towels</a>
     <a href="${base}recs1/">Recs 1</a>
     <a href="${base}recs2/">Recs 2</a>
+    <span style="display:inline-block;width:1px;height:32px;background:#ccc;margin:0 20px;vertical-align:middle;"></span>
+    <span style="display:inline-flex;align-items:center;margin-left:24px;">
+      <label for="property-dropdown" style="font-size:16px;">Property:</label>
+      <select id="property-dropdown" style="margin-left:6px;font-size:16px;padding:6px 12px;">
+        ${Array.from({length:9},(_,i)=>`<option value=\"jamboree_${i+1}\">jamboree_${i+1}</option>`).join('')}
+      </select>
+    </span>
+    <span style="display:inline-flex;align-items:center;margin-left:18px;">
+      <label for="locale-dropdown" style="font-size:16px;">Locale:</label>
+      <select id="locale-dropdown" style="margin-left:6px;font-size:16px;padding:6px 12px;">
+        <option value="en">EN-US-USD</option>
+        <option value="fr">FR-FR-EUR</option>
+      </select>
+    </span>
   </div>
 `;
 
 const navbarContainer = document.querySelector("#navbar-container");
+// --- Dropdown logic ---
+const propertyDropdown = document.getElementById("property-dropdown");
+const localeDropdown = document.getElementById("locale-dropdown");
+
+// Helper to parse current jamboree and locale from path
+function getCurrentJamboreeAndLocale() {
+  const match = window.location.pathname.match(/jamboree_(\d+)_(en|fr)\//);
+  if (match) {
+    return { jamboree: `jamboree_${match[1]}`, locale: match[2] };
+  }
+  return { jamboree: "jamboree_1", locale: "en" };
+}
+
+// Set dropdowns to current page
+const { jamboree, locale } = getCurrentJamboreeAndLocale();
+if (propertyDropdown && jamboree) propertyDropdown.value = jamboree;
+if (localeDropdown && locale) localeDropdown.value = locale;
+
+function goToJamboreePage(newJamboree, newLocale) {
+  if (!newJamboree || !newLocale) return;
+  const newPath = `/${newJamboree}_${newLocale}/`;
+  window.location.href = newPath;
+}
+
+propertyDropdown?.addEventListener("change", (e) => {
+  const selectedJamboree = e.target.value;
+  if (!selectedJamboree) return;
+  goToJamboreePage(selectedJamboree, localeDropdown.value || locale);
+});
+
+localeDropdown?.addEventListener("change", (e) => {
+  const selectedLocale = e.target.value;
+  if (!selectedLocale) return;
+  goToJamboreePage(propertyDropdown.value || jamboree, selectedLocale);
+});
+
 navbarContainer.style.display = "flex";
 navbarContainer.style.justifyContent = "center";
 navbarContainer.style.width = "100%";
