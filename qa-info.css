@@ -12,5 +12,11 @@
   white-space: nowrap !important;
   text-overflow: ellipsis !important;
   overflow: hidden !important;
-  display: block !important;
+}
+
+.qa-target {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
 }

@@ -16,6 +16,7 @@ export function updateQAInfoSpans() {
     const qaSpan = document.createElement('span');
     qaSpan.className = 'qa-info';
     qaSpan.textContent = `<${el.tagName.toLowerCase()}${attrs ? ' ' + attrs : ''}>`;
+    qaSpan.style.display = 'none'; // Hide by default
     el.parentNode.insertBefore(qaSpan, el);
   });
 }

@@ -59,13 +59,14 @@ const navbarContainer = document.querySelector("#navbar-container");
 const qaInfoToggle = document.getElementById("qa-info-toggle");
 function setQAInfoVisibility(visible) {
   document.querySelectorAll('.qa-info').forEach(el => {
-    el.style.display = visible ? '' : 'none';
+    el.style.display = visible ? 'block' : 'none';
   });
 }
 qaInfoToggle?.addEventListener('change', (e) => {
   setQAInfoVisibility(e.target.checked);
 });
-// Set initial visibility to false
+// Ensure initial state: box unchecked, tags hidden
+if (qaInfoToggle) qaInfoToggle.checked = false;
 setQAInfoVisibility(false);
 // --- Dropdown logic ---
 const propertyDropdown = document.getElementById("property-dropdown");
