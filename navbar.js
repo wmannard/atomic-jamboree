@@ -19,7 +19,7 @@ export const navUrls = {
   },
 };
 
-const base = import.meta.env.BASE_URL || '/';
+const base = import.meta.env.BASE_URL || "/";
 
 document.querySelector("#nav-bar").innerHTML = `
   <div id="navbar-container">
@@ -27,13 +27,17 @@ document.querySelector("#nav-bar").innerHTML = `
     <a href="${base}listing1/">Surf Accessories</a> 
     <a href="${base}listing2/">Pants</a> 
     <a href="${base}listing3/">Towels</a>
-    <a href="${base}recs1/">Recs 1</a>
-    <a href="${base}recs2/">Recs 2</a>
+    <a href="${base}recs1/">Recs</a>
+    <a href="${base}recs2/">Cart Recs</a>
     <span style="display:inline-block;width:1px;height:32px;background:#ccc;margin:0 20px;vertical-align:middle;"></span>
     <span style="display:inline-flex;align-items:center;margin-left:24px;">
       <label for="property-dropdown" style="font-size:16px;">Property:</label>
       <select id="property-dropdown" style="margin-left:6px;font-size:16px;padding:6px 12px;">
-        ${Array.from({length:9},(_,i)=>`<option value=\"jamboree_${i+1}\">jamboree_${i+1}</option>`).join('')}
+        ${Array.from(
+          { length: 9 },
+          (_, i) =>
+            `<option value=\"jamboree_${i + 1}\">jamboree_${i + 1}</option>`
+        ).join("")}
       </select>
     </span>
     <span style="display:inline-flex;align-items:center;margin-left:18px;">
@@ -67,7 +71,15 @@ if (localeDropdown && locale) localeDropdown.value = locale;
 
 function goToJamboreePage(newJamboree, newLocale) {
   if (!newJamboree || !newLocale) return;
-  const newPath = `/${newJamboree}_${newLocale}/`;
+  const currentPath = window.location.pathname;
+  const regex = /\/jamboree_\d+_(en|fr)\//;
+  const newBase = `/${newJamboree}_${newLocale}/`;
+  let newPath;
+  if (regex.test(currentPath)) {
+    newPath = currentPath.replace(regex, newBase);
+  } else {
+    newPath = newBase;
+  }
   window.location.href = newPath;
 }
 

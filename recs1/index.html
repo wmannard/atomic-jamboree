@@ -38,7 +38,7 @@
         <atomic-layout-section section="main">
           <atomic-commerce-recommendation-list
             id="popular_bought"
-            slot-id="%%"
+            slot-id=""
             products-per-page="3"
           >
             <atomic-product-template>
@@ -65,7 +65,7 @@
                   </atomic-product-field-condition>
                 </atomic-product-section-metadata>
                 <atomic-product-section-emphasized>
-                  <atomic-product-price currency="USD"></atomic-product-price>
+                  <atomic-product-price></atomic-product-price>
                 </atomic-product-section-emphasized>
                 <atomic-product-section-children>
                   <atomic-product-children></atomic-product-children>
@@ -84,6 +84,37 @@
             slot-id=""
             products-per-page="3"
           >
+                      <atomic-product-template>
+              <template>
+                <atomic-product-section-name>
+                  <atomic-product-link class="font-bold"></atomic-product-link>
+                </atomic-product-section-name>
+                <atomic-product-section-visual>
+                  <atomic-product-image
+                    field="ec_thumbnails"
+                  ></atomic-product-image>
+                </atomic-product-section-visual>
+                <atomic-product-section-metadata>
+                  <atomic-product-field-condition if-defined="ec_brand">
+                    <atomic-product-text
+                      field="ec_brand"
+                      class="text-neutral-dark block"
+                    ></atomic-product-text>
+                  </atomic-product-field-condition>
+                  <atomic-product-field-condition if-defined="ec_brand">
+                    <atomic-product-rating
+                      field="ec_rating"
+                    ></atomic-product-rating>
+                  </atomic-product-field-condition>
+                </atomic-product-section-metadata>
+                <atomic-product-section-emphasized>
+                  <atomic-product-price></atomic-product-price>
+                </atomic-product-section-emphasized>
+                <atomic-product-section-children>
+                  <atomic-product-children></atomic-product-children>
+                </atomic-product-section-children>
+              </template>
+            </atomic-product-template>
           </atomic-commerce-recommendation-list>
         </atomic-layout-section>
       </atomic-commerce-layout>
