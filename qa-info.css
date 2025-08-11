@@ -1,0 +1,10 @@
+/* QA info banner styles */
+/* .qa-info {
+  background: #f3f4f6;
+  color: #6b7280;
+} */
+.qa-info {
+  background: #d3d3d3;
+  color: #0078d4;
+  border-radius: 4px;
+}

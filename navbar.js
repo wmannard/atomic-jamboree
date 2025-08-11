@@ -47,10 +47,26 @@ document.querySelector("#nav-bar").innerHTML = `
         <option value="fr">FR-FR-EUR</option>
       </select>
     </span>
+    <span style="display:inline-flex;align-items:center;margin-left:auto;margin-right:16px;">
+      <label for="qa-info-toggle" style="font-size:16px;">Show QA Info</label>
+      <input type="checkbox" id="qa-info-toggle" style="margin-left:6px;" />
+    </span>
   </div>
 `;
 
 const navbarContainer = document.querySelector("#navbar-container");
+// --- QA Info toggle logic ---
+const qaInfoToggle = document.getElementById("qa-info-toggle");
+function setQAInfoVisibility(visible) {
+  document.querySelectorAll('.qa-info').forEach(el => {
+    el.style.display = visible ? '' : 'none';
+  });
+}
+qaInfoToggle?.addEventListener('change', (e) => {
+  setQAInfoVisibility(e.target.checked);
+});
+// Set initial visibility to false
+setQAInfoVisibility(false);
 // --- Dropdown logic ---
 const propertyDropdown = document.getElementById("property-dropdown");
 const localeDropdown = document.getElementById("locale-dropdown");
