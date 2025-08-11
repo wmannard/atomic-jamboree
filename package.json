@@ -5,7 +5,9 @@
   "scripts": {
     "preview": "npx vite preview",
     "build": "node ./scripts/copyResources.mjs && bash ./build-all.sh && node ./scripts/generateDistIndex.mjs",
-    "build-on-windows": "node ./scripts/copyResources.mjs && call build-all.bat && node ./scripts/generateDistIndex.mjs"
+    "build-on-windows": "node ./scripts/copyResources.mjs && call build-all.bat && node ./scripts/generateDistIndex.mjs",
+    "start": "npm run build && npx vite preview",
+    "start-on-windows": "npm run build-on-windows && npx vite preview"
   },
   "dependencies": {
     "@coveo/atomic": "3.29.1",
