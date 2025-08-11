@@ -33,7 +33,7 @@
     <atomic-commerce-interface type="search">
       <atomic-commerce-layout>
         <atomic-layout-section section="search">
-          <span class="qa-info">&lt;atomic-commerce-search-box&gt;</span>
+          <span class="qa-info"></span>
           <atomic-commerce-search-box>
             <atomic-commerce-search-box-recent-queries></atomic-commerce-search-box-recent-queries>
             <atomic-commerce-search-box-query-suggestions></atomic-commerce-search-box-query-suggestions>
@@ -148,5 +148,18 @@
       </atomic-commerce-layout>
     </atomic-commerce-interface>
     <script type="module" src="/navbar.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.qa-info').forEach(span => {
+          const next = span.nextElementSibling;
+          if (next) {
+            const attrs = Array.from(next.attributes)
+              .map(attr => `${attr.name}="${attr.value}"`)
+              .join(' ');
+            span.textContent = `<${next.tagName.toLowerCase()}${attrs ? ' ' + attrs : ''}>`;
+          }
+        });
+      });
+    </script>
   </body>
 </html>
