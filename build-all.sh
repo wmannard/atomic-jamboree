@@ -8,7 +8,7 @@ for JAMBOREE in {1..9}; do
       # Memory safe sequential builds for Netlify
       VITE_JAMBOREE=$JAMBOREE VITE_LOCALE=$LOCALE npx vite build --outDir $OUTDIR
     else
-      # Fast parallel build for local development
+      # Fast parallel builds for local development
       VITE_JAMBOREE=$JAMBOREE VITE_LOCALE=$LOCALE npx vite build --outDir $OUTDIR &
     fi
   done
