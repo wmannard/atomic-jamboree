@@ -21,7 +21,7 @@ export function updateQAInfoSpans() {
     qaSpan.textContent = `<${el.tagName.toLowerCase()}${
       attrs ? " " + attrs : ""
     }>`;
-    qaSpan.style.display = "none"; // Hide by default
+    qaSpan.style.visibility = "hidden"; // Hide by default, but reserve space
     el.parentNode.insertBefore(qaSpan, el);
   });
 }

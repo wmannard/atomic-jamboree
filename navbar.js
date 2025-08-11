@@ -56,10 +56,10 @@ document.querySelector("#nav-bar").innerHTML = `
 
 const navbarContainer = document.querySelector("#navbar-container");
 // --- QA Info toggle logic ---
-const qaInfoToggle = document.getElementById("qa-info-toggle");
+const qaInfoToggle = document.getElementById('qa-info-toggle');
 function setQAInfoVisibility(visible) {
   document.querySelectorAll('.qa-info').forEach(el => {
-    el.style.display = visible ? 'block' : 'none';
+    el.style.visibility = visible ? 'visible' : 'hidden';
   });
 }
 qaInfoToggle?.addEventListener('change', (e) => {
