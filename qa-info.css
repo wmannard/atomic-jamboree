@@ -15,8 +15,12 @@
 }
 
 .qa-target {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 2px !important;
+  width: auto !important;
+  align-self: flex-start !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
 }
