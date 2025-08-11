@@ -1,12 +1,16 @@
-/* QA info banner styles */
-/* .qa-info {
-  background: #f3f4f6;
-  color: #6b7280;
-} */
 .qa-info {
-  background: #d3d3d3;
-  color: #0078d4;
-  border-radius: 4px;
-  padding-left: 4px;
-  padding-right: 4px;
+  background: #d3d3d3 !important;
+  color: #0078d4 !important;
+  border-radius: 4px !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  display: block !important;
 }
