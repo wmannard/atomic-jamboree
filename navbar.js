@@ -19,21 +19,25 @@ export const navUrls = {
   },
 };
 
-const base = import.meta.env.BASE_URL || '/';
+const base = import.meta.env.BASE_URL || "/";
 
 document.querySelector("#nav-bar").innerHTML = `
   <div id="navbar-container">
     <a href="${base}">Search</a>
-    <a href="${base}listing1/">Surf Accessories</a> 
+    <a href="${base}listing1/">Surf Accs.</a> 
     <a href="${base}listing2/">Pants</a> 
     <a href="${base}listing3/">Towels</a>
-    <a href="${base}recs1/">Recs 1</a>
-    <a href="${base}recs2/">Recs 2</a>
+    <a href="${base}recs1/">Recs</a>
+    <a href="${base}recs2/">Cart Recs</a>
     <span style="display:inline-block;width:1px;height:32px;background:#ccc;margin:0 20px;vertical-align:middle;"></span>
     <span style="display:inline-flex;align-items:center;margin-left:24px;">
       <label for="property-dropdown" style="font-size:16px;">Property:</label>
       <select id="property-dropdown" style="margin-left:6px;font-size:16px;padding:6px 12px;">
-        ${Array.from({length:9},(_,i)=>`<option value=\"jamboree_${i+1}\">jamboree_${i+1}</option>`).join('')}
+        ${Array.from(
+          { length: 9 },
+          (_, i) =>
+            `<option value=\"jamboree_${i + 1}\">jamboree_${i + 1}</option>`
+        ).join("")}
       </select>
     </span>
     <span style="display:inline-flex;align-items:center;margin-left:18px;">
@@ -43,10 +47,27 @@ document.querySelector("#nav-bar").innerHTML = `
         <option value="fr">FR-FR-EUR</option>
       </select>
     </span>
+    <span style="display:inline-flex;align-items:center;margin-left:auto;margin-right:16px;">
+      <label for="qa-info-toggle" style="font-size:16px;">Show QA Info</label>
+      <input type="checkbox" id="qa-info-toggle" style="margin-left:6px;" />
+    </span>
   </div>
 `;
 
 const navbarContainer = document.querySelector("#navbar-container");
+// --- QA Info toggle logic ---
+const qaInfoToggle = document.getElementById("qa-info-toggle");
+function setQAInfoVisibility(visible) {
+  document.querySelectorAll(".qa-info").forEach((el) => {
+    el.style.visibility = visible ? "visible" : "hidden";
+  });
+}
+qaInfoToggle?.addEventListener("change", (e) => {
+  setQAInfoVisibility(e.target.checked);
+});
+// Ensure initial state: box unchecked, tags hidden
+if (qaInfoToggle) qaInfoToggle.checked = false;
+setQAInfoVisibility(false);
 // --- Dropdown logic ---
 const propertyDropdown = document.getElementById("property-dropdown");
 const localeDropdown = document.getElementById("locale-dropdown");
@@ -67,7 +88,15 @@ if (localeDropdown && locale) localeDropdown.value = locale;
 
 function goToJamboreePage(newJamboree, newLocale) {
   if (!newJamboree || !newLocale) return;
-  const newPath = `/${newJamboree}_${newLocale}/`;
+  const currentPath = window.location.pathname;
+  const regex = /\/jamboree_\d+_(en|fr)\//;
+  const newBase = `/${newJamboree}_${newLocale}/`;
+  let newPath;
+  if (regex.test(currentPath)) {
+    newPath = currentPath.replace(regex, newBase);
+  } else {
+    newPath = newBase;
+  }
   window.location.href = newPath;
 }
 

@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="QA test page for Atomic Jamboree." />
+    <meta name="keywords" content="atomic, jamboree, qa, test" />
+    <link rel="stylesheet" href="../qa-info.css" />
     <title>Listing 1</title>
 
     <script type="module">
@@ -75,15 +78,23 @@
         ></atomic-layout-section>
         <atomic-layout-section section="main">
           <atomic-layout-section section="status">
-            <atomic-commerce-breadbox></atomic-commerce-breadbox>
-            <atomic-commerce-query-summary></atomic-commerce-query-summary>
-            <atomic-commerce-sort-dropdown></atomic-commerce-sort-dropdown>
-            <atomic-commerce-refine-toggle></atomic-commerce-refine-toggle>
+            <div class="qa-target">
+              <atomic-commerce-breadbox></atomic-commerce-breadbox>
+            </div>
+            <div class="qa-target">
+              <atomic-commerce-sort-dropdown></atomic-commerce-sort-dropdown>
+            </div>
+            <div class="qa-target">
+              <atomic-commerce-query-summary></atomic-commerce-query-summary>
+            </div>
+            <div class="qa-target">
+              <atomic-commerce-refine-toggle></atomic-commerce-refine-toggle>
+            </div>
           </atomic-layout-section>
           <atomic-layout-section section="products">
             <atomic-commerce-product-list
-              display="grid"
-              density="compact"
+              display="list"
+              density="comfortable"
               image-size="small"
             >
               <atomic-product-template>
@@ -126,14 +137,13 @@
             <atomic-commerce-no-products></atomic-commerce-no-products>
           </atomic-layout-section>
           <atomic-layout-section section="pagination">
-            <atomic-commerce-load-more-products></atomic-commerce-load-more-products>
-            <!-- Alternative pagination
-                <atomic-commerce-pager></atomic-commerce-pager>
-                -->
+            <atomic-commerce-pager></atomic-commerce-pager>
+            <!-- <atomic-results-per-page initialChoice="10" choices-displayed="5,10,20"></atomic-results-per-page> -->
           </atomic-layout-section>
         </atomic-layout-section>
       </atomic-commerce-layout>
     </atomic-commerce-interface>
     <script type="module" src="/navbar.js"></script>
+    <script type="module" src="../qa-info.js"></script>
   </body>
 </html>

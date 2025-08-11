@@ -9,7 +9,8 @@ for /L %%J in (1,1,9) do (
     echo Building for jamboree !JAMBOREE! !LOCALE! -> !OUTDIR!
     set "VITE_JAMBOREE=!JAMBOREE!"
     set "VITE_LOCALE=!LOCALE!"
-    call npx vite build --outDir !OUTDIR!
+    start "" npx vite build --outDir !OUTDIR!
   )
 )
+
 endlocal
