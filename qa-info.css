@@ -20,8 +20,8 @@
   flex-direction: column !important;
   align-items: flex-start !important;
   gap: 2px !important;
-  width: auto !important;
-  align-self: flex-start !important;
+  width: 100% !important;
+  align-self: stretch !important;
   justify-content: flex-start !important;
   text-align: left !important;
 }
