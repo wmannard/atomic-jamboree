@@ -10,7 +10,7 @@
     "start-on-windows": "npm run build-on-windows && npx vite preview"
   },
   "dependencies": {
-    "@coveo/atomic": "3.32.3-pre.d8395b7e5a",
+    "@coveo/atomic": "file:./coveo-atomic-3.32.0.tgz",
     "@coveo/headless": "3.27.4"
   },
   "devDependencies": {
