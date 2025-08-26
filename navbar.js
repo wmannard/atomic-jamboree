@@ -38,7 +38,7 @@ document.querySelector("#nav-bar").innerHTML = `
     </div>
     <span class="vr mx-4"></span>
     <span class="d-inline-flex align-items-center ms-3">
-      <label for="property-dropdown" class="me-2 fs-5">Property:</label>
+      <label for="property-dropdown" class="me-2 fs-6">Property:</label>
       <select id="property-dropdown" class="form-select form-select-sm w-auto">
         ${Array.from(
           { length: 9 },
@@ -48,20 +48,20 @@ document.querySelector("#nav-bar").innerHTML = `
       </select>
     </span>
     <span class="d-inline-flex align-items-center ms-3">
-      <label for="locale-dropdown" class="me-2 fs-5">Locale:</label>
+      <label for="locale-dropdown" class="me-2 fs-6">Locale:</label>
       <select id="locale-dropdown" class="form-select form-select-sm w-auto">
         <option value="en">EN-US-USD</option>
         <option value="fr">FR-FR-EUR</option>
       </select>
     </span>
     <span class="d-inline-flex align-items-center ms-3">
-      <label for="sponsored-products-input" class="fs-5 me-2">Sponsored Products:</label>
+      <label for="sponsored-products-input" class="fs-6 me-2">Pin products:</label>
       <input type="text" id="sponsored-products-input" class="form-control form-control-sm w-auto" placeholder="Enter IDs, comma separated" />
       <button id="save-sponsored-products" class="btn btn-sm btn-primary ms-2">Save</button>
     </span>
     <span id="sponsored-products-tags" class="ms-3"></span>
     <span class="d-inline-flex align-items-center ms-auto me-4">
-      <label for="qa-info-toggle" class="fs-5 me-2">Show QA Info</label>
+      <label for="qa-info-toggle" class="fs-6 me-2">Show QA Info</label>
       <input type="checkbox" id="qa-info-toggle" />
     </span>
   </div>
