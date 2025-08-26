@@ -30,6 +30,10 @@
   </head>
   <body>
     <div id="nav-bar"></div>
+    <script type="module">
+      import { mountInfoBanner } from "../infoBanner.js";
+      mountInfoBanner({ visitorPath: "/search" });
+    </script>
     <atomic-commerce-interface type="search">
       <atomic-commerce-layout>
         <atomic-layout-section section="search">

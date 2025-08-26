@@ -31,6 +31,10 @@
   </head>
   <body>
     <div id="nav-bar"></div>
+    <script type="module">
+      import { mountInfoBanner } from "../infoBanner.js";
+      mountInfoBanner({ visitorPath: "/plp/clothing/pants" });
+    </script>
     <atomic-commerce-interface
       type="product-listing"
       language-assets-path="../lang"
@@ -78,10 +82,10 @@
         </atomic-layout-section>
         <atomic-layout-section section="main">
           <atomic-layout-section section="status">
-              <atomic-commerce-breadbox></atomic-commerce-breadbox>
-              <atomic-commerce-sort-dropdown></atomic-commerce-sort-dropdown>
-              <atomic-commerce-query-summary></atomic-commerce-query-summary>
-              <atomic-commerce-refine-toggle></atomic-commerce-refine-toggle>
+            <atomic-commerce-breadbox></atomic-commerce-breadbox>
+            <atomic-commerce-sort-dropdown></atomic-commerce-sort-dropdown>
+            <atomic-commerce-query-summary></atomic-commerce-query-summary>
+            <atomic-commerce-refine-toggle></atomic-commerce-refine-toggle>
           </atomic-layout-section>
           <atomic-layout-section section="products">
             <atomic-commerce-product-list

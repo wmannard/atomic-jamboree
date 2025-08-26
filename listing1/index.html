@@ -35,30 +35,9 @@
   </head>
   <body>
     <div id="nav-bar"></div>
-    <div
-      class="alert alert-info alert-dismissible fade show"
-      role="alert"
-      style="
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        width: 75%;
-        margin: 0 auto;
-      "
-    >
-      <strong>Visitor URL:</strong>
-      https://sports-dev.barca.group/plp/clothing/pants | 
-      <strong>Referrer URL:</strong>
-      <span id="referrer-url"></span>
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-      ></button>
-    </div>
-    <script>
-      const url = window.location.origin + window.location.pathname;
-      document.getElementById("referrer-url").textContent = url;
+    <script type="module">
+      import { mountInfoBanner } from "../infoBanner.js";
+      mountInfoBanner({ visitorPath: "/plp/accessories/surf-accessories" });
     </script>
     <atomic-commerce-interface
       type="product-listing"
