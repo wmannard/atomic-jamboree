@@ -152,6 +152,7 @@ qaInfoToggle?.addEventListener("change", (e) => {
 // --- Logged In toggle logic ---
 loggedInToggle?.addEventListener("change", (e) => {
   localStorage.setItem("logged-in", e.target.checked ? "true" : "false");
+  window.location.reload();
 });
 
 // Ensure initial state: box unchecked, tags hidden
