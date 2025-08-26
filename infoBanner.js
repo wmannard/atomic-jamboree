@@ -6,7 +6,7 @@ export function renderInfoBanner({ visitorPath }) {
       role="alert"
       style="font-family: Arial, sans-serif; font-size: 14px; width: 75%; margin: 0 auto;"
     >
-      <strong>Visitor URL:</strong> https://sports-dev.barca.group${visitorPath}<br />
+      <strong>Visitor URL:</strong> https://sports-dev.barca.group${visitorPath} | 
       <strong>Referrer URL:</strong> <span id="referrer-url">${referrerUrl}</span>
       <button
         type="button"
