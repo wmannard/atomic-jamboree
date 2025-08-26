@@ -8,7 +8,10 @@ export function updateQAInfoSpans() {
     (el) => {
       const tag = el.tagName.toLowerCase();
       return (
-        tag.startsWith("atomic-") && isVisible(el) && !tag.includes("layout")
+        tag.startsWith("atomic-") &&
+        isVisible(el) &&
+        !tag.includes("layout") &&
+        !tag.includes("interface")
       );
     }
   );
