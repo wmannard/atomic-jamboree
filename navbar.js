@@ -22,8 +22,8 @@ export const navUrls = {
 const base = import.meta.env.BASE_URL || "/";
 
 document.querySelector("#nav-bar").innerHTML = `
-  <div id="navbar-container">
-    <div class="dropdown" style="margin-left:12px;">
+  <div id="navbar-container" class="d-flex justify-content-center align-items-center w-100 py-2 border-bottom mb-3" style="font-family: var(--atomic-font-family);">
+    <div class="dropdown me-3">
       <button class="btn btn-primary dropdown-toggle" type="button" id="pagesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
         Navigation
       </button>
@@ -36,36 +36,47 @@ document.querySelector("#nav-bar").innerHTML = `
         <li><a class="dropdown-item" href="${base}recs2/">Cart Recs</a></li>
       </ul>
     </div>
-    <span style="display:inline-block;width:1px;height:32px;background:#ccc;margin:0 20px;vertical-align:middle;"></span>
-    <span style="display:inline-flex;align-items:center;margin-left:24px;">
-      <label for="property-dropdown" style="font-size:16px;">Property:</label>
-      <select id="property-dropdown" style="margin-left:6px;font-size:16px;padding:6px 12px;">
+    <span class="vr mx-4"></span>
+    <span class="d-inline-flex align-items-center ms-3">
+      <label for="property-dropdown" class="me-2 fs-5">Property:</label>
+      <select id="property-dropdown" class="form-select form-select-sm w-auto">
         ${Array.from(
           { length: 9 },
           (_, i) =>
-            `<option value=\"jamboree_${i + 1}\">jamboree_${i + 1}</option>`
+            `<option value="jamboree_${i + 1}">jamboree_${i + 1}</option>`
         ).join("")}
       </select>
     </span>
-    <span style="display:inline-flex;align-items:center;margin-left:18px;">
-      <label for="locale-dropdown" style="font-size:16px;">Locale:</label>
-      <select id="locale-dropdown" style="margin-left:6px;font-size:16px;padding:6px 12px;">
+    <span class="d-inline-flex align-items-center ms-3">
+      <label for="locale-dropdown" class="me-2 fs-5">Locale:</label>
+      <select id="locale-dropdown" class="form-select form-select-sm w-auto">
         <option value="en">EN-US-USD</option>
         <option value="fr">FR-FR-EUR</option>
       </select>
     </span>
-    <span style="display:inline-flex;align-items:center;margin-left:18px;">
-      <label for="sponsored-products-input" style="font-size:16px;">Sponsored Products:</label>
-      <input type="text" id="sponsored-products-input" class="form-control" style="margin-left:6px;width:220px;" placeholder="Enter IDs, comma separated" />
-      <button id="save-sponsored-products" class="btn btn-sm btn-primary" style="margin-left:8px;">Save</button>
+    <span class="d-inline-flex align-items-center ms-3">
+      <label for="sponsored-products-input" class="fs-5 me-2">Sponsored Products:</label>
+      <input type="text" id="sponsored-products-input" class="form-control form-control-sm w-auto" placeholder="Enter IDs, comma separated" />
+      <button id="save-sponsored-products" class="btn btn-sm btn-primary ms-2">Save</button>
     </span>
-    <span id="sponsored-products-tags" style="margin-left:12px;"></span>
-    <span style="display:inline-flex;align-items:center;margin-left:auto;margin-right:16px;">
-      <label for="qa-info-toggle" style="font-size:16px;">Show QA Info</label>
-      <input type="checkbox" id="qa-info-toggle" style="margin-left:6px;" />
+    <span id="sponsored-products-tags" class="ms-3"></span>
+    <span class="d-inline-flex align-items-center ms-auto me-4">
+      <label for="qa-info-toggle" class="fs-5 me-2">Show QA Info</label>
+      <input type="checkbox" id="qa-info-toggle" />
     </span>
   </div>
 `;
+// Highlight the current page in the dropdown (run after navbar is rendered)
+const currentPath = window.location.pathname;
+let currentItemText = "Navigation";
+document.querySelectorAll(".dropdown-item").forEach((item) => {
+  if (item.getAttribute("href") === currentPath) {
+    item.classList.add("active");
+    item.setAttribute("aria-current", "page");
+    currentItemText = item.textContent;
+  }
+});
+document.getElementById("pagesDropdown").innerText = currentItemText;
 
 const navbarContainer = document.querySelector("#navbar-container");
 // Sponsored Products input logic
@@ -192,31 +203,4 @@ navbarContainer.style.borderBottom = "1px solid #e5e7eb";
 navbarContainer.style.marginBottom = "20px";
 navbarContainer.style.fontFamily = "var(--atomic-font-family)";
 
-const navLinks = navbarContainer.querySelectorAll("a");
-navLinks.forEach((link) => {
-  link.style.textDecoration = "none";
-  link.style.color = "#333";
-  link.style.fontSize = "24px";
-  link.style.padding = "8px 16px";
-  link.style.display = "inline-block";
-  link.style.transition = "background-color 0.3s, color 0.3s";
-
-  link.addEventListener("mouseover", () => {
-    link.style.color = "#f05245";
-  });
-
-  link.addEventListener("mouseout", () => {
-    if (link.classList.contains("active")) {
-      link.style.color = "#fff";
-    } else {
-      link.style.color = "#333";
-    }
-  });
-
-  if (window.location.pathname === link.getAttribute("href")) {
-    link.classList.add("active");
-    link.style.color = "#fff";
-    link.style.backgroundColor = "primary";
-    link.style.borderRadius = "0";
-  }
-});
+// Removed custom navLinks styling and event handlers
