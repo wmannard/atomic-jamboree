@@ -92,6 +92,7 @@ function injectSponsoredProducts(newValue) {
     JSON.stringify({ sponsored: sponsoredArray })
   );
   renderSponsoredTags(sponsoredArray);
+  window.location.reload();
 }
 
 function renderSponsoredTags(sponsoredArray) {
