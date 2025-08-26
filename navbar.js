@@ -23,12 +23,19 @@ const base = import.meta.env.BASE_URL || "/";
 
 document.querySelector("#nav-bar").innerHTML = `
   <div id="navbar-container">
-    <a href="${base}">Search</a>
-    <a href="${base}listing1/">Surf Accs.</a> 
-    <a href="${base}listing2/">Pants</a> 
-    <a href="${base}listing3/">Towels</a>
-    <a href="${base}recs1/">Recs</a>
-    <a href="${base}recs2/">Cart Recs</a>
+    <div class="dropdown" style="margin-left:12px;">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="pagesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        Navigation
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
+        <li><a class="dropdown-item" href="${base}">Search</a></li>
+        <li><a class="dropdown-item" href="${base}listing1/">Surf Accessories</a></li>
+        <li><a class="dropdown-item" href="${base}listing2/">Pants</a></li>
+        <li><a class="dropdown-item" href="${base}listing3/">Towels</a></li>
+        <li><a class="dropdown-item" href="${base}recs1/">Recs</a></li>
+        <li><a class="dropdown-item" href="${base}recs2/">Cart Recs</a></li>
+      </ul>
+    </div>
     <span style="display:inline-block;width:1px;height:32px;background:#ccc;margin:0 20px;vertical-align:middle;"></span>
     <span style="display:inline-flex;align-items:center;margin-left:24px;">
       <label for="property-dropdown" style="font-size:16px;">Property:</label>
