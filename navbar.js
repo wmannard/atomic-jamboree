@@ -63,6 +63,8 @@ document.querySelector("#nav-bar").innerHTML = `
     <span class="d-inline-flex align-items-center ms-auto me-4">
       <label for="qa-info-toggle" class="fs-6 me-2">Show QA Info</label>
       <input type="checkbox" id="qa-info-toggle" />
+      <label for="logged-in-toggle" class="fs-6 ms-3 me-2">Logged In</label>
+      <input type="checkbox" id="logged-in-toggle" />
     </span>
   </div>
 `;
@@ -131,6 +133,7 @@ document
   });
 // --- QA Info toggle logic ---
 const qaInfoToggle = document.getElementById("qa-info-toggle");
+const loggedInToggle = document.getElementById("logged-in-toggle");
 
 function setQAInfoVisibility(visible) {
   document.querySelectorAll(".qa-info").forEach((el) => {
@@ -146,10 +149,18 @@ qaInfoToggle?.addEventListener("change", (e) => {
   setQAInfoVisibility(e.target.checked);
 });
 
+// --- Logged In toggle logic ---
+loggedInToggle?.addEventListener("change", (e) => {
+  localStorage.setItem("logged-in", e.target.checked ? "true" : "false");
+});
+
 // Ensure initial state: box unchecked, tags hidden
 if (qaInfoToggle) qaInfoToggle.checked = false;
-
 setQAInfoVisibility(false);
+if (loggedInToggle) {
+  const loggedInValue = localStorage.getItem("logged-in");
+  loggedInToggle.checked = loggedInValue === "true";
+}
 
 // --- Dropdown logic ---
 const propertyDropdown = document.getElementById("property-dropdown");
