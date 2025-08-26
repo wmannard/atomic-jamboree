@@ -32,5 +32,11 @@ export const commerceEngine = buildCommerceEngine({
         url: navUrls[document.title].url,
       },
     },
+    preprocessRequest: (request) => {
+      const body = request.body ? JSON.parse(request.body) : {};
+      body.pinnedProducts = ["iamaproduct"];
+      request.body = JSON.stringify(body);
+      return request;
+    },
   },
 });
