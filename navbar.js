@@ -47,6 +47,12 @@ document.querySelector("#nav-bar").innerHTML = `
         <option value="fr">FR-FR-EUR</option>
       </select>
     </span>
+    <span style="display:inline-flex;align-items:center;margin-left:18px;">
+      <label for="sponsored-products-input" style="font-size:16px;">Sponsored Products:</label>
+      <input type="text" id="sponsored-products-input" class="form-control" style="margin-left:6px;width:220px;" placeholder="Enter IDs, comma separated" />
+      <button id="save-sponsored-products" class="btn btn-sm btn-primary" style="margin-left:8px;">Save</button>
+    </span>
+    <span id="sponsored-products-tags" style="margin-left:12px;"></span>
     <span style="display:inline-flex;align-items:center;margin-left:auto;margin-right:16px;">
       <label for="qa-info-toggle" style="font-size:16px;">Show QA Info</label>
       <input type="checkbox" id="qa-info-toggle" style="margin-left:6px;" />
@@ -55,6 +61,56 @@ document.querySelector("#nav-bar").innerHTML = `
 `;
 
 const navbarContainer = document.querySelector("#navbar-container");
+// Sponsored Products input logic
+function injectSponsoredProducts(newValue) {
+  const sponsoredArray = newValue
+    .split(",")
+    .map((id) => id.trim())
+    .filter((id) => id.length > 0);
+  localStorage.setItem(
+    "sponsored-products",
+    JSON.stringify({ sponsored: sponsoredArray })
+  );
+  renderSponsoredTags(sponsoredArray);
+}
+
+function renderSponsoredTags(sponsoredArray) {
+  const tagsContainer = document.getElementById("sponsored-products-tags");
+  if (!tagsContainer) return;
+  tagsContainer.innerHTML = sponsoredArray
+    .map(
+      (id) =>
+        `<span class="badge bg-info text-dark" style="margin-right:6px;">${id}</span>`
+    )
+    .join("");
+}
+
+// Load initial sponsored products from localStorage
+const sponsoredProductsRaw = localStorage.getItem("sponsored-products");
+const sponsoredArray =
+  sponsoredProductsRaw && JSON.parse(sponsoredProductsRaw).sponsored
+    ? JSON.parse(sponsoredProductsRaw).sponsored
+    : [];
+document.getElementById("sponsored-products-input").value =
+  sponsoredArray.join(", ");
+renderSponsoredTags(sponsoredArray);
+
+// Save button logic
+document
+  .getElementById("save-sponsored-products")
+  .addEventListener("click", () => {
+    const inputValue = document.getElementById(
+      "sponsored-products-input"
+    ).value;
+    injectSponsoredProducts(inputValue);
+  });
+
+// Optional: update on input blur
+document
+  .getElementById("sponsored-products-input")
+  .addEventListener("blur", (e) => {
+    injectSponsoredProducts(e.target.value);
+  });
 // --- QA Info toggle logic ---
 const qaInfoToggle = document.getElementById("qa-info-toggle");
 function setQAInfoVisibility(visible) {

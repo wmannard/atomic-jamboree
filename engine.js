@@ -34,7 +34,11 @@ export const commerceEngine = buildCommerceEngine({
     },
     preprocessRequest: (request) => {
       const body = request.body ? JSON.parse(request.body) : {};
-      body.pinnedProducts = ["iamaproduct"];
+        // If the request is for a listing, pull sponsored products from localStorage
+        if (request.url && request.url.includes('/listing')) {
+          const sponsoredProducts = JSON.parse(localStorage.getItem('sponsored-products') || '{}') || {};
+          body.pinnedProducts = sponsoredProducts?.sponsored || [];
+        }
       request.body = JSON.stringify(body);
       return request;
     },
