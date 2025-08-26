@@ -24,7 +24,7 @@ const base = import.meta.env.BASE_URL || "/";
 document.querySelector("#nav-bar").innerHTML = `
   <div id="navbar-container">
     <div class="dropdown" style="margin-left:12px;">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="pagesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="pagesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
         Navigation
       </button>
       <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
@@ -120,17 +120,26 @@ document
   });
 // --- QA Info toggle logic ---
 const qaInfoToggle = document.getElementById("qa-info-toggle");
+
 function setQAInfoVisibility(visible) {
   document.querySelectorAll(".qa-info").forEach((el) => {
     el.style.visibility = visible ? "visible" : "hidden";
   });
+  const infoBanner = document.getElementById("info-banner");
+  if (infoBanner) {
+    infoBanner.style.display = visible ? "block" : "none";
+  }
 }
+
 qaInfoToggle?.addEventListener("change", (e) => {
   setQAInfoVisibility(e.target.checked);
 });
+
 // Ensure initial state: box unchecked, tags hidden
 if (qaInfoToggle) qaInfoToggle.checked = false;
+
 setQAInfoVisibility(false);
+
 // --- Dropdown logic ---
 const propertyDropdown = document.getElementById("property-dropdown");
 const localeDropdown = document.getElementById("locale-dropdown");
@@ -197,13 +206,17 @@ navLinks.forEach((link) => {
   });
 
   link.addEventListener("mouseout", () => {
-    if (link !== document.querySelector(".active")) {
+    if (link.classList.contains("active")) {
+      link.style.color = "#fff";
+    } else {
       link.style.color = "#333";
     }
   });
 
   if (window.location.pathname === link.getAttribute("href")) {
     link.classList.add("active");
-    link.style.color = "#f05245";
+    link.style.color = "#fff";
+    link.style.backgroundColor = "primary";
+    link.style.borderRadius = "0";
   }
 });
