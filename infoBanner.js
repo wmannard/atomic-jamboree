@@ -1,8 +1,5 @@
 export function renderInfoBanner({ visitorPath }) {
-  // Get current page URL without params/fragments
   const referrerUrl = window.location.origin + window.location.pathname;
-
-  // Create banner HTML
   return `
     <div
       class="alert alert-info alert-dismissible fade show"
@@ -21,9 +18,15 @@ export function renderInfoBanner({ visitorPath }) {
   `;
 }
 
-export function mountInfoBanner({ visitorPath }, mountSelector = "body") {
+export function mountInfoBanner(
+  { visitorPath },
+  mountSelector = "#info-banner"
+) {
   const mountEl = document.querySelector(mountSelector);
   if (!mountEl) return;
-  // Insert banner at the top of the mount element
-  mountEl.insertAdjacentHTML("afterbegin", renderInfoBanner({ visitorPath }));
+  mountEl.innerHTML = renderInfoBanner({ visitorPath });
 }
+
+// Auto-mount banner when module is loaded (customize visitorPath as needed)
+const defaultVisitorPath = "/plp/accessories/surf-accessories";
+mountInfoBanner({ visitorPath: defaultVisitorPath });
