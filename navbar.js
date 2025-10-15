@@ -38,7 +38,7 @@ document.querySelector("#nav-bar").innerHTML = `
     </div>
     <span class="vr mx-4"></span>
     <span class="d-inline-flex align-items-center ms-3">
-      <label for="property-dropdown" class="me-2 fs-6">Property:</label>
+      <label for="property-dropdown" class="me-2 fs-6">Tracking ID:</label>
       <select id="property-dropdown" class="form-select form-select-sm w-auto">
         ${Array.from(
           { length: 9 },
@@ -55,7 +55,7 @@ document.querySelector("#nav-bar").innerHTML = `
       </select>
     </span>
     <span class="d-inline-flex align-items-center ms-3">
-      <label for="sponsored-products-input" class="fs-6 me-2">Pin products:</label>
+      <label for="sponsored-products-input" class="fs-6 me-2">Sponsored products:</label>
       <input type="text" id="sponsored-products-input" class="form-control form-control-sm w-auto" placeholder="Enter IDs, comma separated" />
       <button id="save-sponsored-products" class="btn btn-sm btn-primary ms-2">Save</button>
     </span>
