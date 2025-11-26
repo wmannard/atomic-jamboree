@@ -10,11 +10,11 @@
     "start-on-windows": "npm run build-on-windows && npx vite preview"
   },
   "dependencies": {
-    "@coveo/atomic": "^3.33.0",
-    "@coveo/headless": "^3.28.4"
+    "@coveo/atomic": "^3.39.0",
+    "@coveo/headless": "^3.35.1"
   },
   "devDependencies": {
-    "fs-extra": "^11.2.0",
-    "vite": "6.3.5"
+    "fs-extra": "^11.3.2",
+    "vite": "7.2.4"
   }
 }
