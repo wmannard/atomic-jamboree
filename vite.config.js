@@ -16,6 +16,7 @@ export default {
         listing3: resolve(__dirname, 'listing3/index.html'),
         recs1: resolve(__dirname, 'recs1/index.html'),
         recs2: resolve(__dirname, 'recs2/index.html'),
+        pdp: resolve(__dirname, 'pdp/index.html'),
       }
     }
   },

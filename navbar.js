@@ -17,6 +17,9 @@ export const navUrls = {
   "Recs 2": {
     url: import.meta.env.VITE_RECS_2_URL,
   },
+  "Product Detail Page": {
+    url: import.meta.env.VITE_PDP_URL || "https://sports.barca.group",
+  },
 };
 
 const base = import.meta.env.BASE_URL || "/";

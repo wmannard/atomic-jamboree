@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="QA test page for Atomic Jamboree." />
+    <meta name="keywords" content="atomic, jamboree, qa, test" />
+    <link rel="stylesheet" href="../qa-info.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <title>Product Detail Page</title>
+  </head>
+  <body>
+    <div id="nav-bar"></div>
+    <div id="info-banner"></div>
+    <div class="container my-5">
+      <h2>Product Detail Page</h2>
+      <div class="alert alert-info">
+        <p>
+          <strong>Product ID from URL:</strong> <span id="product-id"></span>
+        </p>
+      </div>
+      <pre
+        id="product-data"
+        class="border p-3 bg-light"
+        style="max-height: 600px; overflow-y: auto"
+      ></pre>
+    </div>
+    <script type="module" src="/navbar.js"></script>
+    <script type="module">
+      import { mountInfoBanner } from "../infoBanner.js";
+      mountInfoBanner({ visitorPath: "/pdp" });
+    </script>
+    <script type="module">
+      import { searchProduct } from "../commerceApi.js";
+
+      // Display the product ID from query string
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get("0") || params.toString().replace("=", "");
+      document.getElementById("product-id").textContent = productId || "None";
+
+      // Fetch product data
+      if (productId) {
+        try {
+          const result = await searchProduct(productId);
+          console.log("Product data:", result);
+          // Display the JSON on screen
+          document.getElementById("product-data").textContent = JSON.stringify(
+            result.product,
+            null,
+            2
+          );
+        } catch (error) {
+          console.error("Failed to fetch product:", error);
+          document.getElementById(
+            "product-data"
+          ).textContent = `Error: ${error.message}`;
+        }
+      } else {
+        document.getElementById("product-data").textContent =
+          "No product ID provided";
+      }
+    </script>
+    <script type="module" src="../qa-info.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
