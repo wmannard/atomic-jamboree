@@ -16,17 +16,13 @@
     <div id="nav-bar"></div>
     <div id="info-banner"></div>
     <div class="container my-5">
-      <h2>Product Detail Page</h2>
-      <div class="alert alert-info">
-        <p>
-          <strong>Product ID from URL:</strong> <span id="product-id"></span>
-        </p>
+      <div id="product-container">
+        <div class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
       </div>
-      <pre
-        id="product-data"
-        class="border p-3 bg-light"
-        style="max-height: 600px; overflow-y: auto"
-      ></pre>
     </div>
     <script type="module" src="/navbar.js"></script>
     <script type="module">
@@ -36,31 +32,95 @@
     <script type="module">
       import { searchProduct } from "../commerceApi.js";
 
-      // Display the product ID from query string
       const params = new URLSearchParams(window.location.search);
       const productId = params.get("0") || params.toString().replace("=", "");
-      document.getElementById("product-id").textContent = productId || "None";
+      const container = document.getElementById("product-container");
 
-      // Fetch product data
       if (productId) {
         try {
           const result = await searchProduct(productId);
-          console.log("Product data:", result);
-          // Display the JSON on screen
-          document.getElementById("product-data").textContent = JSON.stringify(
-            result.product,
-            null,
-            2
-          );
+          const product = result.product;
+
+          container.innerHTML = `
+            <div class="row">
+              <div class="col-lg-6 mb-4">
+                <img 
+                  src="${product.ec_images?.[0] || ""}" 
+                  alt="${product.ec_name}" 
+                  class="img-fluid rounded"
+                  style="max-width: 500px;"
+                />
+              </div>
+              <div class="col-lg-6">
+                <h1 class="mb-3">${product.ec_name}</h1>
+                <p class="text-muted mb-2">${product.ec_brand}</p>
+                
+                <div class="mb-3">
+                  ${
+                    product.ec_rating
+                      ? `
+                    <span class="text-warning">★ ${product.ec_rating.toFixed(
+                      1
+                    )}</span>
+                  `
+                      : ""
+                  }
+                </div>
+
+                <div class="mb-4">
+                  ${
+                    product.ec_promo_price < product.ec_price
+                      ? `
+                    <span class="h3 text-danger me-2">$${product.ec_promo_price.toFixed(
+                      2
+                    )}</span>
+                    <span class="text-decoration-line-through text-muted">$${product.ec_price.toFixed(
+                      2
+                    )}</span>
+                  `
+                      : `
+                    <span class="h3">$${product.ec_price.toFixed(2)}</span>
+                  `
+                  }
+                </div>
+
+                <p class="mb-4">${product.ec_description}</p>
+
+                <div class="mb-3">
+                  <span class="badge ${
+                    product.ec_in_stock ? "bg-success" : "bg-danger"
+                  }">
+                    ${product.ec_in_stock ? "In Stock" : "Out of Stock"}
+                  </span>
+                </div>
+
+                <button class="btn btn-primary btn-lg" ${
+                  !product.ec_in_stock ? "disabled" : ""
+                }>
+                  Add to Cart
+                </button>
+
+                <div class="mt-4 text-muted small">
+                  <p>Product ID: ${product.ec_product_id}</p>
+                </div>
+              </div>
+            </div>
+          `;
         } catch (error) {
           console.error("Failed to fetch product:", error);
-          document.getElementById(
-            "product-data"
-          ).textContent = `Error: ${error.message}`;
+          container.innerHTML = `
+            <div class="alert alert-danger">
+              <h4>Error loading product</h4>
+              <p>${error.message}</p>
+            </div>
+          `;
         }
       } else {
-        document.getElementById("product-data").textContent =
-          "No product ID provided";
+        container.innerHTML = `
+          <div class="alert alert-warning">
+            No product ID provided
+          </div>
+        `;
       }
     </script>
     <script type="module" src="../qa-info.js"></script>
