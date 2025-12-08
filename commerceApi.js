@@ -1,3 +1,5 @@
+// This helper is for direct calls to the search API that bypass the atomic engine. Used for the PDP product retrieval.
+
 import { navUrls } from "./navbar";
 
 const {
