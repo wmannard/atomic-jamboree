@@ -79,5 +79,8 @@ export const searchProduct = async (productId, options = {}) => {
   return {
     ...result,
     product, // The matched product
+    language: LANGUAGE,
+    country: COUNTRY,
+    currency: CURRENCY,
   };
 };
