@@ -94,7 +94,7 @@
                   </span>
                 </div>
 
-                <button class="btn btn-primary btn-lg" ${
+                <button class="btn btn-primary btn-lg" id="add-to-cart-btn" ${
                   !product.ec_in_stock ? "disabled" : ""
                 }>
                   Add to Cart
@@ -106,6 +106,14 @@
               </div>
             </div>
           `;
+
+          // Add click handler for "Add to Cart" button
+          const addToCartBtn = document.getElementById("add-to-cart-btn");
+          if (addToCartBtn && product.ec_in_stock) {
+            addToCartBtn.addEventListener("click", () => {
+              alert("Cart coming soon");
+            });
+          }
         } catch (error) {
           console.error("Failed to fetch product:", error);
           container.innerHTML = `
