@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="QA test page for Atomic Jamboree." />
+    <meta name="keywords" content="atomic, jamboree, qa, test" />
+    <link rel="stylesheet" href="../qa-info.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <title>Product Detail Page</title>
+  </head>
+  <body>
+    <div id="nav-bar"></div>
+    <div id="info-banner"></div>
+    <div class="container my-5">
+      <div id="product-container">
+        <div class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/navbar.js"></script>
+    <script type="module">
+      import { mountInfoBanner } from "../infoBanner.js";
+      mountInfoBanner({ visitorPath: "/pdp" });
+    </script>
+    <script type="module">
+      import { searchProduct } from "../commerceApi.js";
+
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get("0") || params.toString().replace("=", "");
+      const container = document.getElementById("product-container");
+
+      if (productId) {
+        try {
+          const result = await searchProduct(productId);
+          const product = result.product;
+
+          container.innerHTML = `
+            <div class="row">
+              <div class="col-lg-6 mb-4">
+                <img 
+                  src="${product.ec_images?.[0] || ""}" 
+                  alt="${product.ec_name}" 
+                  class="img-fluid rounded"
+                  style="max-width: 500px;"
+                />
+              </div>
+              <div class="col-lg-6">
+                <h1 class="mb-3">${product.ec_name}</h1>
+                <p class="text-muted mb-2">${product.ec_brand}</p>
+                
+                <div class="mb-3">
+                  ${
+                    product.ec_rating
+                      ? `
+                    <span class="text-warning">★ ${product.ec_rating.toFixed(
+                      1
+                    )}</span>
+                  `
+                      : ""
+                  }
+                </div>
+
+                <div class="mb-4">
+                  ${
+                    product.ec_promo_price < product.ec_price
+                      ? `
+                    <span class="h3 text-danger me-2">$${product.ec_promo_price.toFixed(
+                      2
+                    )}</span>
+                    <span class="text-decoration-line-through text-muted">$${product.ec_price.toFixed(
+                      2
+                    )}</span>
+                  `
+                      : `
+                    <span class="h3">$${product.ec_price.toFixed(2)}</span>
+                  `
+                  }
+                </div>
+
+                <p class="mb-4">${product.ec_description}</p>
+
+                <div class="mb-3">
+                  <span class="badge ${
+                    product.ec_in_stock ? "bg-success" : "bg-danger"
+                  }">
+                    ${product.ec_in_stock ? "In Stock" : "Out of Stock"}
+                  </span>
+                </div>
+
+                <button class="btn btn-primary btn-lg" ${
+                  !product.ec_in_stock ? "disabled" : ""
+                }>
+                  Add to Cart
+                </button>
+
+                <div class="mt-4 text-muted small">
+                  <p>Product ID: ${product.ec_product_id}</p>
+                </div>
+              </div>
+            </div>
+          `;
+        } catch (error) {
+          console.error("Failed to fetch product:", error);
+          container.innerHTML = `
+            <div class="alert alert-danger">
+              <h4>Error loading product</h4>
+              <p>${error.message}</p>
+            </div>
+          `;
+        }
+      } else {
+        container.innerHTML = `
+          <div class="alert alert-warning">
+            No product ID provided
+          </div>
+        `;
+      }
+    </script>
+    <script type="module" src="../qa-info.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

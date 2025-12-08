@@ -17,6 +17,9 @@ export const navUrls = {
   "Recs 2": {
     url: import.meta.env.VITE_RECS_2_URL,
   },
+  "Product Detail Page": {
+    url: import.meta.env.VITE_PDP_URL || "https://sports.barca.group",
+  },
 };
 
 const base = import.meta.env.BASE_URL || "/";
@@ -193,7 +196,8 @@ function goToJamboreePage(newJamboree, newLocale) {
   } else {
     newPath = newBase;
   }
-  window.location.href = newPath;
+  // Preserve query params and hash
+  window.location.href = newPath + window.location.search + window.location.hash;
 }
 
 propertyDropdown?.addEventListener("change", (e) => {
