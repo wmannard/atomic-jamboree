@@ -196,7 +196,8 @@ function goToJamboreePage(newJamboree, newLocale) {
   } else {
     newPath = newBase;
   }
-  window.location.href = newPath;
+  // Preserve query params and hash
+  window.location.href = newPath + window.location.search + window.location.hash;
 }
 
 propertyDropdown?.addEventListener("change", (e) => {
