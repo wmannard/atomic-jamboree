@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 for /L %%J in (1,1,9) do (
-  for %%L in (EN FR) do (
+  for %%L in (EN FR NL) do (
     set "JAMBOREE=%%J"
     set "LOCALE=%%L"
     set "OUTDIR=dist/jamboree_!JAMBOREE!_!LOCALE!"
