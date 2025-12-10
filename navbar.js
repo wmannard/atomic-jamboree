@@ -55,6 +55,7 @@ document.querySelector("#nav-bar").innerHTML = `
       <select id="locale-dropdown" class="form-select form-select-sm w-auto">
         <option value="en">EN-US-USD</option>
         <option value="fr">FR-FR-EUR</option>
+        <option value="nl">NL-NL-EUR</option>
       </select>
     </span>
     <span class="d-inline-flex align-items-center ms-3">
@@ -173,7 +174,7 @@ const localeDropdown = document.getElementById("locale-dropdown");
 
 // Helper to parse current jamboree and locale from path
 function getCurrentJamboreeAndLocale() {
-  const match = window.location.pathname.match(/jamboree_(\d+)_(en|fr)\//);
+  const match = window.location.pathname.match(/jamboree_(\d+)_(en|fr|nl)\//);
   if (match) {
     return { jamboree: `jamboree_${match[1]}`, locale: match[2] };
   }
@@ -188,7 +189,7 @@ if (localeDropdown && locale) localeDropdown.value = locale;
 function goToJamboreePage(newJamboree, newLocale) {
   if (!newJamboree || !newLocale) return;
   const currentPath = window.location.pathname;
-  const regex = /\/jamboree_\d+_(en|fr)\//;
+  const regex = /\/jamboree_\d+_(en|fr|nl)\//;
   const newBase = `/${newJamboree}_${newLocale}/`;
   let newPath;
   if (regex.test(currentPath)) {

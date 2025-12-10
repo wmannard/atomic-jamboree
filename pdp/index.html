@@ -35,11 +35,41 @@
       const params = new URLSearchParams(window.location.search);
       const productId = params.get("0") || params.toString().replace("=", "");
       const container = document.getElementById("product-container");
+      const lang = {
+        en: {
+          addToCart: "Add to Cart",
+          inStock: "In Stock",
+          outOfStock: "Out of Stock",
+          productId: "Product ID",
+        },
+        fr: {
+          addToCart: "Ajouter au panier",
+          inStock: "En stock",
+          outOfStock: "Rupture de stock",
+          productId: "ID du produit",
+        },
+        nl: {
+          addToCart: "In winkelwagen",
+          inStock: "Op voorraad",
+          outOfStock: "Niet op voorraad",
+          productId: "Product-ID",
+        },
+      };
 
       if (productId) {
         try {
           const result = await searchProduct(productId);
           const product = result.product;
+
+          // Create currency formatter with proper locale
+          const locale = `${result.language}-${result.country}`;
+          const currencyFormatter = new Intl.NumberFormat(locale, {
+            style: "currency",
+            currency: result.currency,
+          });
+
+          // Get translations for current language
+          const translations = lang[result.language] || lang.en;
 
           container.innerHTML = `
             <div class="row">
@@ -71,15 +101,17 @@
                   ${
                     product.ec_promo_price < product.ec_price
                       ? `
-                    <span class="h3 text-danger me-2">$${product.ec_promo_price.toFixed(
-                      2
+                    <span class="h3 text-danger me-2">${currencyFormatter.format(
+                      product.ec_promo_price
                     )}</span>
-                    <span class="text-decoration-line-through text-muted">$${product.ec_price.toFixed(
-                      2
+                    <span class="text-decoration-line-through text-muted">${currencyFormatter.format(
+                      product.ec_price
                     )}</span>
                   `
                       : `
-                    <span class="h3">$${product.ec_price.toFixed(2)}</span>
+                    <span class="h3">${currencyFormatter.format(
+                      product.ec_price
+                    )}</span>
                   `
                   }
                 </div>
@@ -90,22 +122,34 @@
                   <span class="badge ${
                     product.ec_in_stock ? "bg-success" : "bg-danger"
                   }">
-                    ${product.ec_in_stock ? "In Stock" : "Out of Stock"}
+                    ${
+                      product.ec_in_stock
+                        ? translations.inStock
+                        : translations.outOfStock
+                    }
                   </span>
                 </div>
 
-                <button class="btn btn-primary btn-lg" ${
+                <button class="btn btn-primary btn-lg" id="add-to-cart-btn" ${
                   !product.ec_in_stock ? "disabled" : ""
                 }>
-                  Add to Cart
+                  ${translations.addToCart}
                 </button>
 
                 <div class="mt-4 text-muted small">
-                  <p>Product ID: ${product.ec_product_id}</p>
+                  <p>${translations.productId}: ${product.permanentid}</p>
                 </div>
               </div>
             </div>
           `;
+
+          // Add click handler for "Add to Cart" button
+          const addToCartBtn = document.getElementById("add-to-cart-btn");
+          if (addToCartBtn && product.ec_in_stock) {
+            addToCartBtn.addEventListener("click", () => {
+              alert("Cart coming soon");
+            });
+          }
         } catch (error) {
           console.error("Failed to fetch product:", error);
           container.innerHTML = `
