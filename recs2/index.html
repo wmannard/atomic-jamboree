@@ -92,10 +92,9 @@
     <script type="module" src="/navbar.js"></script>
     <script type="module" src="../qa-info.js"></script>
     <script type="module">
-      const jamboree = import.meta.env.VITE_JAMBOREE;
-      const locale = import.meta.env.VITE_LOCALE;
-      const prefix = `VITE_${jamboree}_${locale}_`;
-      const cartSlot = import.meta.env[`${prefix}SLOT_ID_CART_RECOMMENDATIONS`];
+      import { getEnvValue } from '../configHelper.js';
+
+      const cartSlot = getEnvValue('SLOT_ID_CART_RECOMMENDATIONS');
 
       document
         .getElementById("cart_recommendations")

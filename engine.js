@@ -1,25 +1,22 @@
 import { buildCommerceEngine } from "@coveo/headless/commerce";
 import { navUrls } from "./navbar";
+import { getEnvValue } from "./configHelper";
 
 const {
   VITE_ORGANIZATION_ID,
   VITE_ENVIRONMENT,
   VITE_ACCESS_TOKEN,
   VITE_SEARCH_TOKEN,
-  VITE_JAMBOREE,
-  VITE_LOCALE,
 } = import.meta.env;
 
 // Use VITE_SEARCH_TOKEN if 'logged-in' is true in localStorage
 const LOGGED_IN = localStorage.getItem('logged-in') === 'true';
 const ACCESS_TOKEN = LOGGED_IN ? VITE_SEARCH_TOKEN : VITE_ACCESS_TOKEN;
 
-const prefix = `VITE_${VITE_JAMBOREE}_${VITE_LOCALE}_`;
-
-const TRACKING_ID = import.meta.env[`${prefix}TRACKING_ID`];
-const LANGUAGE = import.meta.env[`${prefix}LANGUAGE`];
-const COUNTRY = import.meta.env[`${prefix}COUNTRY`];
-const CURRENCY = import.meta.env[`${prefix}CURRENCY`];
+const TRACKING_ID = getEnvValue('TRACKING_ID');
+const LANGUAGE = getEnvValue('LANGUAGE');
+const COUNTRY = getEnvValue('COUNTRY');
+const CURRENCY = getEnvValue('CURRENCY');
 
 export const commerceEngine = buildCommerceEngine({
   configuration: {

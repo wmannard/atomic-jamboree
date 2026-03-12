@@ -143,12 +143,10 @@
     <script type="module" src="/navbar.js"></script>
     <script type="module" src="../qa-info.js"></script>
     <script type="module">
-      const jamboree = import.meta.env.VITE_JAMBOREE;
-      const locale = import.meta.env.VITE_LOCALE;
-      const prefix = `VITE_${jamboree}_${locale}_`;
+      import { getEnvValue } from '../configHelper.js';
 
-      const boughtSlot = import.meta.env[`${prefix}SLOT_ID_POPULAR_BOUGHT`];
-      const viewedSlot = import.meta.env[`${prefix}SLOT_ID_POPULAR_VIEWED`];
+      const boughtSlot = getEnvValue('SLOT_ID_POPULAR_BOUGHT');
+      const viewedSlot = getEnvValue('SLOT_ID_POPULAR_VIEWED');
 
       document
         .getElementById("popular_bought")

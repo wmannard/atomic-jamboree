@@ -34,18 +34,12 @@
     </script>
 
     <script type="module">
-      const jamboree = import.meta.env.VITE_JAMBOREE;
-      const locale = import.meta.env.VITE_LOCALE;
-      const prefix = `VITE_${jamboree}_${locale}_`;
+      import { getEnvValue } from '../configHelper.js';
 
       // Set global badge placement IDs
       window.BADGE_PLACEMENTS = {
-        PLP_TOP_LEFT: import.meta.env[
-          `${prefix}BADGE_PLACEMENT__PLP__TOP_LEFT`
-        ],
-        PLP_BOTTOM_LEFT: import.meta.env[
-          `${prefix}BADGE_PLACEMENT__PLP__BOTTOM_LEFT`
-        ],
+        PLP_TOP_LEFT: getEnvValue('BADGE_PLACEMENT__PLP__TOP_LEFT'),
+        PLP_BOTTOM_LEFT: getEnvValue('BADGE_PLACEMENT__PLP__BOTTOM_LEFT'),
       };
     </script>
   </head>
