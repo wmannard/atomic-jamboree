@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -23,7 +23,7 @@
       (async () => {
         await customElements.whenDefined("atomic-commerce-interface");
         const commerceInterface = document.querySelector(
-          "atomic-commerce-interface"
+          "atomic-commerce-interface",
         );
 
         await commerceInterface.initializeWithEngine(commerceEngine);
@@ -36,7 +36,10 @@
     <div id="nav-bar"></div>
     <div id="info-banner"></div>
     <h2 class="text-center my-4">Search</h2>
-    <atomic-commerce-interface type="search">
+    <atomic-commerce-interface
+      type="search"
+      fields-to-include='["badgePlacements"]'
+    >
       <atomic-commerce-layout>
         <atomic-layout-section section="search">
           <atomic-commerce-search-box>
@@ -59,10 +62,10 @@
                     </atomic-product-field-condition>
                   </atomic-product-section-visual>
                   <atomic-product-section-metadata>
-                    <atomic-field-condition must-match-query-pinned="true">
+                    <atomic-product-field-condition must-match-query-pinned="true">
                       <span class="text-2xl">💵</span>
                       <span class="font-bold">Sponsored Product</span>
-                    </atomic-field-condition>
+                    </atomic-product-field-condition>
                     <atomic-product-field-condition if-defined="ec_brand">
                       <atomic-product-text
                         field="ec_brand"
@@ -118,10 +121,18 @@
                     </atomic-product-field-condition>
                   </atomic-product-section-visual>
                   <atomic-product-section-metadata>
-                    <atomic-field-condition must-match-query-pinned="true">
+                    <atomic-product-field-condition must-match-query-pinned="true">
                       <span class="text-2xl">💵</span>
                       <span class="font-bold">Sponsored Product</span>
-                    </atomic-field-condition>
+                    </atomic-product-field-condition>
+                    <badge-placement-condition placement-id="5a64ce85-827c-419b-be41-73bb349dd9aa">
+                      <span class="text-2xl">☑️☑️</span>
+                      <span class="font-bold">I have a match!</span>
+                    </badge-placement-condition>
+                    <atomic-product-field-condition if-defined="badgePlacements">
+                      <span class="text-2xl">☑️</span>
+                      <span class="font-bold">I have a badge placement</span>
+                    </atomic-product-field-condition>
                     <atomic-product-field-condition if-defined="ec_brand">
                       <atomic-product-text
                         field="ec_brand"
@@ -158,6 +169,7 @@
       </atomic-commerce-layout>
     </atomic-commerce-interface>
     <script type="module" src="/navbar.js"></script>
+    <script type="module" src="/badgePlacementCondition.js"></script>
     <script type="module">
       import { mountInfoBanner } from "./infoBanner.js";
       mountInfoBanner({ visitorPath: "/search" });
