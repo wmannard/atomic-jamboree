@@ -96,10 +96,15 @@
             <atomic-commerce-product-list
               display="table"
               density="compact"
-              image-size="small"
+              image-size="icon"
             >
               <atomic-product-template>
                 <template>
+                  <atomic-table-element label="Image">
+                    <atomic-product-image
+                      field="ec_thumbnails"
+                    ></atomic-product-image>
+                  </atomic-table-element>
                   <atomic-table-element label="Name">
                     <badge-placement data-placement-key="PLP_TOP_LEFT">
                     </badge-placement>
@@ -125,11 +130,6 @@
                   </atomic-table-element>
                   <atomic-table-element label="Price">
                     <atomic-product-price currency="USD"></atomic-product-price>
-                  </atomic-table-element>
-                  <atomic-table-element label="Image">
-                    <atomic-product-image
-                      field="ec_thumbnails"
-                    ></atomic-product-image>
                   </atomic-table-element>
                   <atomic-table-element label="Description">
                     <badge-placement data-placement-key="PLP_BOTTOM_LEFT">
