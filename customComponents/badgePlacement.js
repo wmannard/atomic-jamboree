@@ -4,14 +4,14 @@ import { productContext } from '@coveo/atomic';
  * Custom web component to render badges for a specific badge placement ID.
  * 
  * Usage:
- * <badge-placement-condition placement-id="5a64ce85-827c-419b-be41-73bb349dd9aa">
+ * <badge-placement placement-id="5a64ce85-827c-419b-be41-73bb349dd9aa">
  *   <span>Fallback content if no placement matches</span>
- * </badge-placement-condition>
+ * </badge-placement>
  * 
  * If the placement-id matches, it will render the badges from that placement.
  * If no match, the component removes itself from the DOM.
  */
-class BadgePlacementCondition extends HTMLElement {
+class BadgePlacement extends HTMLElement {
   constructor() {
     super();
     this.product = null;
@@ -23,7 +23,7 @@ class BadgePlacementCondition extends HTMLElement {
       this.product = await productContext(this);
       this.render();
     } catch (error) {
-      console.error('BadgePlacementCondition: Failed to get product context', error);
+      console.error('BadgePlacement: Failed to get product context', error);
       // Remove the component if we can't get the product context
       this.remove();
     }
@@ -122,4 +122,4 @@ class BadgePlacementCondition extends HTMLElement {
 }
 
 // Register the custom element
-customElements.define('badge-placement-condition', BadgePlacementCondition);
+customElements.define('badge-placement', BadgePlacement);

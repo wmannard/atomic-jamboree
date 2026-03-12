@@ -21,7 +21,10 @@
     </script>
 
     <script type="module">
-      import { initBadgePlacements, PLACEMENT_CONFIGS } from '../shared/initBadgePlacements.js';
+      import {
+        initBadgePlacements,
+        PLACEMENT_CONFIGS,
+      } from "../shared/initBadgePlacements.js";
       initBadgePlacements(PLACEMENT_CONFIGS.PLP);
     </script>
   </head>
@@ -54,7 +57,9 @@
                     ></atomic-product-image>
                   </atomic-product-section-visual>
                   <atomic-product-section-metadata>
-                    <atomic-product-field-condition must-match-query-pinned="true">
+                    <atomic-product-field-condition
+                      must-match-query-pinned="true"
+                    >
                       <span class="text-2xl">💵</span>
                       <span class="font-bold">Sponsored Product</span>
                     </atomic-product-field-condition>
@@ -96,10 +101,8 @@
               <atomic-product-template>
                 <template>
                   <atomic-product-section-name>
-                    <badge-placement-condition
-                      data-placement-key="PLP_TOP_LEFT"
-                    >
-                    </badge-placement-condition>
+                    <badge-placement data-placement-key="PLP_TOP_LEFT">
+                    </badge-placement>
                     <atomic-product-link
                       class="font-bold"
                       href-template="${window.location.origin}${window.location.pathname}../pdp/?${permanentid}"
@@ -111,14 +114,14 @@
                     ></atomic-product-image>
                   </atomic-product-section-visual>
                   <atomic-product-section-children>
-                    <badge-placement-condition
-                      data-placement-key="PLP_BOTTOM_LEFT"
-                    >
-                    </badge-placement-condition>
+                    <badge-placement data-placement-key="PLP_BOTTOM_LEFT">
+                    </badge-placement>
                     <atomic-product-children></atomic-product-children>
                   </atomic-product-section-children>
                   <atomic-product-section-metadata>
-                    <atomic-product-field-condition must-match-query-pinned="true">
+                    <atomic-product-field-condition
+                      must-match-query-pinned="true"
+                    >
                       <span class="text-2xl">💵</span>
                       <span class="font-bold">Sponsored Product</span>
                     </atomic-product-field-condition>
@@ -156,7 +159,7 @@
       </atomic-commerce-layout>
     </atomic-commerce-interface>
     <script type="module" src="/navbar.js"></script>
-    <script type="module" src="/customComponents/badgePlacementCondition.js"></script>
+    <script type="module" src="/customComponents/badgePlacement.js"></script>
     <script type="module">
       import { mountInfoBanner } from "../infoBanner.js";
       mountInfoBanner({ visitorPath: "/plp/accessories/surf-accessories" });
