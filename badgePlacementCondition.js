@@ -33,7 +33,16 @@ class BadgePlacementCondition extends HTMLElement {
    * Get the matching placement object
    */
   getMatchingPlacement() {
-    const placementId = this.getAttribute('placement-id');
+    // Try to get placement-id from attribute
+    let placementId = this.getAttribute('placement-id');
+    
+    // If not set, try to get from data-placement-key and window.BADGE_PLACEMENTS
+    if (!placementId) {
+      const placementKey = this.getAttribute('data-placement-key');
+      if (placementKey && window.BADGE_PLACEMENTS) {
+        placementId = window.BADGE_PLACEMENTS[placementKey];
+      }
+    }
     
     if (!this.product || !placementId) {
       return null;

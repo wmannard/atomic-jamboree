@@ -31,6 +31,22 @@
         commerceInterface.executeFirstRequest();
       })();
     </script>
+
+    <script type="module">
+      const jamboree = import.meta.env.VITE_JAMBOREE;
+      const locale = import.meta.env.VITE_LOCALE;
+      const prefix = `VITE_${jamboree}_${locale}_`;
+
+      // Set global badge placement IDs
+      window.BADGE_PLACEMENTS = {
+        SEARCH_TOP_LEFT: import.meta.env[
+          `${prefix}BADGE_PLACEMENT__SEARCH__TOP_LEFT`
+        ],
+        SEARCH_BOTTOM_LEFT: import.meta.env[
+          `${prefix}BADGE_PLACEMENT__SEARCH__BOTTOM_LEFT`
+        ],
+      };
+    </script>
   </head>
   <body>
     <div id="nav-bar"></div>
@@ -62,7 +78,9 @@
                     </atomic-product-field-condition>
                   </atomic-product-section-visual>
                   <atomic-product-section-metadata>
-                    <atomic-product-field-condition must-match-query-pinned="true">
+                    <atomic-product-field-condition
+                      must-match-query-pinned="true"
+                    >
                       <span class="text-2xl">💵</span>
                       <span class="font-bold">Sponsored Product</span>
                     </atomic-product-field-condition>
@@ -108,6 +126,10 @@
               <atomic-product-template>
                 <template>
                   <atomic-product-section-name>
+                    <badge-placement-condition
+                      data-placement-key="SEARCH_TOP_LEFT"
+                    >
+                    </badge-placement-condition>
                     <atomic-product-link
                       class="font-bold"
                       href-template="${window.location.origin}${window.location.pathname}pdp/?${permanentid}"
@@ -121,17 +143,11 @@
                     </atomic-product-field-condition>
                   </atomic-product-section-visual>
                   <atomic-product-section-metadata>
-                    <atomic-product-field-condition must-match-query-pinned="true">
+                    <atomic-product-field-condition
+                      must-match-query-pinned="true"
+                    >
                       <span class="text-2xl">💵</span>
                       <span class="font-bold">Sponsored Product</span>
-                    </atomic-product-field-condition>
-                    <badge-placement-condition placement-id="5a64ce85-827c-419b-be41-73bb349dd9aa">
-                      <span class="text-2xl">☑️☑️</span>
-                      <span class="font-bold">I have a match!</span>
-                    </badge-placement-condition>
-                    <atomic-product-field-condition if-defined="badgePlacements">
-                      <span class="text-2xl">☑️</span>
-                      <span class="font-bold">I have a badge placement</span>
                     </atomic-product-field-condition>
                     <atomic-product-field-condition if-defined="ec_brand">
                       <atomic-product-text
@@ -152,6 +168,10 @@
                     <atomic-product-description></atomic-product-description>
                   </atomic-product-section-description>
                   <atomic-product-section-children>
+                    <badge-placement-condition
+                      data-placement-key="SEARCH_BOTTOM_LEFT"
+                    >
+                    </badge-placement-condition>
                     <atomic-product-children></atomic-product-children>
                   </atomic-product-section-children>
                 </template>
