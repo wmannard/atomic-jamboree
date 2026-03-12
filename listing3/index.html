@@ -32,6 +32,22 @@
         commerceInterface.executeFirstRequest();
       })();
     </script>
+
+    <script type="module">
+      const jamboree = import.meta.env.VITE_JAMBOREE;
+      const locale = import.meta.env.VITE_LOCALE;
+      const prefix = `VITE_${jamboree}_${locale}_`;
+
+      // Set global badge placement IDs
+      window.BADGE_PLACEMENTS = {
+        PLP_TOP_LEFT: import.meta.env[
+          `${prefix}BADGE_PLACEMENT__PLP__TOP_LEFT`
+        ],
+        PLP_BOTTOM_LEFT: import.meta.env[
+          `${prefix}BADGE_PLACEMENT__PLP__BOTTOM_LEFT`
+        ],
+      };
+    </script>
   </head>
   <body>
     <div id="nav-bar"></div>
@@ -40,6 +56,7 @@
     <atomic-commerce-interface
       type="product-listing"
       language-assets-path="../lang"
+      fields-to-include='["badgePlacements"]'
     >
       <atomic-commerce-layout>
         <atomic-layout-section section="search">
@@ -103,6 +120,10 @@
               <atomic-product-template>
                 <template>
                   <atomic-table-element label="Name">
+                    <badge-placement-condition
+                      data-placement-key="PLP_TOP_LEFT"
+                    >
+                    </badge-placement-condition>
                     <atomic-product-field-condition must-match-query-pinned="true">
                       <span>💵</span>
                       <span class="font-bold text-sm">Sponsored Product</span>
@@ -130,6 +151,10 @@
                     ></atomic-product-image>
                   </atomic-table-element>
                   <atomic-table-element label="Description">
+                    <badge-placement-condition
+                      data-placement-key="PLP_BOTTOM_LEFT"
+                    >
+                    </badge-placement-condition>
                     <atomic-product-description></atomic-product-description>
                   </atomic-table-element>
                   <!-- Add more atomic-table-element blocks for other fields as needed -->
@@ -149,6 +174,7 @@
       </atomic-commerce-layout>
     </atomic-commerce-interface>
     <script type="module" src="/navbar.js"></script>
+    <script type="module" src="/customComponents/badgePlacementCondition.js"></script>
     <script type="module">
       import { mountInfoBanner } from "../infoBanner.js";
       mountInfoBanner({ visitorPath: "/plp/accessories/towels" });
