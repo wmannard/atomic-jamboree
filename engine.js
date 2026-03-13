@@ -1,6 +1,6 @@
 import { buildCommerceEngine } from "@coveo/headless/commerce";
-import { navUrls } from "./navbar";
 import { getEnvValue } from "./configHelper";
+import { navUrls } from "./navbar";
 
 const {
   VITE_ORGANIZATION_ID,

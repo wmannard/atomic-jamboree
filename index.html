@@ -95,11 +95,14 @@
           </atomic-layout-section>
           <atomic-layout-section section="products">
             <atomic-commerce-product-list
-              display="list"
               density="compact"
-              image-size="icon"
             >
               <atomic-product-template>
+                <template slot="link">
+                  <atomic-product-link
+                      href-template="${window.location.origin}${window.location.pathname}pdp/?${permanentid}"
+                    ></atomic-product-link>
+                </template>
                 <template>
                   <atomic-product-section-name>
                     <badge-placement

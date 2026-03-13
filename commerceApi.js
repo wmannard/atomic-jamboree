@@ -1,7 +1,7 @@
 // This helper is for direct calls to the search API that bypass the atomic engine. Used for the PDP product retrieval.
 
-import { navUrls } from "./navbar";
 import { getEnvValue } from "./configHelper";
+import { navUrls } from "./navbar";
 
 const {
   VITE_ORGANIZATION_ID,
@@ -80,4 +80,56 @@ export const searchProduct = async (productId, options = {}) => {
     country: COUNTRY,
     currency: CURRENCY,
   };
+};
+
+export const fetchBadges = async (productId, placementIds) => {
+  const baseUrl =
+    VITE_ENVIRONMENT === "prod"
+      ? "https://platform.cloud.coveo.com"
+      : `https://platform${VITE_ENVIRONMENT}.cloud.coveo.com`;
+
+  const url = `${baseUrl}/rest/organizations/${VITE_ORGANIZATION_ID}/commerce/v2/tracking-ids/${TRACKING_ID}/badges`;
+
+  const body = {
+    language: LANGUAGE,
+    country: COUNTRY,
+    currency: CURRENCY,
+    placementIds: placementIds.filter(Boolean),
+    context: {
+      user: {
+        userAgent: navigator.userAgent,
+      },
+      view: {
+        url: window.location.href,
+      },
+      capture: true,
+      cart: [],
+      source: ["@coveo/headless@3.35.1"],
+      product: {
+        productId,
+      },
+      enableSemantic: true,
+      enableML: true,
+      enableBusinessRules: false,
+      enableMerchandizing: false,
+      enableRGA: false,
+      useSSR: false,
+    },
+    clientId: generateClientId(),
+  };
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Badges API request failed: ${response.status}`);
+  }
+
+  return response.json();
 };

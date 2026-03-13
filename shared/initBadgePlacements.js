@@ -6,9 +6,21 @@ import { getEnvValue } from '../configHelper.js';
  */
 export function initBadgePlacements(placements) {
   window.BADGE_PLACEMENTS = {};
-  
+
+  const rawOverrides = localStorage.getItem('badge-placements-config');
+  let overrides = {};
+  if (rawOverrides) {
+    try {
+      overrides = JSON.parse(rawOverrides) || {};
+    } catch (e) {
+      // Malformed JSON in localStorage; clear it and fall back to defaults
+      localStorage.removeItem('badge-placements-config');
+      overrides = {};
+    }
+  }
+
   for (const [key, envVar] of Object.entries(placements)) {
-    window.BADGE_PLACEMENTS[key] = getEnvValue(envVar);
+    window.BADGE_PLACEMENTS[key] = overrides[key] || getEnvValue(envVar);
   }
 }
 
@@ -21,5 +33,9 @@ export const PLACEMENT_CONFIGS = {
   SEARCH: {
     SEARCH_TOP_LEFT: 'BADGE_PLACEMENT__SEARCH__TOP_LEFT',
     SEARCH_BOTTOM_LEFT: 'BADGE_PLACEMENT__SEARCH__BOTTOM_LEFT',
+  },
+  PDP: {
+    PDP_OVER_IMAGE: 'BADGE_PLACEMENT__PDP__OVER_IMAGE',
+    PDP_UNDER_TITLE: 'BADGE_PLACEMENT__PDP__UNDER_TITLE',
   },
 };
