@@ -44,10 +44,10 @@ document.querySelector("#nav-bar").innerHTML = `
       <label for="property-dropdown" class="me-2 fs-6">Tracking ID:</label>
       <select id="property-dropdown" class="form-select form-select-sm w-auto">
         ${Array.from(
-          { length: 9 },
-          (_, i) =>
-            `<option value="jamboree_${i + 1}">jamboree_${i + 1}</option>`
-        ).join("")}
+  { length: 9 },
+  (_, i) =>
+    `<option value="jamboree_${i + 1}">jamboree_${i + 1}</option>`
+).join("")}
       </select>
     </span>
     <span class="d-inline-flex align-items-center ms-3">
@@ -72,6 +72,195 @@ document.querySelector("#nav-bar").innerHTML = `
     </span>
   </div>
 `;
+
+// Fixed badge config button on the left side of the screen
+const badgeFab = document.createElement('div');
+badgeFab.id = 'badge-fab';
+badgeFab.setAttribute('role', 'button');
+badgeFab.setAttribute('title', 'Badge Placements Config');
+badgeFab.innerHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .101.025 1 1 0 0 0 .1-.025q.114-.034.294-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067s-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/>
+    <path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+  </svg>
+`;
+Object.assign(badgeFab.style, {
+  position: 'fixed',
+  left: '0',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  zIndex: '1050',
+  width: '48px',
+  height: '48px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+  color: '#fff',
+  borderRadius: '0 12px 12px 0',
+  cursor: 'pointer',
+  boxShadow: '2px 2px 12px rgba(0,0,0,0.25)',
+  transition: 'all 0.2s ease',
+});
+badgeFab.addEventListener('mouseenter', () => {
+  badgeFab.style.width = '56px';
+  badgeFab.style.boxShadow = '4px 4px 16px rgba(0,0,0,0.35)';
+});
+badgeFab.addEventListener('mouseleave', () => {
+  badgeFab.style.width = '48px';
+  badgeFab.style.boxShadow = '2px 2px 12px rgba(0,0,0,0.25)';
+});
+badgeFab.addEventListener('click', () => {
+  const modalEl = document.getElementById('badgeConfigModal');
+  if (modalEl && window.bootstrap) {
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+  }
+});
+document.body.appendChild(badgeFab);
+// Badge Configuration Modal
+const badgeModalHTML = `
+<div class="modal fade" id="badgeConfigModal" tabindex="-1" aria-labelledby="badgeConfigModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="badgeConfigModalLabel">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-shield-check me-2" viewBox="0 0 16 16" style="vertical-align: -3px;">
+            <path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .101.025 1 1 0 0 0 .1-.025q.114-.034.294-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067s-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/>
+            <path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+          </svg>
+          Badge Placement IDs
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="text-muted small mb-4">Enter placement IDs to override the default badge positions. Leave empty to use environment defaults.</p>
+        <div class="row g-4">
+          <!-- Search Column -->
+          <div class="col-md-4">
+            <div class="card h-100 border-0" style="background: #f0f4ff;">
+              <div class="card-body p-3">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge bg-primary rounded-pill me-2" style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                    </svg>
+                  </span>
+                  <h6 class="mb-0 fw-semibold">Search</h6>
+                </div>
+                <div class="mb-3">
+                  <label for="badge-search-top-left" class="form-label small text-muted mb-1">Top-left</label>
+                  <input type="text" class="form-control form-control-sm" id="badge-search-top-left" placeholder="e.g. 5a64ce85-827c-..." />
+                </div>
+                <div>
+                  <label for="badge-search-bottom-left" class="form-label small text-muted mb-1">Bottom-left</label>
+                  <input type="text" class="form-control form-control-sm" id="badge-search-bottom-left" placeholder="e.g. 5a64ce85-827c-..." />
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- PLP Column -->
+          <div class="col-md-4">
+            <div class="card h-100 border-0" style="background: #f0faf4;">
+              <div class="card-body p-3">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge bg-success rounded-pill me-2" style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"/>
+                    </svg>
+                  </span>
+                  <h6 class="mb-0 fw-semibold">PLP (Listing)</h6>
+                </div>
+                <div class="mb-3">
+                  <label for="badge-plp-top-left" class="form-label small text-muted mb-1">Top-left</label>
+                  <input type="text" class="form-control form-control-sm" id="badge-plp-top-left" placeholder="e.g. 5a64ce85-827c-..." />
+                </div>
+                <div>
+                  <label for="badge-plp-bottom-left" class="form-label small text-muted mb-1">Bottom-left</label>
+                  <input type="text" class="form-control form-control-sm" id="badge-plp-bottom-left" placeholder="e.g. 5a64ce85-827c-..." />
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- PDP Column -->
+          <div class="col-md-4">
+            <div class="card h-100 border-0" style="background: #fff8f0;">
+              <div class="card-body p-3">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge bg-warning text-dark rounded-pill me-2" style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+                      <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                    </svg>
+                  </span>
+                  <h6 class="mb-0 fw-semibold">PDP</h6>
+                </div>
+                <div class="mb-3">
+                  <label for="badge-pdp-over-image" class="form-label small text-muted mb-1">Over image</label>
+                  <input type="text" class="form-control form-control-sm" id="badge-pdp-over-image" placeholder="e.g. 5a64ce85-827c-..." />
+                </div>
+                <div>
+                  <label for="badge-pdp-under-title" class="form-label small text-muted mb-1">Under title</label>
+                  <input type="text" class="form-control form-control-sm" id="badge-pdp-under-title" placeholder="e.g. 5a64ce85-827c-..." />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0 px-4 pb-4">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-outline-danger btn-sm" id="badge-config-clear">Clear All</button>
+        <button type="button" class="btn btn-primary btn-sm px-4" id="badge-config-save">Save &amp; Reload</button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+document.body.insertAdjacentHTML('beforeend', badgeModalHTML);
+
+const BADGE_FIELDS = [
+  { id: 'badge-search-top-left', key: 'SEARCH_TOP_LEFT' },
+  { id: 'badge-search-bottom-left', key: 'SEARCH_BOTTOM_LEFT' },
+  { id: 'badge-plp-top-left', key: 'PLP_TOP_LEFT' },
+  { id: 'badge-plp-bottom-left', key: 'PLP_BOTTOM_LEFT' },
+  { id: 'badge-pdp-over-image', key: 'PDP_OVER_IMAGE' },
+  { id: 'badge-pdp-under-title', key: 'PDP_UNDER_TITLE' },
+];
+
+function loadBadgeConfig() {
+  const saved = JSON.parse(localStorage.getItem('badge-placements-config') || '{}');
+  BADGE_FIELDS.forEach(({ id, key }) => {
+    const input = document.getElementById(id);
+    if (input) input.value = saved[key] || '';
+  });
+}
+
+function saveBadgeConfig() {
+  const config = {};
+  BADGE_FIELDS.forEach(({ id, key }) => {
+    const val = document.getElementById(id)?.value.trim();
+    if (val) config[key] = val;
+  });
+  localStorage.setItem('badge-placements-config', JSON.stringify(config));
+  window.location.reload();
+}
+
+function clearBadgeConfig() {
+  localStorage.removeItem('badge-placements-config');
+  BADGE_FIELDS.forEach(({ id }) => {
+    const input = document.getElementById(id);
+    if (input) input.value = '';
+  });
+  window.location.reload();
+}
+
+document.getElementById('badge-config-save')?.addEventListener('click', saveBadgeConfig);
+document.getElementById('badge-config-clear')?.addEventListener('click', clearBadgeConfig);
+
+// Load saved values when modal opens
+document.getElementById('badgeConfigModal')?.addEventListener('show.bs.modal', loadBadgeConfig);
+
 // Highlight the current page in the dropdown (run after navbar is rendered)
 const currentPath = window.location.pathname;
 let currentItemText = "Navigation";
