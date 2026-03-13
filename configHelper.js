@@ -12,7 +12,7 @@ export function getEnvValue(key) {
   const locale = import.meta.env.VITE_LOCALE;
   
   // Try locale-specific first, then jamboree-wide, then global
-  return import.meta.env[`VITE_${jamboree}_${locale}_${key}`] ||
-         import.meta.env[`VITE_${jamboree}_${key}`] ||
+  return import.meta.env[`VITE_${jamboree}_${locale}_${key}`] ??
+         import.meta.env[`VITE_${jamboree}_${key}`] ??
          import.meta.env[`VITE_${key}`];
 }
