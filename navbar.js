@@ -229,7 +229,18 @@ const BADGE_FIELDS = [
 ];
 
 function loadBadgeConfig() {
-  const saved = JSON.parse(localStorage.getItem('badge-placements-config') || '{}');
+  let saved = {};
+  const raw = localStorage.getItem('badge-placements-config');
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      saved = parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (e) {
+      console.error('Invalid badge-placements-config in localStorage; clearing it.', e);
+      localStorage.removeItem('badge-placements-config');
+      saved = {};
+    }
+  }
   BADGE_FIELDS.forEach(({ id, key }) => {
     const input = document.getElementById(id);
     if (input) input.value = saved[key] || '';
