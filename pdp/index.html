@@ -90,33 +90,6 @@
               .replace(/'/g, "&#39;");
           }
 
-          function escapeAttribute(str) {
-            // Basic attribute escaping for use inside double quotes
-            return String(str).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-          }
-
-          function sanitizeIconUrl(url) {
-            if (!url) return "";
-            try {
-              const parsed = new URL(String(url), window.location.href);
-              if (parsed.protocol === "http:" || parsed.protocol === "https:") {
-                return parsed.href;
-              }
-            } catch (e) {
-              // fall through to return empty string
-            }
-            return "";
-          }
-
-          function sanitizeColor(color, fallback) {
-            if (!color) return fallback;
-            const str = String(color).trim();
-            // Allow simple hex colors (#rgb, #rgba, #rrggbb, #rrggbbaa) or alphabetic named colors.
-            const isHex = /^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(str);
-            const isNamed = /^[a-zA-Z]+$/.test(str);
-            return (isHex || isNamed) ? str : fallback;
-          }
-
           function renderBadgesHTML(placementId, badgeResponse) {
             if (!placementId || !badgeResponse?.products) return '';
             const product = badgeResponse.products.find(p => p.productId === productId);
@@ -124,11 +97,10 @@
             const placement = product.badgePlacements?.find(p => p.placementId === placementId);
             if (!placement?.badges?.length) return '';
             return placement.badges.map(b => {
-              const bgColor = sanitizeColor(b.backgroundColor, '#000');
-              const textColor = sanitizeColor(b.textColor, '#fff');
-              const safeIconUrl = sanitizeIconUrl(b.iconUrl);
-              const iconHtml = safeIconUrl
-                ? `<img src="${escapeAttribute(safeIconUrl)}" style="width:1rem;height:1rem;" />`
+              const bgColor = b.backgroundColor || '#000';
+              const textColor = b.textColor || '#fff';
+              const iconHtml = b.iconUrl
+                ? `<img src="${b.iconUrl}" style="width:1rem;height:1rem;" />`
                 : '';
               const safeText = escapeHtml(b.text || '');
               return `<span style="background:${bgColor};color:${textColor};padding:0.25rem 0.5rem;border-radius:0.25rem;font-size:0.875rem;font-weight:500;display:inline-flex;align-items:center;gap:0.25rem;margin-right:0.5rem;">`
