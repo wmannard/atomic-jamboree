@@ -6,7 +6,18 @@ import { getEnvValue } from '../configHelper.js';
  */
 export function initBadgePlacements(placements) {
   window.BADGE_PLACEMENTS = {};
-  const overrides = JSON.parse(localStorage.getItem('badge-placements-config') || '{}');
+
+  const rawOverrides = localStorage.getItem('badge-placements-config');
+  let overrides = {};
+  if (rawOverrides) {
+    try {
+      overrides = JSON.parse(rawOverrides) || {};
+    } catch (e) {
+      // Malformed JSON in localStorage; clear it and fall back to defaults
+      localStorage.removeItem('badge-placements-config');
+      overrides = {};
+    }
+  }
 
   for (const [key, envVar] of Object.entries(placements)) {
     window.BADGE_PLACEMENTS[key] = overrides[key] || getEnvValue(envVar);
