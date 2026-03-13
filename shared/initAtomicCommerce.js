@@ -7,6 +7,9 @@ export async function initAtomicCommerce(commerceEngine) {
   const commerceInterface = document.querySelector(
     "atomic-commerce-interface"
   );
+  if (!commerceInterface) {
+    throw new Error("Missing <atomic-commerce-interface> element in DOM.");
+  }
   await commerceInterface.initializeWithEngine(commerceEngine);
   commerceInterface.executeFirstRequest();
 }
