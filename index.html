@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -11,32 +11,27 @@
       rel="stylesheet"
     />
     <title>Search</title>
-    <script type="module">
-      import "@coveo/atomic/themes/coveo.css";
-      import { defineCustomElements } from "@coveo/atomic/loader";
-      defineCustomElements();
-    </script>
+    <script type="module" src="/shared/initAtomicLoader.js"></script>
 
     <script type="module">
       import { commerceEngine } from "./engine.js";
+      import { initAtomicCommerce } from "./shared/initAtomicCommerce.js";
+      initAtomicCommerce(commerceEngine);
+    </script>
 
-      (async () => {
-        await customElements.whenDefined("atomic-commerce-interface");
-        const commerceInterface = document.querySelector(
-          "atomic-commerce-interface"
-        );
-
-        await commerceInterface.initializeWithEngine(commerceEngine);
-
-        commerceInterface.executeFirstRequest();
-      })();
+    <script type="module">
+      import { initBadgePlacements, PLACEMENT_CONFIGS } from './shared/initBadgePlacements.js';
+      initBadgePlacements(PLACEMENT_CONFIGS.SEARCH);
     </script>
   </head>
   <body>
     <div id="nav-bar"></div>
     <div id="info-banner"></div>
     <h2 class="text-center my-4">Search</h2>
-    <atomic-commerce-interface type="search">
+    <atomic-commerce-interface
+      type="search"
+      fields-to-include='["badgePlacements"]'
+    >
       <atomic-commerce-layout>
         <atomic-layout-section section="search">
           <atomic-commerce-search-box>
@@ -59,10 +54,12 @@
                     </atomic-product-field-condition>
                   </atomic-product-section-visual>
                   <atomic-product-section-metadata>
-                    <atomic-field-condition must-match-query-pinned="true">
+                    <atomic-product-field-condition
+                      must-match-query-pinned="true"
+                    >
                       <span class="text-2xl">💵</span>
                       <span class="font-bold">Sponsored Product</span>
-                    </atomic-field-condition>
+                    </atomic-product-field-condition>
                     <atomic-product-field-condition if-defined="ec_brand">
                       <atomic-product-text
                         field="ec_brand"
@@ -105,6 +102,10 @@
               <atomic-product-template>
                 <template>
                   <atomic-product-section-name>
+                    <badge-placement
+                      data-placement-key="SEARCH_TOP_LEFT"
+                    >
+                    </badge-placement>
                     <atomic-product-link
                       class="font-bold"
                       href-template="${window.location.origin}${window.location.pathname}pdp/?${permanentid}"
@@ -118,10 +119,12 @@
                     </atomic-product-field-condition>
                   </atomic-product-section-visual>
                   <atomic-product-section-metadata>
-                    <atomic-field-condition must-match-query-pinned="true">
+                    <atomic-product-field-condition
+                      must-match-query-pinned="true"
+                    >
                       <span class="text-2xl">💵</span>
                       <span class="font-bold">Sponsored Product</span>
-                    </atomic-field-condition>
+                    </atomic-product-field-condition>
                     <atomic-product-field-condition if-defined="ec_brand">
                       <atomic-product-text
                         field="ec_brand"
@@ -141,6 +144,10 @@
                     <atomic-product-description></atomic-product-description>
                   </atomic-product-section-description>
                   <atomic-product-section-children>
+                    <badge-placement
+                      data-placement-key="SEARCH_BOTTOM_LEFT"
+                    >
+                    </badge-placement>
                     <atomic-product-children></atomic-product-children>
                   </atomic-product-section-children>
                 </template>
@@ -158,6 +165,7 @@
       </atomic-commerce-layout>
     </atomic-commerce-interface>
     <script type="module" src="/navbar.js"></script>
+    <script type="module" src="/customComponents/badgePlacement.js"></script>
     <script type="module">
       import { mountInfoBanner } from "./infoBanner.js";
       mountInfoBanner({ visitorPath: "/search" });
