@@ -122,4 +122,6 @@ class BadgePlacement extends HTMLElement {
 }
 
 // Register the custom element
-customElements.define('badge-placement', BadgePlacement);
+if (!customElements.get('badge-placement')) {
+  customElements.define('badge-placement', BadgePlacement);
+}
