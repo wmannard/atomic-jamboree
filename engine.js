@@ -1,6 +1,6 @@
 import { buildCommerceEngine } from "@coveo/headless/commerce";
+import { buildContext } from "@coveo/headless/commerce";
 import { getEnvValue } from "./configHelper";
-import { navUrls } from "./navbar";
 
 const {
   VITE_ORGANIZATION_ID,
@@ -31,12 +31,11 @@ export const commerceEngine = buildCommerceEngine({
       country: COUNTRY,
       currency: CURRENCY,
       view: {
-        url: navUrls[document.title].url,
+        url: window.location.href,
       },
     },
     preprocessRequest: (request) => {
       const body = request.body ? JSON.parse(request.body) : {};
-      // If the request is for a listing, pull sponsored products from localStorage
       if (request.url && request.url.includes("/listing")) {
         const sponsoredProducts =
           JSON.parse(localStorage.getItem("sponsored-products") || "{}") || {};
@@ -47,3 +46,15 @@ export const commerceEngine = buildCommerceEngine({
     },
   },
 });
+
+// Context controller for updating view URL on navigation
+const contextController = buildContext(commerceEngine);
+
+/**
+ * Update the engine's view URL when navigating between pages.
+ * This is critical for correct analytics and PLP targeting.
+ * @param {string} url - The URL corresponding to the current page/view
+ */
+export function setViewUrl(url) {
+  contextController.setView({ url });
+}

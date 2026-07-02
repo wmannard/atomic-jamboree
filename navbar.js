@@ -22,8 +22,6 @@ export const navUrls = {
   },
 };
 
-const base = import.meta.env.BASE_URL || "/";
-
 document.querySelector("#nav-bar").innerHTML = `
   <div id="navbar-container" class="d-flex justify-content-center align-items-center w-100 py-2 border-bottom mb-3" style="font-family: var(--atomic-font-family);">
     <div class="dropdown me-3">
@@ -31,12 +29,12 @@ document.querySelector("#nav-bar").innerHTML = `
         Navigation
       </button>
       <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
-        <li><a class="dropdown-item" href="${base}">Search</a></li>
-        <li><a class="dropdown-item" href="${base}listing1/">Surf Accessories</a></li>
-        <li><a class="dropdown-item" href="${base}listing2/">Pants</a></li>
-        <li><a class="dropdown-item" href="${base}listing3/">Towels</a></li>
-        <li><a class="dropdown-item" href="${base}recs1/">Recs</a></li>
-        <li><a class="dropdown-item" href="${base}recs2/">Cart Recs</a></li>
+        <li><a class="dropdown-item" href="#/">Search</a></li>
+        <li><a class="dropdown-item" href="#/listing1">Surf Accessories</a></li>
+        <li><a class="dropdown-item" href="#/listing2">Pants</a></li>
+        <li><a class="dropdown-item" href="#/listing3">Towels</a></li>
+        <li><a class="dropdown-item" href="#/recs1">Recs</a></li>
+        <li><a class="dropdown-item" href="#/recs2">Cart Recs</a></li>
       </ul>
     </div>
     <span class="vr mx-4"></span>
@@ -281,10 +279,11 @@ document.getElementById('badge-config-clear')?.addEventListener('click', clearBa
 document.getElementById('badgeConfigModal')?.addEventListener('show.bs.modal', loadBadgeConfig);
 
 // Highlight the current page in the dropdown (run after navbar is rendered)
-const currentPath = window.location.pathname;
+const currentHash = window.location.hash || "#/";
 let currentItemText = "Navigation";
 document.querySelectorAll(".dropdown-item").forEach((item) => {
-  if (item.getAttribute("href") === currentPath) {
+  const href = item.getAttribute("href");
+  if (href === currentHash || (href === "#/" && currentHash === "")) {
     item.classList.add("active");
     item.setAttribute("aria-current", "page");
     currentItemText = item.textContent;
