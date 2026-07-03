@@ -1,41 +1,48 @@
 # atomic-jamboree
 
-A test environment for Commerce jamborees
+A test environment for Commerce jamborees.
 
-## Start
-
-Copy `.env.local.example` to `.env.local` and provide a token.
-
-### Mac/Linux:
+## Setup
 
 ```sh
 npm install
+cp .env.local.example .env.local
+# Fill in your access token in .env.local
+```
+
+## Development
+
+```sh
+npm run dev
+```
+
+Then navigate to `http://localhost:5173/jamboree_1_en/` (or any jamboree/locale combo).
+
+The dev server supports all `/jamboree_{1-9}_{en|fr|nl}/` paths — config is resolved from the URL at runtime.
+
+## Production build + preview
+
+```sh
 npm run start
 ```
 
-Set environment variable `BUILD_ONE=1` to just build the english/jamboree_1 pages
-for faster debugging:
+This builds once and serves a preview. The landing page at `/` links to all jamboree/locale combinations.
 
-```sh
-BUILD_ONE=1 npm run start
+## URL structure
+
+Each jamboree and locale is accessed via URL path:
+
+```
+/jamboree_1_en/       → Jamboree 1, English (US/USD)
+/jamboree_3_fr/       → Jamboree 3, French (FR/EUR)
+/jamboree_9_nl/       → Jamboree 9, Dutch (NL/EUR)
 ```
 
-### Windows:
+Within a jamboree, switching locale is instant (no page reload). Switching tracking ID navigates to the new URL.
 
-```bat
-npm install
-npm run start-on-windows
-```
+## How it works
 
-For faster debugging, set `BUILD_ONE=1`:
-
-```bat
-set BUILD_ONE=1
-npm run start-on-windows
-```
-
-## Note
-
-The interactive (live) Vite environment won't work since the various pages are copied at build time by the `build-all` script.
-You need a build before running the preview. This could be improved by consolidating the multiple HTML entry points into a 
-single-entry app with programmatic Atomic engine resets instead of page navigations.
+- Single Vite build — all env vars for all 9 jamborees × 3 locales are inlined into one bundle
+- `configHelper.js` parses the jamboree number and locale from the URL path at runtime
+- Netlify rewrites serve the same built app for all `/jamboree_*/` paths
+- The Vite dev server includes a middleware plugin that does the same rewriting locally
