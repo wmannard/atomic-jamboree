@@ -1,13 +1,22 @@
-import { readdir, writeFile } from "fs/promises";
+import { readFile, writeFile, rename } from "fs/promises";
 import { join } from "path";
+import { existsSync } from "fs";
 
 const distDir = "./dist";
 
-const entries = await readdir(distDir, { withFileTypes: true });
-const dirs = entries.filter((e) => e.isDirectory()).map((e) => e.name);
+const jamborees = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const locales = ["en", "fr", "nl"];
 
-const links = dirs
-  .map((dir) => `<li>📁 <a href="./${dir}/">${dir}/</a></li>`)
+const links = jamborees
+  .map((j) => {
+    const localeLinks = locales
+      .map(
+        (l) =>
+          `<a href="./jamboree_${j}_${l}/" class="locale-link">${l.toUpperCase()}</a>`
+      )
+      .join(" ");
+    return `<li>📁 <strong>jamboree_${j}</strong> — ${localeLinks}</li>`;
+  })
   .join("\n");
 
 const html = `<!DOCTYPE html>
@@ -16,9 +25,11 @@ const html = `<!DOCTYPE html>
     <meta charset="utf-8">
     <title>Jamboree Builds</title>
     <style>
-      body { font-family: sans-serif; }
+      body { font-family: sans-serif; max-width: 600px; margin: 2em auto; }
       ul { list-style: none; padding: 0; }
-      li { margin: 0.5em 0; font-size: 1.2em; }
+      li { margin: 0.75em 0; font-size: 1.1em; }
+      .locale-link { margin-left: 0.5em; padding: 0.2em 0.6em; background: #e8f0fe; border-radius: 4px; text-decoration: none; color: #1a73e8; font-size: 0.85em; }
+      .locale-link:hover { background: #d2e3fc; }
     </style>
   </head>
   <body>
@@ -30,6 +41,15 @@ const html = `<!DOCTYPE html>
 </html>
 `;
 
-await writeFile(join(distDir, "index.html"), html);
+// Move the Vite-built index.html (the actual app) to app.html
+// so we can use index.html as the landing/navigation page
+const appHtml = join(distDir, "app.html");
+const indexHtml = join(distDir, "index.html");
 
-console.log("Generated dist/index.html with folder icons");
+if (existsSync(indexHtml)) {
+  await rename(indexHtml, appHtml);
+}
+
+await writeFile(indexHtml, html);
+
+console.log("Generated dist/index.html (landing page) and preserved app at dist/app.html");

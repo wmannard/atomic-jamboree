@@ -1,4 +1,24 @@
-[context.production]
+# Rewrite all jamboree paths to the single-build app.
+# The app resolves its config from the URL at runtime.
+[[redirects]]
+  from = "/jamboree_:num_:locale/*"
+  to = "/app.html"
+  status = 200
+
+# Fallback SPA rewrite for hash-based routing within a jamboree page
+[[redirects]]
+  from = "/jamboree_:num_:locale/"
+  to = "/app.html"
+  status = 200
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[context.production.environment]
   VITE_ORGANIZATION_ID = "barcasportsmcy01fvu"
   VITE_ENVIRONMENT = "dev"
   VITE_SEARCH_URL = "https://sports-dev.barca.group/search"

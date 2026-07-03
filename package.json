@@ -3,11 +3,10 @@
   "description": "A sample project for testing and validating the commerce use case in @coveo/atomic",
   "type": "module",
   "scripts": {
+    "dev": "npx vite",
     "preview": "npx vite preview",
-    "build": "node ./scripts/copyResources.mjs && bash ./build-all.sh && node ./scripts/generateDistIndex.mjs",
-    "build-on-windows": "node ./scripts/copyResources.mjs && call build-all.bat && node ./scripts/generateDistIndex.mjs",
-    "start": "npm run build && npx vite preview",
-    "start-on-windows": "npm run build-on-windows && npx vite preview"
+    "build": "node ./scripts/copyResources.mjs && npx vite build && node ./scripts/generateDistIndex.mjs",
+    "start": "npm run build && npx vite preview"
   },
   "dependencies": {
     "@coveo/atomic": "^3.60.0",

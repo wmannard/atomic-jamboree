@@ -48,13 +48,25 @@ let currentRenderedPath = null;
 async function resolveRoute() {
   const path = getCurrentPath();
 
-  // If the hash is Coveo state (not a route path), ignore it
-  if (path === null) return;
+  // If the hash is Coveo state (not a route path), render the default route
+  // if nothing has been rendered yet. This handles the case where the page
+  // loads with a Coveo state hash (e.g. #perPage=10) from a previous session.
+  if (path === null) {
+    if (currentRenderedPath === null) {
+      // Nothing rendered yet — fall through to render the default "/" route
+      renderRoute("/");
+    }
+    return;
+  }
 
   // Don't re-render if we're already showing this page.
   // This prevents unnecessary re-renders when Coveo updates the hash with search state.
   if (path === currentRenderedPath) return;
 
+  renderRoute(path);
+}
+
+async function renderRoute(path) {
   const route = routes[path];
 
   if (!route) {
