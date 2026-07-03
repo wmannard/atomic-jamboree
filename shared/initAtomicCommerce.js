@@ -11,5 +11,8 @@ export async function initAtomicCommerce(commerceEngine) {
     throw new Error("Missing <atomic-commerce-interface> element in DOM.");
   }
   await commerceInterface.initializeWithEngine(commerceEngine);
+  const loader = document.getElementById("atomic-loader");
+  if (loader) loader.remove();
+  commerceInterface.style.display = "";
   commerceInterface.executeFirstRequest();
 }

@@ -10,9 +10,15 @@ export const searchPage = {
     container.innerHTML = `
       <div id="info-banner"></div>
       <h2 class="text-center my-4">Search</h2>
+      <div id="atomic-loader" class="d-flex justify-content-center align-items-center" style="min-height:50vh">
+        <div class="spinner-border text-primary" style="width:3rem;height:3rem" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
       <atomic-commerce-interface
         type="search"
         fields-to-include='["badgePlacements"]'
+        style="display:none"
       >
         <atomic-commerce-layout>
           <atomic-layout-section section="search">
