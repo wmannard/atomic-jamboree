@@ -18,6 +18,8 @@ function createListingPage({ title, heading, viewUrl, visitorPath, display, dens
         <h2 class="text-center my-4">${heading}</h2>
         <atomic-commerce-interface
           type="product-listing"
+          language-assets-path="/lang"
+          icon-assets-path="/assets"
           fields-to-include='["badgePlacements"]'
         >
           <atomic-commerce-layout>

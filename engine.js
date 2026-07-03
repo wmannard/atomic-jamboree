@@ -1,6 +1,6 @@
 import { buildCommerceEngine } from "@coveo/headless/commerce";
 import { buildContext } from "@coveo/headless/commerce";
-import { getEnvValue, setLocale } from "./configHelper";
+import { getEnvValue, getJamboree, setLocale } from "./configHelper";
 
 const {
   VITE_ORGANIZATION_ID,
@@ -60,31 +60,30 @@ export function setViewUrl(url) {
 }
 
 /**
- * Switch the engine's locale context and re-execute the current request.
- * Updates language, country, and currency from env config for the new locale,
- * then triggers a fresh request on the active Atomic commerce interface.
+ * Switch the locale without a page reload.
+ * Reads the target locale's language/country/currency directly from env vars,
+ * then calls updateLocale on the Atomic interface to batch the context + i18n change.
  * @param {string} newLocale - Lowercase locale code (e.g. "fr", "nl", "en")
  */
 export function switchLocale(newLocale) {
   const loc = newLocale.toUpperCase();
+  const j = getJamboree();
+
+  // Read target locale values directly from the env var object
+  const env = import.meta.env;
+  const language = env[`VITE_${j}_${loc}_LANGUAGE`] ?? env[`VITE_${j}_LANGUAGE`];
+  const country = env[`VITE_${j}_${loc}_COUNTRY`] ?? env[`VITE_${j}_COUNTRY`];
+  const currency = env[`VITE_${j}_${loc}_CURRENCY`] ?? env[`VITE_${j}_CURRENCY`];
+
+  // Update configHelper's locale for any subsequent getEnvValue calls
   setLocale(loc);
 
-  const language = getEnvValue("LANGUAGE");
-  const country = getEnvValue("COUNTRY");
-  const currency = getEnvValue("CURRENCY");
-
-  contextController.setLanguage(language);
-  contextController.setCountry(country);
-  contextController.setCurrency(currency);
-
-  // Re-execute the request on the active commerce interface
+  // Call updateLocale which atomically updates engine context + i18n
   const iface = document.querySelector("atomic-commerce-interface");
-  if (iface) {
+  if (iface?.updateLocale) {
+    iface.updateLocale(language, country, currency);
+    // updateLocale dispatches setContext but doesn't trigger a refetch —
+    // we need to explicitly re-execute the request.
     iface.executeFirstRequest();
   }
-
-  // Also handle recommendation interfaces
-  document.querySelectorAll("atomic-commerce-recommendation-interface").forEach((el) => {
-    el.executeFirstRequest?.();
-  });
 }

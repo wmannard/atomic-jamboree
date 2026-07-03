@@ -423,7 +423,7 @@ localeDropdown?.addEventListener("change", (e) => {
   // Switch locale in-place without page reload
   switchLocale(selectedLocale);
 
-  // Update the URL to reflect the new locale without reloading
+  // Update the URL to reflect the new locale
   const currentPath = window.location.pathname;
   const regex = /\/jamboree_(\d+)_(en|fr|nl)\//;
   const match = currentPath.match(regex);

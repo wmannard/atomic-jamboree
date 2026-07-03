@@ -9,7 +9,7 @@ export const recs1Page = {
   async render(container) {
     container.innerHTML = `
       <h2 class="text-center my-4">Recommendations</h2>
-      <atomic-commerce-recommendation-interface>
+      <atomic-commerce-recommendation-interface language-assets-path="/lang">
         <atomic-commerce-layout>
           <atomic-layout-section section="main">
             <atomic-commerce-recommendation-list
@@ -52,7 +52,7 @@ export const recs1Page = {
           </atomic-layout-section>
         </atomic-commerce-layout>
       </atomic-commerce-recommendation-interface>
-      <atomic-commerce-recommendation-interface>
+      <atomic-commerce-recommendation-interface language-assets-path="/lang">
         <atomic-commerce-layout>
           <atomic-layout-section section="main">
             <atomic-commerce-recommendation-list
@@ -114,7 +114,7 @@ export const recs2Page = {
     container.innerHTML = `
       <div id="info-banner"></div>
       <h2 class="text-center my-4">Cart Recommendations</h2>
-      <atomic-commerce-recommendation-interface>
+      <atomic-commerce-recommendation-interface language-assets-path="/lang">
         <atomic-commerce-layout>
           <atomic-layout-section section="main">
             <atomic-commerce-recommendation-list

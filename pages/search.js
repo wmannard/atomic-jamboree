@@ -17,6 +17,8 @@ export const searchPage = {
       </div>
       <atomic-commerce-interface
         type="search"
+        language-assets-path="/lang"
+        icon-assets-path="/assets"
         fields-to-include='["badgePlacements"]'
         style="display:none"
       >
