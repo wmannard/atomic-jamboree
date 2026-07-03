@@ -11,7 +11,8 @@ function parseContext() {
   return { jamboree: "1", locale: "EN" };
 }
 
-const { jamboree, locale } = parseContext();
+const { jamboree } = parseContext();
+let locale = parseContext().locale;
 
 /**
  * All VITE_* env vars are inlined at build time into import.meta.env.
@@ -44,4 +45,12 @@ export function getJamboree() {
  */
 export function getLocale() {
   return locale;
+}
+
+/**
+ * Update the current locale used for env var lookups.
+ * @param {string} newLocale - Uppercase locale code (e.g. "FR")
+ */
+export function setLocale(newLocale) {
+  locale = newLocale.toUpperCase();
 }

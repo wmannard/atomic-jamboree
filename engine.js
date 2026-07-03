@@ -1,6 +1,6 @@
 import { buildCommerceEngine } from "@coveo/headless/commerce";
 import { buildContext } from "@coveo/headless/commerce";
-import { getEnvValue } from "./configHelper";
+import { getEnvValue, setLocale } from "./configHelper";
 
 const {
   VITE_ORGANIZATION_ID,
@@ -57,4 +57,34 @@ const contextController = buildContext(commerceEngine);
  */
 export function setViewUrl(url) {
   contextController.setView({ url });
+}
+
+/**
+ * Switch the engine's locale context and re-execute the current request.
+ * Updates language, country, and currency from env config for the new locale,
+ * then triggers a fresh request on the active Atomic commerce interface.
+ * @param {string} newLocale - Lowercase locale code (e.g. "fr", "nl", "en")
+ */
+export function switchLocale(newLocale) {
+  const loc = newLocale.toUpperCase();
+  setLocale(loc);
+
+  const language = getEnvValue("LANGUAGE");
+  const country = getEnvValue("COUNTRY");
+  const currency = getEnvValue("CURRENCY");
+
+  contextController.setLanguage(language);
+  contextController.setCountry(country);
+  contextController.setCurrency(currency);
+
+  // Re-execute the request on the active commerce interface
+  const iface = document.querySelector("atomic-commerce-interface");
+  if (iface) {
+    iface.executeFirstRequest();
+  }
+
+  // Also handle recommendation interfaces
+  document.querySelectorAll("atomic-commerce-recommendation-interface").forEach((el) => {
+    el.executeFirstRequest?.();
+  });
 }

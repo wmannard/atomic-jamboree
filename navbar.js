@@ -1,3 +1,5 @@
+import { switchLocale } from "./engine.js";
+
 export const navUrls = {
   Search: {
     url: import.meta.env.VITE_SEARCH_URL,
@@ -417,7 +419,18 @@ propertyDropdown?.addEventListener("change", (e) => {
 localeDropdown?.addEventListener("change", (e) => {
   const selectedLocale = e.target.value;
   if (!selectedLocale) return;
-  goToJamboreePage(propertyDropdown.value || jamboree, selectedLocale);
+
+  // Switch locale in-place without page reload
+  switchLocale(selectedLocale);
+
+  // Update the URL to reflect the new locale without reloading
+  const currentPath = window.location.pathname;
+  const regex = /\/jamboree_(\d+)_(en|fr|nl)\//;
+  const match = currentPath.match(regex);
+  if (match) {
+    const newPath = currentPath.replace(regex, `/jamboree_${match[1]}_${selectedLocale}/`);
+    history.replaceState(null, "", newPath + window.location.search + window.location.hash);
+  }
 });
 
 navbarContainer.style.display = "flex";
