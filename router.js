@@ -28,17 +28,30 @@ export function navigate(path) {
 
 /**
  * Get the current route path from the hash.
+ * Coveo Atomic writes search state directly to the hash (e.g., #perPage=10&sortCriteria=relevance).
+ * We distinguish route paths (start with "/") from Coveo state (no leading "/").
+ * If the hash doesn't start with "/", we treat it as the root search page.
  */
 function getCurrentPath() {
   const hash = window.location.hash.slice(1); // remove '#'
-  return hash || "/";
+  if (!hash) return "/";
+  // Route paths always start with "/"; anything else is Coveo search state
+  if (!hash.startsWith("/")) return "/";
+  return hash;
 }
+
+let currentRenderedPath = null;
 
 /**
  * Resolve and render the current route.
  */
 async function resolveRoute() {
   const path = getCurrentPath();
+
+  // Don't re-render if we're already showing this page.
+  // This prevents unnecessary re-renders when Coveo updates the hash with search state.
+  if (path === currentRenderedPath) return;
+
   const route = routes[path];
 
   if (!route) {
@@ -62,6 +75,7 @@ async function resolveRoute() {
   // Render the page content into #app
   const appContainer = document.getElementById("app");
   await route.render(appContainer);
+  currentRenderedPath = path;
 }
 
 /**
