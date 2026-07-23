@@ -18,7 +18,7 @@ npm run dev
 
 Then navigate to `http://localhost:5173/jamboree_1_en/` (or any jamboree/locale combo).
 
-The dev server supports all `/jamboree_{1-9}_{en|fr|nl}/` paths — config is resolved from the URL at runtime.
+The dev server supports all `/jamboree_{1-9}_{en|fr|nl}/` paths — config is resolved from the URL at runtime. A navigation index is available at `http://localhost:5173/`.
 
 ## Production build + preview
 
