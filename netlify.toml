@@ -1,13 +1,7 @@
 # Rewrite all jamboree paths to the single-build app.
 # The app resolves its config from the URL at runtime.
 [[redirects]]
-  from = "/jamboree_:num_:locale/*"
-  to = "/app.html"
-  status = 200
-
-# Fallback SPA rewrite for hash-based routing within a jamboree page
-[[redirects]]
-  from = "/jamboree_:num_:locale/"
+  from = "/jamboree_*"
   to = "/app.html"
   status = 200
 
