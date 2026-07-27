@@ -6,12 +6,13 @@ import { navUrls } from "./navbar";
 const {
   VITE_ORGANIZATION_ID,
   VITE_ENVIRONMENT,
-  VITE_ACCESS_TOKEN,
+  VITE_NEW_ACCESS_TOKEN,
   VITE_SEARCH_TOKEN,
 } = import.meta.env;
 
+// VITE_NEW_ACCESS_TOKEN is a transitional name — revert to VITE_ACCESS_TOKEN when ready
 const LOGGED_IN = localStorage.getItem("logged-in") === "true";
-const ACCESS_TOKEN = LOGGED_IN ? VITE_SEARCH_TOKEN : VITE_ACCESS_TOKEN;
+const ACCESS_TOKEN = LOGGED_IN ? VITE_SEARCH_TOKEN : VITE_NEW_ACCESS_TOKEN;
 
 const TRACKING_ID = getEnvValue('TRACKING_ID');
 const LANGUAGE = getEnvValue('LANGUAGE');
