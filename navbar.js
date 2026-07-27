@@ -280,18 +280,28 @@ document.getElementById('badge-config-clear')?.addEventListener('click', clearBa
 // Load saved values when modal opens
 document.getElementById('badgeConfigModal')?.addEventListener('show.bs.modal', loadBadgeConfig);
 
-// Highlight the current page in the dropdown (run after navbar is rendered)
-const currentHash = window.location.hash || "#/";
-let currentItemText = "Navigation";
-document.querySelectorAll(".dropdown-item").forEach((item) => {
-  const href = item.getAttribute("href");
-  if (href === currentHash || (href === "#/" && currentHash === "")) {
-    item.classList.add("active");
-    item.setAttribute("aria-current", "page");
-    currentItemText = item.textContent;
-  }
-});
-document.getElementById("pagesDropdown").innerText = currentItemText;
+// Highlight the current page in the dropdown.
+// Accepts the rendered route path (e.g. "/", "/listing1") so that it works
+// even when Coveo has overwritten the hash with search state parameters.
+export function updateNavHighlight(routePath) {
+  const matchHash = routePath ? `#${routePath}` : (window.location.hash || "#/");
+  let currentItemText = "Navigation";
+  document.querySelectorAll(".dropdown-item").forEach((item) => {
+    const href = item.getAttribute("href");
+    if (href === matchHash || (href === "#/" && matchHash === "#/")) {
+      item.classList.add("active");
+      item.setAttribute("aria-current", "page");
+      currentItemText = item.textContent;
+    } else {
+      item.classList.remove("active");
+      item.removeAttribute("aria-current");
+    }
+  });
+  document.getElementById("pagesDropdown").innerText = currentItemText;
+}
+
+// Run on initial load
+updateNavHighlight();
 
 const navbarContainer = document.querySelector("#navbar-container");
 // Sponsored Products input logic

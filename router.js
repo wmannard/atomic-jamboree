@@ -1,5 +1,5 @@
 import { setViewUrl } from "./engine.js";
-import { navUrls } from "./navbar.js";
+import { navUrls, updateNavHighlight } from "./navbar.js";
 
 /**
  * Simple hash-based router for the single-entry app.
@@ -109,6 +109,9 @@ async function renderRoute(path) {
   const appContainer = document.getElementById("app");
   await route.render(appContainer);
   currentRenderedPath = path;
+
+  // Update the navigation dropdown to reflect the current page
+  updateNavHighlight(path);
 }
 
 /**
