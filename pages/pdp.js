@@ -23,8 +23,8 @@ export const pdpPage = {
       <div id="info-banner"></div>
       <div class="container my-5">
         <div id="product-container">
-          <div class="text-center">
-            <div class="spinner-border" role="status">
+          <div class="d-flex justify-content-center align-items-center" style="min-height:50vh">
+            <div class="spinner-border text-primary" style="width:3rem;height:3rem" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
           </div>
