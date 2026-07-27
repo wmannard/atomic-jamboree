@@ -39,8 +39,8 @@ export const searchPage = {
                       ></atomic-product-link>
                     </atomic-product-section-name>
                     <atomic-product-section-visual>
-                      <atomic-product-field-condition if-defined="ec_thumbnails">
-                        <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+                      <atomic-product-field-condition if-defined="ec_images">
+                        <atomic-product-image field="ec_images"></atomic-product-image>
                       </atomic-product-field-condition>
                     </atomic-product-section-visual>
                     <atomic-product-section-metadata>
@@ -93,8 +93,8 @@ export const searchPage = {
                       ></atomic-product-link>
                     </atomic-product-section-name>
                     <atomic-product-section-visual>
-                      <atomic-product-field-condition if-defined="ec_thumbnails">
-                        <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+                      <atomic-product-field-condition if-defined="ec_images">
+                        <atomic-product-image field="ec_images"></atomic-product-image>
                       </atomic-product-field-condition>
                     </atomic-product-section-visual>
                     <atomic-product-section-metadata>

@@ -420,13 +420,22 @@ localeDropdown?.addEventListener("change", (e) => {
   const selectedLocale = e.target.value;
   if (!selectedLocale) return;
 
-  // Switch locale in-place without page reload
-  switchLocale(selectedLocale);
-
   // Update the URL to reflect the new locale
   const currentPath = window.location.pathname;
   const regex = /\/jamboree_(\d+)_(en|fr|nl)\//;
   const match = currentPath.match(regex);
+
+  // PDP doesn't use atomic-commerce-interface, so a locale switch requires a reload
+  const isOnPdp = window.location.hash.includes("/pdp");
+  if (isOnPdp && match) {
+    const newPath = currentPath.replace(regex, `/jamboree_${match[1]}_${selectedLocale}/`);
+    window.location.href = newPath + window.location.hash;
+    return;
+  }
+
+  // Switch locale in-place without page reload (works for search/listing/recs)
+  switchLocale(selectedLocale);
+
   if (match) {
     const newPath = currentPath.replace(regex, `/jamboree_${match[1]}_${selectedLocale}/`);
     history.replaceState(null, "", newPath + window.location.search + window.location.hash);

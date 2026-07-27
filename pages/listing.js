@@ -39,7 +39,7 @@ function createListingPage({ title, heading, viewUrl, visitorPath, display, dens
                         ></atomic-product-link>
                       </atomic-product-section-name>
                       <atomic-product-section-visual>
-                        <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+                        <atomic-product-image field="ec_images"></atomic-product-image>
                       </atomic-product-section-visual>
                       <atomic-product-section-metadata>
                         <atomic-product-field-condition must-match-query-pinned="true">
@@ -97,7 +97,7 @@ function getProductListHTML(display, density, imageSize, pdpHref) {
         <atomic-product-template>
           <template>
             <atomic-table-element label="Image">
-              <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+              <atomic-product-image field="ec_images"></atomic-product-image>
             </atomic-table-element>
             <atomic-table-element label="Name">
               <badge-placement data-placement-key="PLP_TOP_LEFT"></badge-placement>
@@ -146,7 +146,7 @@ function getProductListHTML(display, density, imageSize, pdpHref) {
             ></atomic-product-link>
           </atomic-product-section-name>
           <atomic-product-section-visual>
-            <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+            <atomic-product-image field="ec_images"></atomic-product-image>
           </atomic-product-section-visual>
           <atomic-product-section-children>
             <badge-placement data-placement-key="PLP_BOTTOM_LEFT"></badge-placement>

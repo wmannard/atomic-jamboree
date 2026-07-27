@@ -28,7 +28,7 @@ export const recs1Page = {
                     ></atomic-product-link>
                   </atomic-product-section-name>
                   <atomic-product-section-visual>
-                    <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+                    <atomic-product-image field="ec_images"></atomic-product-image>
                   </atomic-product-section-visual>
                   <atomic-product-section-metadata>
                     <atomic-product-field-condition must-match-query-pinned="true">
@@ -71,7 +71,7 @@ export const recs1Page = {
                     ></atomic-product-link>
                   </atomic-product-section-name>
                   <atomic-product-section-visual>
-                    <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+                    <atomic-product-image field="ec_images"></atomic-product-image>
                   </atomic-product-section-visual>
                   <atomic-product-section-metadata>
                     <atomic-product-field-condition must-match-query-pinned="true">
@@ -133,7 +133,7 @@ export const recs2Page = {
                     ></atomic-product-link>
                   </atomic-product-section-name>
                   <atomic-product-section-visual>
-                    <atomic-product-image field="ec_thumbnails"></atomic-product-image>
+                    <atomic-product-image field="ec_images"></atomic-product-image>
                   </atomic-product-section-visual>
                   <atomic-product-section-metadata>
                     <atomic-product-field-condition must-match-query-pinned="true">
