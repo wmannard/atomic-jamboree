@@ -27,17 +27,35 @@ export function navigate(path) {
 }
 
 /**
+ * Get the href-template string for PDP links.
+ * Produces a path-based URL that works with both hash routing and direct navigation.
+ * E.g. "/jamboree_3_en/pdp/?${permanentid}"
+ */
+export function getPdpHrefTemplate() {
+  // Get the base path (e.g. /jamboree_3_en/)
+  const path = window.location.pathname;
+  const match = path.match(/\/jamboree_\d+_(en|fr|nl)\//i);
+  const basePath = match ? match[0] : "/";
+  return `${window.location.origin}${basePath}pdp/?\${permanentid}`;
+}
+
+/**
  * Get the current route path from the hash.
  * Route paths always start with "/". Coveo writes state without a leading "/"
  * (e.g., #perPage=10&sortCriteria=relevance). If the hash isn't a route path,
  * we return null to signal "no route change".
+ *
+ * The "?" separator is used to pass parameters (e.g. product ID) to route
+ * handlers, so we strip it here and let the handler read from the full hash.
  */
 function getCurrentPath() {
   const hash = window.location.hash.slice(1); // remove '#'
   if (!hash) return "/";
   // Route paths always start with "/"; anything else is Coveo search state
   if (!hash.startsWith("/")) return null;
-  return hash;
+  // Strip query portion so "/pdp?PRODUCT_ID" matches the "/pdp" route
+  const qIndex = hash.indexOf("?");
+  return qIndex === -1 ? hash : hash.slice(0, qIndex);
 }
 
 let currentRenderedPath = null;
@@ -94,9 +112,32 @@ async function renderRoute(path) {
 }
 
 /**
+ * If the page was loaded via a path-based URL (e.g. /jamboree_3_en/pdp/?PRODUCT_ID),
+ * redirect into the equivalent hash route so the SPA router can handle it.
+ * This supports shareable/bookmarkable path-based PDP links.
+ */
+function redirectPathToHash() {
+  const path = window.location.pathname;
+  const match = path.match(/\/jamboree_\d+_(en|fr|nl)\/pdp\/?$/i);
+  if (match) {
+    // Extract product ID from query string (e.g. ?RDWSK1_6057_BK or ?0=RDWSK1_6057_BK)
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("0") || params.toString().replace("=", "");
+    if (productId) {
+      // Build the base path (strip /pdp/ suffix) and set the hash route
+      const basePath = path.replace(/\/pdp\/?$/, "/");
+      window.history.replaceState(null, "", basePath + "#/pdp?" + productId);
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Initialize the router - listen for hash changes and render initial route.
  */
 export function initRouter() {
+  redirectPathToHash();
   window.addEventListener("hashchange", resolveRoute);
   resolveRoute();
 }

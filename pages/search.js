@@ -2,11 +2,13 @@ import { commerceEngine } from "../engine.js";
 import { initAtomicCommerce } from "../shared/initAtomicCommerce.js";
 import { initBadgePlacements, PLACEMENT_CONFIGS } from "../shared/initBadgePlacements.js";
 import { mountInfoBanner } from "../infoBanner.js";
+import { getPdpHrefTemplate } from "../router.js";
 
 export const searchPage = {
   title: "Search",
   viewUrl: import.meta.env.VITE_SEARCH_URL,
   async render(container) {
+    const pdpHref = getPdpHrefTemplate();
     container.innerHTML = `
       <div id="info-banner"></div>
       <h2 class="text-center my-4">Search</h2>
@@ -33,7 +35,7 @@ export const searchPage = {
                     <atomic-product-section-name>
                       <atomic-product-link
                         class="font-bold"
-                        href-template="#/pdp?$\{permanentid}"
+                        href-template="${pdpHref}"
                       ></atomic-product-link>
                     </atomic-product-section-name>
                     <atomic-product-section-visual>
@@ -79,7 +81,7 @@ export const searchPage = {
                 <atomic-product-template>
                   <template slot="link">
                     <atomic-product-link
-                      href-template="#/pdp?$\{permanentid}"
+                      href-template="${pdpHref}"
                     ></atomic-product-link>
                   </template>
                   <template>
@@ -87,7 +89,7 @@ export const searchPage = {
                       <badge-placement data-placement-key="SEARCH_TOP_LEFT"></badge-placement>
                       <atomic-product-link
                         class="font-bold"
-                        href-template="#/pdp?$\{permanentid}"
+                        href-template="${pdpHref}"
                       ></atomic-product-link>
                     </atomic-product-section-name>
                     <atomic-product-section-visual>

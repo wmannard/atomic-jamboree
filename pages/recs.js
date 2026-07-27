@@ -2,11 +2,13 @@ import { commerceEngine } from "../engine.js";
 import { initAtomicRecommendations } from "../shared/initAtomicRecommendations.js";
 import { getEnvValue } from "../configHelper.js";
 import { mountInfoBanner } from "../infoBanner.js";
+import { getPdpHrefTemplate } from "../router.js";
 
 export const recs1Page = {
   title: "Recs 1",
   viewUrl: import.meta.env.VITE_RECS_1_URL,
   async render(container) {
+    const pdpHref = getPdpHrefTemplate();
     container.innerHTML = `
       <h2 class="text-center my-4">Recommendations</h2>
       <atomic-commerce-recommendation-interface language-assets-path="/lang">
@@ -22,7 +24,7 @@ export const recs1Page = {
                   <atomic-product-section-name>
                     <atomic-product-link
                       class="font-bold"
-                      href-template="#/pdp?$\{permanentid}"
+                      href-template="${pdpHref}"
                     ></atomic-product-link>
                   </atomic-product-section-name>
                   <atomic-product-section-visual>
@@ -65,7 +67,7 @@ export const recs1Page = {
                   <atomic-product-section-name>
                     <atomic-product-link
                       class="font-bold"
-                      href-template="#/pdp?$\{permanentid}"
+                      href-template="${pdpHref}"
                     ></atomic-product-link>
                   </atomic-product-section-name>
                   <atomic-product-section-visual>
@@ -111,6 +113,7 @@ export const recs2Page = {
   title: "Recs 2",
   viewUrl: import.meta.env.VITE_RECS_2_URL,
   async render(container) {
+    const pdpHref = getPdpHrefTemplate();
     container.innerHTML = `
       <div id="info-banner"></div>
       <h2 class="text-center my-4">Cart Recommendations</h2>
@@ -126,7 +129,7 @@ export const recs2Page = {
                   <atomic-product-section-name>
                     <atomic-product-link
                       class="font-bold"
-                      href-template="#/pdp?$\{permanentid}"
+                      href-template="${pdpHref}"
                     ></atomic-product-link>
                   </atomic-product-section-name>
                   <atomic-product-section-visual>

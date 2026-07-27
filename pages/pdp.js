@@ -7,9 +7,17 @@ export const pdpPage = {
   title: "Product Detail Page",
   viewUrl: import.meta.env.VITE_PDP_URL || "https://sports.barca.group",
   async render(container) {
-    // Extract product ID from hash query: #/pdp?<productId>
+    // Extract product ID from either:
+    // 1. Hash query: #/pdp?<productId> (SPA navigation)
+    // 2. URL query string: /pdp/?<productId> (direct/path-based navigation, after redirect)
     const hashParts = window.location.hash.split("?");
-    const productId = hashParts[1] || "";
+    let productId = hashParts[1] || "";
+    if (!productId) {
+      // Fallback: check query string (shouldn't normally reach here after redirectPathToHash,
+      // but handles edge cases)
+      const params = new URLSearchParams(window.location.search);
+      productId = params.get("0") || params.toString().replace("=", "");
+    }
 
     container.innerHTML = `
       <div id="info-banner"></div>

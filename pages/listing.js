@@ -2,6 +2,7 @@ import { commerceEngine } from "../engine.js";
 import { initAtomicCommerce } from "../shared/initAtomicCommerce.js";
 import { initBadgePlacements, PLACEMENT_CONFIGS } from "../shared/initBadgePlacements.js";
 import { mountInfoBanner } from "../infoBanner.js";
+import { getPdpHrefTemplate } from "../router.js";
 
 /**
  * Factory to create listing page configs.
@@ -13,6 +14,7 @@ function createListingPage({ title, heading, viewUrl, visitorPath, display, dens
     title,
     viewUrl,
     async render(container) {
+      const pdpHref = getPdpHrefTemplate();
       container.innerHTML = `
         <div id="info-banner"></div>
         <h2 class="text-center my-4">${heading}</h2>
@@ -33,7 +35,7 @@ function createListingPage({ title, heading, viewUrl, visitorPath, display, dens
                       <atomic-product-section-name>
                         <atomic-product-link
                           class="font-bold"
-                          href-template="#/pdp?$\{permanentid}"
+                          href-template="${pdpHref}"
                         ></atomic-product-link>
                       </atomic-product-section-name>
                       <atomic-product-section-visual>
@@ -69,7 +71,7 @@ function createListingPage({ title, heading, viewUrl, visitorPath, display, dens
                 <atomic-commerce-refine-toggle></atomic-commerce-refine-toggle>
               </atomic-layout-section>
               <atomic-layout-section section="products">
-                ${getProductListHTML(display, density, imageSize)}
+                ${getProductListHTML(display, density, imageSize, pdpHref)}
                 <atomic-commerce-query-error></atomic-commerce-query-error>
                 <atomic-commerce-no-products></atomic-commerce-no-products>
               </atomic-layout-section>
@@ -88,7 +90,7 @@ function createListingPage({ title, heading, viewUrl, visitorPath, display, dens
   };
 }
 
-function getProductListHTML(display, density, imageSize) {
+function getProductListHTML(display, density, imageSize, pdpHref) {
   if (display === "table") {
     return `
       <atomic-commerce-product-list display="table" density="${density}" image-size="${imageSize}">
@@ -106,7 +108,7 @@ function getProductListHTML(display, density, imageSize) {
               <br />
               <atomic-product-link
                 class="font-bold"
-                href-template="#/pdp?$\{permanentid}"
+                href-template="${pdpHref}"
               ></atomic-product-link>
             </atomic-table-element>
             <atomic-table-element label="Brand">
@@ -140,7 +142,7 @@ function getProductListHTML(display, density, imageSize) {
             <badge-placement data-placement-key="PLP_TOP_LEFT"></badge-placement>
             <atomic-product-link
               class="font-bold"
-              href-template="#/pdp?$\{permanentid}"
+              href-template="${pdpHref}"
             ></atomic-product-link>
           </atomic-product-section-name>
           <atomic-product-section-visual>
