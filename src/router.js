@@ -141,6 +141,28 @@ function redirectPathToHash() {
  */
 export function initRouter() {
   redirectPathToHash();
+  installPdpClickInterceptor();
   window.addEventListener("hashchange", resolveRoute);
   resolveRoute();
+}
+
+/**
+ * Intercept clicks on same-origin PDP links for instant SPA navigation.
+ * The href-template produces path-based URLs (for correct hover/copy behaviour),
+ * but we can navigate via the hash router when the user clicks within the app.
+ */
+function installPdpClickInterceptor() {
+  document.addEventListener("click", (e) => {
+    const anchor = e.target.closest("a[href]");
+    if (!anchor) return;
+    let url;
+    try { url = new URL(anchor.href); } catch { return; }
+    if (url.origin !== window.location.origin) return;
+    if (!/\/pdp\/?$/.test(url.pathname)) return;
+    const params = new URLSearchParams(url.search);
+    const productId = params.get("0") || params.toString().replace("=", "");
+    if (!productId) return;
+    e.preventDefault();
+    window.location.hash = `#/pdp?${productId}`;
+  }, true);
 }

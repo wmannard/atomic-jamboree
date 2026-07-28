@@ -18,15 +18,14 @@ function createListingPage({ title, heading, viewUrl, visitorPath, display }) {
     title,
     viewUrl,
     async render(container) {
-      container.innerHTML = templates[display];
+      const pdpHref = getPdpHrefTemplate();
+      container.innerHTML = templates[display].replaceAll(
+        "<atomic-product-link",
+        `<atomic-product-link href-template="${pdpHref}"`
+      );
 
       // Set dynamic values via DOM manipulation
       container.querySelector("h2").textContent = heading;
-
-      const pdpHref = getPdpHrefTemplate();
-      container.querySelectorAll("atomic-product-link").forEach((el) => {
-        el.setAttribute("href-template", pdpHref);
-      });
 
       await initAtomicCommerce(commerceEngine);
       initBadgePlacements(PLACEMENT_CONFIGS.PLP);

@@ -9,13 +9,11 @@ export const searchPage = {
   title: "Search",
   viewUrl: import.meta.env.VITE_SEARCH_URL,
   async render(container) {
-    container.innerHTML = searchTemplate;
-
-    // Set dynamic href-template on all product links
     const pdpHref = getPdpHrefTemplate();
-    container.querySelectorAll("atomic-product-link").forEach((el) => {
-      el.setAttribute("href-template", pdpHref);
-    });
+    container.innerHTML = searchTemplate.replaceAll(
+      "<atomic-product-link",
+      `<atomic-product-link href-template="${pdpHref}"`
+    );
 
     await initAtomicCommerce(commerceEngine);
     initBadgePlacements(PLACEMENT_CONFIGS.SEARCH);

@@ -52,6 +52,9 @@
       <atomic-layout-section section="products">
         <atomic-commerce-product-list display="table" density="compact" image-size="icon">
           <atomic-product-template>
+            <template slot="link">
+              <atomic-product-link></atomic-product-link>
+            </template>
             <template>
               <atomic-table-element label="Image">
                 <atomic-product-image field="ec_images"></atomic-product-image>

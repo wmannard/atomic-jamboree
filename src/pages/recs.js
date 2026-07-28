@@ -10,13 +10,11 @@ export const recs1Page = {
   title: "Recs 1",
   viewUrl: import.meta.env.VITE_RECS_1_URL,
   async render(container) {
-    container.innerHTML = recs1Template;
-
-    // Set dynamic values via DOM manipulation
     const pdpHref = getPdpHrefTemplate();
-    container.querySelectorAll("atomic-product-link").forEach((el) => {
-      el.setAttribute("href-template", pdpHref);
-    });
+    container.innerHTML = recs1Template.replaceAll(
+      "<atomic-product-link",
+      `<atomic-product-link href-template="${pdpHref}"`
+    );
 
     const boughtSlot = getEnvValue("SLOT_ID_POPULAR_BOUGHT");
     const viewedSlot = getEnvValue("SLOT_ID_POPULAR_VIEWED");
@@ -32,13 +30,11 @@ export const recs2Page = {
   title: "Recs 2",
   viewUrl: import.meta.env.VITE_RECS_2_URL,
   async render(container) {
-    container.innerHTML = recs2Template;
-
-    // Set dynamic values via DOM manipulation
     const pdpHref = getPdpHrefTemplate();
-    container.querySelectorAll("atomic-product-link").forEach((el) => {
-      el.setAttribute("href-template", pdpHref);
-    });
+    container.innerHTML = recs2Template.replaceAll(
+      "<atomic-product-link",
+      `<atomic-product-link href-template="${pdpHref}"`
+    );
 
     const cartSlot = getEnvValue("SLOT_ID_CART_RECOMMENDATIONS");
     document.getElementById("cart_recommendations").setAttribute("slot-id", cartSlot);

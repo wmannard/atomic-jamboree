@@ -1,5 +1,6 @@
 import { buildCommerceEngine } from "@coveo/headless/commerce";
 import { buildContext } from "@coveo/headless/commerce";
+import { buildRecommendations } from "@coveo/headless/commerce";
 import { getEnvValue, getJamboree, setLocale } from "./configHelper";
 
 const {
@@ -85,5 +86,34 @@ export function switchLocale(newLocale) {
     // updateLocale dispatches setContext but doesn't trigger a refetch —
     // we need to explicitly re-execute the request.
     iface.executeFirstRequest();
+  }
+
+  // Handle recommendation interfaces (they don't have executeFirstRequest,
+  // so we call updateLocale then manually refresh each recommendation list)
+  const recInterfaces = document.querySelectorAll(
+    "atomic-commerce-recommendation-interface"
+  );
+  if (recInterfaces.length > 0) {
+    recInterfaces.forEach((recIface) => {
+      if (recIface.updateLocale) {
+        recIface.updateLocale(language, country, currency);
+      }
+    });
+
+    // Refresh each recommendation list by building a temporary controller
+    // and calling refresh() which dispatches fetchRecommendations with the
+    // updated context.
+    const recLists = document.querySelectorAll(
+      "atomic-commerce-recommendation-list"
+    );
+    recLists.forEach((list) => {
+      const slotId = list.getAttribute("slot-id");
+      if (slotId) {
+        const ctrl = buildRecommendations(commerceEngine, {
+          options: { slotId },
+        });
+        ctrl.refresh();
+      }
+    });
   }
 }
