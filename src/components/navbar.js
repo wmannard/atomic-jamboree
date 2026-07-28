@@ -1,4 +1,5 @@
 import { switchLocale } from "../engine.js";
+import { navigate } from "../router.js";
 
 export const navUrls = {
   Search: {
@@ -31,12 +32,12 @@ document.querySelector("#nav-bar").innerHTML = `
         Navigation
       </button>
       <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
-        <li><a class="dropdown-item" href="#/">Search</a></li>
-        <li><a class="dropdown-item" href="#/listing1">Surf Accessories</a></li>
-        <li><a class="dropdown-item" href="#/listing2">Pants</a></li>
-        <li><a class="dropdown-item" href="#/listing3">Towels</a></li>
-        <li><a class="dropdown-item" href="#/recs1">Recs</a></li>
-        <li><a class="dropdown-item" href="#/recs2">Cart Recs</a></li>
+        <li><a class="dropdown-item" data-route="/">Search</a></li>
+        <li><a class="dropdown-item" data-route="/listing1">Surf Accessories</a></li>
+        <li><a class="dropdown-item" data-route="/listing2">Pants</a></li>
+        <li><a class="dropdown-item" data-route="/listing3">Towels</a></li>
+        <li><a class="dropdown-item" data-route="/recs1">Recs</a></li>
+        <li><a class="dropdown-item" data-route="/recs2">Cart Recs</a></li>
       </ul>
     </div>
     <span class="vr mx-4"></span>
@@ -282,13 +283,13 @@ document.getElementById('badgeConfigModal')?.addEventListener('show.bs.modal', l
 
 // Highlight the current page in the dropdown.
 // Accepts the rendered route path (e.g. "/", "/listing1") so that it works
-// even when Coveo has overwritten the hash with search state parameters.
+// with pathname-based routing.
 export function updateNavHighlight(routePath) {
-  const matchHash = routePath ? `#${routePath}` : (window.location.hash || "#/");
+  const currentRoute = routePath || "/";
   let currentItemText = "Navigation";
-  document.querySelectorAll(".dropdown-item").forEach((item) => {
-    const href = item.getAttribute("href");
-    if (href === matchHash || (href === "#/" && matchHash === "#/")) {
+  document.querySelectorAll(".dropdown-item[data-route]").forEach((item) => {
+    const route = item.getAttribute("data-route");
+    if (route === currentRoute) {
       item.classList.add("active");
       item.setAttribute("aria-current", "page");
       currentItemText = item.textContent;
@@ -302,6 +303,15 @@ export function updateNavHighlight(routePath) {
 
 // Run on initial load
 updateNavHighlight();
+
+// Wire up navigation dropdown items to use SPA routing
+document.querySelectorAll(".dropdown-item[data-route]").forEach((item) => {
+  const route = item.getAttribute("data-route");
+  item.addEventListener("click", (e) => {
+    e.preventDefault();
+    navigate(route);
+  });
+});
 
 const navbarContainer = document.querySelector("#navbar-container");
 // Sponsored Products input logic
@@ -416,8 +426,8 @@ function goToJamboreePage(newJamboree, newLocale) {
   } else {
     newPath = newBase;
   }
-  // Preserve query params and hash
-  window.location.href = newPath + window.location.search + window.location.hash;
+  // Preserve query params
+  window.location.href = newPath + window.location.search;
 }
 
 propertyDropdown?.addEventListener("change", (e) => {
@@ -436,10 +446,10 @@ localeDropdown?.addEventListener("change", (e) => {
   const match = currentPath.match(regex);
 
   // PDP doesn't use atomic-commerce-interface, so a locale switch requires a reload
-  const isOnPdp = window.location.hash.includes("/pdp");
+  const isOnPdp = window.location.pathname.includes("/pdp");
   if (isOnPdp && match) {
     const newPath = currentPath.replace(regex, `/jamboree_${match[1]}_${selectedLocale}/`);
-    window.location.href = newPath + window.location.hash;
+    window.location.href = newPath + window.location.search;
     return;
   }
 
@@ -448,7 +458,7 @@ localeDropdown?.addEventListener("change", (e) => {
 
   if (match) {
     const newPath = currentPath.replace(regex, `/jamboree_${match[1]}_${selectedLocale}/`);
-    history.replaceState(null, "", newPath + window.location.search + window.location.hash);
+    history.replaceState(null, "", newPath + window.location.search);
   }
 });
 

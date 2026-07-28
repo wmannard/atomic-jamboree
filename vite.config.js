@@ -22,7 +22,7 @@ export default defineConfig({
 
           if (!isHtmlRequest) return next();
 
-          // Rewrite /jamboree_X_locale/ paths to serve the app's app.html
+          // Rewrite /jamboree_X_locale/... paths (including sub-routes) to app.html
           if (/^\/jamboree_\d+_(en|fr|nl)(\/|$)/i.test(req.url)) {
             req.url = "/app.html";
           }
@@ -37,7 +37,7 @@ export default defineConfig({
 
           if (!isHtmlRequest) return next();
 
-          // Rewrite /jamboree_X_locale/ paths to serve app.html (mirrors netlify.toml)
+          // Rewrite /jamboree_X_locale/... paths (including sub-routes) to app.html
           if (/^\/jamboree_\d+_(en|fr|nl)(\/|$)/i.test(req.url)) {
             req.url = "/app.html";
           }

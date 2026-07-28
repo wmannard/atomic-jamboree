@@ -2,16 +2,26 @@ import { setViewUrl } from "./engine.js";
 import { navUrls, updateNavHighlight } from "./components/navbar.js";
 
 /**
- * Simple hash-based router for the single-entry app.
- * Routes are defined as hash fragments: #/, #/listing1, #/listing2, etc.
- * Each route maps to a page module that renders content into #app.
+ * Pathname-based router for the single-entry app.
+ * Routes are defined as path suffixes: /, /listing1, /listing2, etc.
+ * The URL base (e.g. /jamboree_3_en/) is stripped before matching.
+ * Hash fragment is left free for Coveo Atomic's URL manager.
  */
 
 const routes = {};
 
 /**
+ * Get the base path for the current jamboree context.
+ * E.g. "/jamboree_3_en/"
+ */
+function getBasePath() {
+  const match = window.location.pathname.match(/\/jamboree_\d+_(en|fr|nl)\//i);
+  return match ? match[0] : "/";
+}
+
+/**
  * Register a route with a handler function.
- * @param {string} path - The hash path (e.g., "/", "/listing1")
+ * @param {string} path - The route path (e.g., "/", "/listing1")
  * @param {object} config - { title, render, viewUrl }
  */
 export function registerRoute(path, config) {
@@ -20,42 +30,38 @@ export function registerRoute(path, config) {
 
 /**
  * Navigate to a route programmatically.
- * @param {string} path - The hash path to navigate to
+ * @param {string} path - The route path to navigate to (e.g. "/listing1")
  */
 export function navigate(path) {
-  window.location.hash = `#${path}`;
+  const url = getBasePath() + path.replace(/^\//, "");
+  window.history.pushState(null, "", url);
+  resolveRoute();
 }
 
 /**
  * Get the href-template string for PDP links.
- * Produces a path-based URL that works with both hash routing and direct navigation.
+ * Produces a path-based URL for use in Coveo atomic-product-link href-template.
  * E.g. "/jamboree_3_en/pdp/?${permanentid}"
  */
 export function getPdpHrefTemplate() {
-  // Get the base path (e.g. /jamboree_3_en/)
-  const path = window.location.pathname;
-  const match = path.match(/\/jamboree_\d+_(en|fr|nl)\//i);
-  const basePath = match ? match[0] : "/";
+  const basePath = getBasePath();
   return `${window.location.origin}${basePath}pdp/?\${permanentid}`;
 }
 
 /**
- * Get the current route path from the hash.
- * Route paths always start with "/". Coveo writes state without a leading "/"
- * (e.g., #perPage=10&sortCriteria=relevance). If the hash isn't a route path,
- * we return null to signal "no route change".
- *
- * The "?" separator is used to pass parameters (e.g. product ID) to route
- * handlers, so we strip it here and let the handler read from the full hash.
+ * Get the current route path by stripping the jamboree base from the pathname.
+ * E.g. /jamboree_3_en/listing1 → /listing1
+ *      /jamboree_3_en/         → /
+ *      /jamboree_3_en/pdp/     → /pdp
  */
 function getCurrentPath() {
-  const hash = window.location.hash.slice(1); // remove '#'
-  if (!hash) return "/";
-  // Route paths always start with "/"; anything else is Coveo search state
-  if (!hash.startsWith("/")) return null;
-  // Strip query portion so "/pdp?PRODUCT_ID" matches the "/pdp" route
-  const qIndex = hash.indexOf("?");
-  return qIndex === -1 ? hash : hash.slice(0, qIndex);
+  const pathname = window.location.pathname;
+  const basePath = getBasePath();
+  let routePath = pathname.slice(basePath.length); // e.g. "listing1" or "pdp/" or ""
+  // Normalise: strip trailing slash, ensure leading slash
+  routePath = "/" + routePath.replace(/\/+$/, "");
+  if (routePath === "/") return "/";
+  return routePath;
 }
 
 let currentRenderedPath = null;
@@ -66,19 +72,7 @@ let currentRenderedPath = null;
 async function resolveRoute() {
   const path = getCurrentPath();
 
-  // If the hash is Coveo state (not a route path), render the default route
-  // if nothing has been rendered yet. This handles the case where the page
-  // loads with a Coveo state hash (e.g. #perPage=10) from a previous session.
-  if (path === null) {
-    if (currentRenderedPath === null) {
-      // Nothing rendered yet — fall through to render the default "/" route
-      renderRoute("/");
-    }
-    return;
-  }
-
   // Don't re-render if we're already showing this page.
-  // This prevents unnecessary re-renders when Coveo updates the hash with search state.
   // Exception: PDP uses a query param for product ID, so always re-render it.
   if (path === currentRenderedPath && path !== "/pdp") return;
 
@@ -93,7 +87,7 @@ async function renderRoute(path) {
       <div class="alert alert-warning text-center my-5">
         <h4>Page not found</h4>
         <p>No route registered for: ${path}</p>
-        <a href="#/">Go to Search</a>
+        <a href="${getBasePath()}">Go to Search</a>
       </div>
     `;
     return;
@@ -116,59 +110,51 @@ async function renderRoute(path) {
 }
 
 /**
- * If the page was loaded via a path-based URL (e.g. /jamboree_3_en/pdp/?PRODUCT_ID),
- * redirect into the equivalent hash route so the SPA router can handle it.
- * This supports shareable/bookmarkable path-based PDP links.
- */
-function redirectPathToHash() {
-  const path = window.location.pathname;
-  const match = path.match(/\/jamboree_\d+_(en|fr|nl)\/pdp\/?$/i);
-  if (match) {
-    // Extract product ID from query string (e.g. ?RDWSK1_6057_BK or ?0=RDWSK1_6057_BK)
-    const params = new URLSearchParams(window.location.search);
-    const productId = params.get("0") || params.toString().replace("=", "");
-    if (productId) {
-      // Build the base path (strip /pdp/ suffix) and set the hash route
-      const basePath = path.replace(/\/pdp\/?$/, "/");
-      window.history.replaceState(null, "", basePath + "#/pdp?" + productId);
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Initialize the router - listen for hash changes and render initial route.
+ * Initialize the router - listen for popstate (back/forward) and render initial route.
  */
 export function initRouter() {
-  redirectPathToHash();
-  installPdpClickInterceptor();
-  window.addEventListener("hashchange", resolveRoute);
+  installLinkInterceptor();
+  window.addEventListener("popstate", resolveRoute);
   resolveRoute();
 }
 
 /**
- * Intercept clicks on same-origin PDP links for instant SPA navigation.
- * The href-template produces path-based URLs (for correct hover/copy behaviour),
- * but we can navigate via the hash router when the user clicks within the app.
+ * Intercept clicks on same-origin internal links for SPA navigation.
+ * This handles:
+ * - Navbar links (e.g. /jamboree_3_en/listing1)
+ * - PDP links from Coveo product cards (e.g. /jamboree_3_en/pdp/?PRODUCT_ID)
+ * Uses composedPath to catch links inside shadow DOMs (Coveo components).
  */
-function installPdpClickInterceptor() {
+function installLinkInterceptor() {
   document.addEventListener("click", (e) => {
-    // Use composedPath to find <a> elements inside shadow DOMs
-    const path = e.composedPath();
-    const anchor = path.find(
+    const composedPath = e.composedPath();
+    const anchor = composedPath.find(
       (el) => el instanceof HTMLAnchorElement && el.href
     );
     if (!anchor) return;
+
     let url;
     try { url = new URL(anchor.href); } catch { return; }
+
+    // Only intercept same-origin links within our jamboree base path
     if (url.origin !== window.location.origin) return;
-    if (!/\/pdp\/?$/.test(url.pathname)) return;
-    const params = new URLSearchParams(url.search);
-    const productId = params.get("0") || params.toString().replace("=", "");
-    if (!productId) return;
+    const basePath = getBasePath();
+    if (!url.pathname.startsWith(basePath)) return;
+
+    // Determine the route path
+    let routePath = url.pathname.slice(basePath.length);
+    routePath = "/" + routePath.replace(/\/+$/, "");
+    if (routePath === "/") routePath = "/";
+
+    // Only intercept if we have a registered route for this path
+    if (!routes[routePath]) return;
+
     e.preventDefault();
     e.stopPropagation();
-    window.location.hash = `#/pdp?${productId}`;
+
+    // For PDP, preserve the query string (product ID)
+    const dest = url.pathname + url.search;
+    window.history.pushState(null, "", dest);
+    resolveRoute();
   }, true);
 }
