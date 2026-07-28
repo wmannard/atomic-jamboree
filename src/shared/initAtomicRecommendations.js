@@ -10,5 +10,9 @@ export async function initAtomicRecommendations(commerceEngine) {
 
   for (const recommendationInterface of recommendationInterfaces) {
     await recommendationInterface.initializeWithEngine(commerceEngine);
+    recommendationInterface.style.display = "";
   }
+
+  const loader = document.getElementById("atomic-loader");
+  if (loader) loader.remove();
 }

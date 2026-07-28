@@ -79,7 +79,8 @@ async function resolveRoute() {
 
   // Don't re-render if we're already showing this page.
   // This prevents unnecessary re-renders when Coveo updates the hash with search state.
-  if (path === currentRenderedPath) return;
+  // Exception: PDP uses a query param for product ID, so always re-render it.
+  if (path === currentRenderedPath && path !== "/pdp") return;
 
   renderRoute(path);
 }
@@ -153,7 +154,11 @@ export function initRouter() {
  */
 function installPdpClickInterceptor() {
   document.addEventListener("click", (e) => {
-    const anchor = e.target.closest("a[href]");
+    // Use composedPath to find <a> elements inside shadow DOMs
+    const path = e.composedPath();
+    const anchor = path.find(
+      (el) => el instanceof HTMLAnchorElement && el.href
+    );
     if (!anchor) return;
     let url;
     try { url = new URL(anchor.href); } catch { return; }
@@ -163,6 +168,7 @@ function installPdpClickInterceptor() {
     const productId = params.get("0") || params.toString().replace("=", "");
     if (!productId) return;
     e.preventDefault();
+    e.stopPropagation();
     window.location.hash = `#/pdp?${productId}`;
   }, true);
 }

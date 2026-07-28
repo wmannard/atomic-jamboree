@@ -1,6 +1,11 @@
 <div id="info-banner"></div>
 <h2 class="text-center my-4">Cart Recommendations</h2>
-<atomic-commerce-recommendation-interface language-assets-path="/lang">
+<div id="atomic-loader" class="d-flex justify-content-center align-items-center" style="min-height:50vh">
+  <div class="spinner-border text-primary" style="width:3rem;height:3rem" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+<atomic-commerce-recommendation-interface language-assets-path="/lang" style="display:none">
   <atomic-commerce-layout>
     <atomic-layout-section section="main">
       <atomic-commerce-recommendation-list
