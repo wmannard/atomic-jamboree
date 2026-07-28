@@ -14,7 +14,7 @@ export default defineConfig({
   },
   plugins: [
     {
-      name: "jamboree-rewrite",
+      name: "app-rewrite",
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
           const accept = req.headers.accept || "";
@@ -22,8 +22,16 @@ export default defineConfig({
 
           if (!isHtmlRequest) return next();
 
-          // Rewrite /jamboree_X/locale/... paths (including sub-routes) to app.html
-          if (/^\/jamboree_\d+\/[a-z]{2}-[a-z]{2}-[a-z]{3}(\/|$)/i.test(req.url)) {
+          const url = req.url || "";
+          const pathname = url.split("?")[0];
+
+          // Rewrite app routes to app.html
+          if (/^\/(search|listing\d*|pdp|recs\d*)(\/|$)/.test(pathname)) {
+            req.url = "/app.html";
+          }
+
+          // Backwards compat: rewrite old /jamboree_X/locale/... paths to app.html
+          if (/^\/jamboree_\d+\/[a-z]{2}-[a-z]{2}-[a-z]{3}(\/|$)/i.test(pathname)) {
             req.url = "/app.html";
           }
 
@@ -37,8 +45,16 @@ export default defineConfig({
 
           if (!isHtmlRequest) return next();
 
-          // Rewrite /jamboree_X/locale/... paths (including sub-routes) to app.html
-          if (/^\/jamboree_\d+\/[a-z]{2}-[a-z]{2}-[a-z]{3}(\/|$)/i.test(req.url)) {
+          const url = req.url || "";
+          const pathname = url.split("?")[0];
+
+          // Rewrite app routes to app.html
+          if (/^\/(search|listing\d*|pdp|recs\d*)(\/|$)/.test(pathname)) {
+            req.url = "/app.html";
+          }
+
+          // Backwards compat: rewrite old /jamboree_X/locale/... paths to app.html
+          if (/^\/jamboree_\d+\/[a-z]{2}-[a-z]{2}-[a-z]{3}(\/|$)/i.test(pathname)) {
             req.url = "/app.html";
           }
 

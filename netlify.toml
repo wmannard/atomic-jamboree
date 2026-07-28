@@ -1,9 +1,31 @@
-# Rewrite all jamboree paths to the single-build app.
-# The app resolves its config from the URL at runtime.
+# Rewrite app routes to the single-build app.
+# The app resolves its config from query params at runtime.
+
 [[redirects]]
-  from = "/jamboree_*"
+  from = "/search"
   to = "/app.html"
   status = 200
+
+[[redirects]]
+  from = "/listing*"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/pdp/*"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/recs*"
+  to = "/app.html"
+  status = 200
+
+# Backwards compatibility: redirect old URLs to new format
+[[redirects]]
+  from = "/jamboree_:num/:locale/*"
+  to = "/:splat?tracking_id=jamboree_:num&locale=:locale"
+  status = 301
 
 [build]
   publish = "dist"

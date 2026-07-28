@@ -9,7 +9,7 @@ import { recs1Page, recs2Page } from "./pages/recs.js";
 import { pdpPage } from "./pages/pdp.js";
 
 // Register all routes
-registerRoute("/", searchPage);
+registerRoute("/search", searchPage);
 registerRoute("/listing1", listing1Page);
 registerRoute("/listing2", listing2Page);
 registerRoute("/listing3", listing3Page);

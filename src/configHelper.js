@@ -13,16 +13,16 @@ export function parseLocaleSlug(slug) {
 }
 
 /**
- * Parse the current jamboree number and locale slug from the URL path.
- * Expected path pattern: /jamboree_{N}/{lang-country-currency}/...
- * Falls back to jamboree 1, en-us-usd if not found (e.g. during local dev at root).
+ * Parse the current jamboree number and locale slug from URL query params.
+ * Expected params: ?tracking_id=jamboree_N&locale=lang-country-currency
+ * Falls back to jamboree 1, en-us-usd if params are missing.
  */
 function parseContext() {
-  const match = window.location.pathname.match(/\/jamboree_(\d+)\/([a-z]{2}-[a-z]{2}-[a-z]{3})\//i);
-  if (match) {
-    return { jamboree: match[1], localeSlug: match[2].toLowerCase() };
-  }
-  return { jamboree: "1", localeSlug: "en-us-usd" };
+  const params = new URLSearchParams(window.location.search);
+  const trackingId = params.get("tracking_id") || "jamboree_1";
+  const jamboreeNum = trackingId.replace("jamboree_", "") || "1";
+  const localeSlug = (params.get("locale") || "en-us-usd").toLowerCase();
+  return { jamboree: jamboreeNum, localeSlug };
 }
 
 const { jamboree, localeSlug: initialSlug } = parseContext();

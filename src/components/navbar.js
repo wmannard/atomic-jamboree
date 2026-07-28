@@ -32,7 +32,7 @@ document.querySelector("#nav-bar").innerHTML = `
         Navigation
       </button>
       <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
-        <li><a class="dropdown-item" data-route="/">Search</a></li>
+        <li><a class="dropdown-item" data-route="/search">Search</a></li>
         <li><a class="dropdown-item" data-route="/listing1">Surf Accessories</a></li>
         <li><a class="dropdown-item" data-route="/listing2">Pants</a></li>
         <li><a class="dropdown-item" data-route="/listing3">Towels</a></li>
@@ -415,13 +415,12 @@ export function enableNavDropdowns() {
   if (propertyDropdown) propertyDropdown.disabled = false;
 }
 
-// Helper to parse current jamboree and locale from path
+// Helper to parse current jamboree and locale from query params
 function getCurrentJamboreeAndLocale() {
-  const match = window.location.pathname.match(/jamboree_(\d+)\/([a-z]{2}-[a-z]{2}-[a-z]{3})\//i);
-  if (match) {
-    return { jamboree: `jamboree_${match[1]}`, locale: match[2].toLowerCase() };
-  }
-  return { jamboree: "jamboree_1", locale: "en-us-usd" };
+  const params = new URLSearchParams(window.location.search);
+  const jamboree = params.get("tracking_id") || "jamboree_1";
+  const locale = (params.get("locale") || "en-us-usd").toLowerCase();
+  return { jamboree, locale };
 }
 
 // Set dropdowns to current page
@@ -431,17 +430,8 @@ if (localeDropdown && locale) localeDropdown.value = locale;
 
 function goToJamboreePage(newJamboree, newLocale) {
   if (!newJamboree || !newLocale) return;
-  const currentPath = window.location.pathname;
-  const regex = /\/jamboree_\d+\/[a-z]{2}-[a-z]{2}-[a-z]{3}\//i;
-  const newBase = `/${newJamboree}/${newLocale}/`;
-  let newPath;
-  if (regex.test(currentPath)) {
-    newPath = currentPath.replace(regex, newBase);
-  } else {
-    newPath = newBase;
-  }
-  // Preserve query params
-  window.location.href = newPath + window.location.search;
+  const pathname = window.location.pathname;
+  window.location.href = `${pathname}?tracking_id=${newJamboree}&locale=${newLocale}`;
 }
 
 propertyDropdown?.addEventListener("change", (e) => {
@@ -454,26 +444,20 @@ localeDropdown?.addEventListener("change", (e) => {
   const selectedLocale = e.target.value;
   if (!selectedLocale) return;
 
-  // Update the URL to reflect the new locale
-  const currentPath = window.location.pathname;
-  const regex = /\/jamboree_(\d+)\/([a-z]{2}-[a-z]{2}-[a-z]{3})\//i;
-  const match = currentPath.match(regex);
+  const params = new URLSearchParams(window.location.search);
+  params.set("locale", selectedLocale);
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
 
   // PDP doesn't use atomic-commerce-interface, so a locale switch requires a reload
-  const isOnPdp = window.location.pathname.includes("/pdp");
-  if (isOnPdp && match) {
-    const newPath = currentPath.replace(regex, `/jamboree_${match[1]}/${selectedLocale}/`);
-    window.location.href = newPath + window.location.search;
+  const isOnPdp = window.location.pathname.startsWith("/pdp");
+  if (isOnPdp) {
+    window.location.href = newUrl;
     return;
   }
 
-  // Map expanded locale slug to short code for the engine's switchLocale
+  // Update URL in place and switch locale without reload
   switchLocale(selectedLocale);
-
-  if (match) {
-    const newPath = currentPath.replace(regex, `/jamboree_${match[1]}/${selectedLocale}/`);
-    history.replaceState(null, "", newPath + window.location.search);
-  }
+  history.replaceState(null, "", newUrl);
 });
 
 navbarContainer.style.display = "flex";

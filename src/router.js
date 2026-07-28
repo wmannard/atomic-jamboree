@@ -4,20 +4,11 @@ import { navUrls, updateNavHighlight } from "./components/navbar.js";
 /**
  * Pathname-based router for the single-entry app.
  * Routes are defined as path suffixes: /, /listing1, /listing2, etc.
- * The URL base (e.g. /jamboree_3/en-us-usd/) is stripped before matching.
+ * Context (tracking_id, locale) lives in query params and is preserved across navigations.
  * Hash fragment is left free for Coveo Atomic's URL manager.
  */
 
 const routes = {};
-
-/**
- * Get the base path for the current jamboree context.
- * E.g. "/jamboree_3/en-us-usd/"
- */
-function getBasePath() {
-  const match = window.location.pathname.match(/\/jamboree_\d+\/([a-z]{2}-[a-z]{2}-[a-z]{3})\//i);
-  return match ? match[0] : "/";
-}
 
 /**
  * Register a route with a handler function.
@@ -29,11 +20,11 @@ export function registerRoute(path, config) {
 }
 
 /**
- * Navigate to a route programmatically.
+ * Navigate to a route programmatically, preserving query params.
  * @param {string} path - The route path to navigate to (e.g. "/listing1")
  */
 export function navigate(path) {
-  const url = getBasePath() + path.replace(/^\//, "");
+  const url = "/" + path.replace(/^\//, "") + window.location.search;
   window.history.pushState(null, "", url);
   resolveRoute();
 }
@@ -41,27 +32,36 @@ export function navigate(path) {
 /**
  * Get the href-template string for PDP links.
  * Produces a path-based URL for use in Coveo atomic-product-link href-template.
- * E.g. "/jamboree_3/en-us-usd/pdp/?${permanentid}"
+ * E.g. "http://localhost:5173/pdp/${permanentid}?tracking_id=jamboree_5&locale=en-us-usd"
  */
 export function getPdpHrefTemplate() {
-  const basePath = getBasePath();
-  return `${window.location.origin}${basePath}pdp/?\${permanentid}`;
+  const search = window.location.search;
+  return `${window.location.origin}/pdp/\${permanentid}${search}`;
 }
 
 /**
- * Get the current route path by stripping the jamboree base from the pathname.
- * E.g. /jamboree_3/en-us-usd/listing1 → /listing1
- *      /jamboree_3/en-us-usd/         → /
- *      /jamboree_3/en-us-usd/pdp/     → /pdp
+ * Extract the product ID from the current URL pathname.
+ * E.g. /pdp/SP04951_00002 → "SP04951_00002"
+ *      /pdp/ → ""
+ */
+export function getPdpProductId() {
+  const match = window.location.pathname.match(/^\/pdp\/(.+?)(?:\/)?$/);
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
+/**
+ * Get the current route path from the pathname.
+ * E.g. /listing1 → /listing1
+ *      /pdp/SP04951_00002 → /pdp
+ *      / → /
  */
 function getCurrentPath() {
-  const pathname = window.location.pathname;
-  const basePath = getBasePath();
-  let routePath = pathname.slice(basePath.length); // e.g. "listing1" or "pdp/" or ""
-  // Normalise: strip trailing slash, ensure leading slash
-  routePath = "/" + routePath.replace(/\/+$/, "");
-  if (routePath === "/") return "/";
-  return routePath;
+  let pathname = window.location.pathname;
+  // Normalize: strip trailing slashes, ensure leading slash
+  pathname = "/" + pathname.replace(/^\/+|\/+$/g, "");
+  // Map /pdp/ANYTHING to route key "/pdp"
+  if (pathname.startsWith("/pdp/")) return "/pdp";
+  return pathname === "/" ? "/" : pathname;
 }
 
 let currentRenderedPath = null;
@@ -87,7 +87,7 @@ async function renderRoute(path) {
       <div class="alert alert-warning text-center my-5">
         <h4>Page not found</h4>
         <p>No route registered for: ${path}</p>
-        <a href="${getBasePath()}">Go to Search</a>
+        <a href="/search${window.location.search ? '?' + window.location.search.slice(1) : ''}">Go to Search</a>
       </div>
     `;
     return;
@@ -121,40 +121,73 @@ export function initRouter() {
 /**
  * Intercept clicks on same-origin internal links for SPA navigation.
  * This handles:
- * - Navbar links (e.g. /jamboree_3/en-us-usd/listing1)
- * - PDP links from Coveo product cards (e.g. /jamboree_3/en-us-usd/pdp/?PRODUCT_ID)
+ * - Navbar links (e.g. /listing1)
+ * - PDP links from Coveo product cards (e.g. /pdp/SP04951_00002?tracking_id=...)
  * Uses composedPath to catch links inside shadow DOMs (Coveo components).
  */
 function installLinkInterceptor() {
   document.addEventListener("click", (e) => {
     const composedPath = e.composedPath();
-    const anchor = composedPath.find(
+
+    // Strategy 1: find a real <a> in the composed path
+    let anchor = composedPath.find(
       (el) => el instanceof HTMLAnchorElement && el.href
     );
+
+    // Strategy 2: find atomic-product-link in the path and get its shadow <a>
+    if (!anchor) {
+      for (const el of composedPath) {
+        if (!el.tagName) continue;
+        if (el.tagName.toLowerCase() === "atomic-product-link") {
+          anchor = el.shadowRoot?.querySelector("a[href]");
+          if (anchor) break;
+        }
+      }
+    }
+
+    // Strategy 3: walk up from the event target through host elements
+    // to find an atomic-product-link (handles deeply nested shadow DOMs in recs)
+    if (!anchor) {
+      let node = e.composedPath()[0];
+      while (node) {
+        if (node instanceof HTMLAnchorElement && node.href) {
+          anchor = node;
+          break;
+        }
+        if (node.tagName?.toLowerCase() === "atomic-product-link") {
+          anchor = node.shadowRoot?.querySelector("a[href]");
+          if (anchor) break;
+        }
+        // Walk up: try parentElement, then host if we're at a shadow root boundary
+        node = node.parentElement || node.getRootNode()?.host;
+      }
+    }
+
     if (!anchor) return;
-
-    let url;
-    try { url = new URL(anchor.href); } catch { return; }
-
-    // Only intercept same-origin links within our jamboree base path
-    if (url.origin !== window.location.origin) return;
-    const basePath = getBasePath();
-    if (!url.pathname.startsWith(basePath)) return;
-
-    // Determine the route path
-    let routePath = url.pathname.slice(basePath.length);
-    routePath = "/" + routePath.replace(/\/+$/, "");
-    if (routePath === "/") routePath = "/";
-
-    // Only intercept if we have a registered route for this path
-    if (!routes[routePath]) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    // For PDP, preserve the query string (product ID)
-    const dest = url.pathname + url.search;
-    window.history.pushState(null, "", dest);
-    resolveRoute();
+    handleLinkClick(e, anchor);
   }, true);
+}
+
+function handleLinkClick(e, anchor) {
+  let url;
+  try { url = new URL(anchor.href); } catch { return; }
+
+  // Only intercept same-origin links
+  if (url.origin !== window.location.origin) return;
+
+  // Determine the route path from the link's pathname
+  let routePath = url.pathname.replace(/\/+$/, "") || "/";
+  // Normalize /pdp/* to route key "/pdp"
+  if (routePath.startsWith("/pdp/")) routePath = "/pdp";
+
+  // Only intercept if we have a registered route for this path
+  if (!routes[routePath]) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  // Preserve our query params (tracking_id, locale) from the current URL
+  const dest = url.pathname + window.location.search;
+  window.history.pushState(null, "", dest);
+  resolveRoute();
 }

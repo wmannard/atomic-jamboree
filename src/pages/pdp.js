@@ -2,18 +2,21 @@ import { searchProduct, fetchBadges } from "../commerceApi.js";
 import { initBadgePlacements, PLACEMENT_CONFIGS } from "../shared/initBadgePlacements.js";
 import { mountInfoBanner } from "../components/infoBanner.js";
 import { getEnvValue } from "../configHelper.js";
+import { getPdpProductId } from "../router.js";
+import { enableNavDropdowns } from "../components/navbar.js";
 import pdpTemplate from "./templates/pdp.html?raw";
 
 export const pdpPage = {
   title: "Product Detail Page",
   viewUrl: import.meta.env.VITE_PDP_URL || "https://sports.barca.group",
   async render(container) {
-    // Extract product ID from URL query string: /pdp/?<productId>
-    const params = new URLSearchParams(window.location.search);
-    let productId = params.get("0") || params.toString().replace("=", "");
-    if (!productId) productId = "";
+    // Extract product ID from URL path: /pdp/<productId>
+    const productId = getPdpProductId();
 
     container.innerHTML = pdpTemplate;
+
+    // PDP doesn't use atomic-commerce-interface, so unlock dropdowns immediately
+    enableNavDropdowns();
 
     initBadgePlacements(PLACEMENT_CONFIGS.PDP);
     mountInfoBanner({ visitorPath: "/pdp" });
