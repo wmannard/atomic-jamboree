@@ -401,6 +401,20 @@ if (loggedInToggle) {
 const propertyDropdown = document.getElementById("property-dropdown");
 const localeDropdown = document.getElementById("locale-dropdown");
 
+// Lock dropdowns until the interface is initialized to prevent race conditions
+// where a locale switch fires before the engine is ready.
+if (localeDropdown) localeDropdown.disabled = true;
+if (propertyDropdown) propertyDropdown.disabled = true;
+
+/**
+ * Unlock the locale and property dropdowns.
+ * Called by initAtomicCommerce once the interface is ready.
+ */
+export function enableNavDropdowns() {
+  if (localeDropdown) localeDropdown.disabled = false;
+  if (propertyDropdown) propertyDropdown.disabled = false;
+}
+
 // Helper to parse current jamboree and locale from path
 function getCurrentJamboreeAndLocale() {
   const match = window.location.pathname.match(/jamboree_(\d+)_(en|fr|nl)\//);

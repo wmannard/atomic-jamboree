@@ -1,3 +1,5 @@
+import { enableNavDropdowns } from "../components/navbar.js";
+
 /**
  * Initialize Atomic Commerce Interface with the given engine
  * @param {Object} commerceEngine - The commerce engine to initialize with
@@ -15,4 +17,5 @@ export async function initAtomicCommerce(commerceEngine) {
   if (loader) loader.remove();
   commerceInterface.style.display = "";
   commerceInterface.executeFirstRequest();
+  enableNavDropdowns();
 }
