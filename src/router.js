@@ -4,7 +4,7 @@ import { navUrls, updateNavHighlight } from "./components/navbar.js";
 /**
  * Pathname-based router for the single-entry app.
  * Routes are defined as path suffixes: /, /listing1, /listing2, etc.
- * The URL base (e.g. /jamboree_3_en/) is stripped before matching.
+ * The URL base (e.g. /jamboree_3/en-us-usd/) is stripped before matching.
  * Hash fragment is left free for Coveo Atomic's URL manager.
  */
 
@@ -12,10 +12,10 @@ const routes = {};
 
 /**
  * Get the base path for the current jamboree context.
- * E.g. "/jamboree_3_en/"
+ * E.g. "/jamboree_3/en-us-usd/"
  */
 function getBasePath() {
-  const match = window.location.pathname.match(/\/jamboree_\d+_(en|fr|nl)\//i);
+  const match = window.location.pathname.match(/\/jamboree_\d+\/([a-z]{2}-[a-z]{2}-[a-z]{3})\//i);
   return match ? match[0] : "/";
 }
 
@@ -41,7 +41,7 @@ export function navigate(path) {
 /**
  * Get the href-template string for PDP links.
  * Produces a path-based URL for use in Coveo atomic-product-link href-template.
- * E.g. "/jamboree_3_en/pdp/?${permanentid}"
+ * E.g. "/jamboree_3/en-us-usd/pdp/?${permanentid}"
  */
 export function getPdpHrefTemplate() {
   const basePath = getBasePath();
@@ -50,9 +50,9 @@ export function getPdpHrefTemplate() {
 
 /**
  * Get the current route path by stripping the jamboree base from the pathname.
- * E.g. /jamboree_3_en/listing1 → /listing1
- *      /jamboree_3_en/         → /
- *      /jamboree_3_en/pdp/     → /pdp
+ * E.g. /jamboree_3/en-us-usd/listing1 → /listing1
+ *      /jamboree_3/en-us-usd/         → /
+ *      /jamboree_3/en-us-usd/pdp/     → /pdp
  */
 function getCurrentPath() {
   const pathname = window.location.pathname;
@@ -121,8 +121,8 @@ export function initRouter() {
 /**
  * Intercept clicks on same-origin internal links for SPA navigation.
  * This handles:
- * - Navbar links (e.g. /jamboree_3_en/listing1)
- * - PDP links from Coveo product cards (e.g. /jamboree_3_en/pdp/?PRODUCT_ID)
+ * - Navbar links (e.g. /jamboree_3/en-us-usd/listing1)
+ * - PDP links from Coveo product cards (e.g. /jamboree_3/en-us-usd/pdp/?PRODUCT_ID)
  * Uses composedPath to catch links inside shadow DOMs (Coveo components).
  */
 function installLinkInterceptor() {

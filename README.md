@@ -19,7 +19,7 @@ Edit `.env.local` and set your Coveo access token. You can get a short-lived sup
 npm run dev
 ```
 
-Navigate to any jamboree/locale path, e.g. `http://localhost:5173/jamboree_1_en/`. The landing page at `http://localhost:5173/` links to all combinations.
+Navigate to any jamboree/locale path, e.g. `http://localhost:5173/jamboree_1/en-us-usd/`. The landing page at `http://localhost:5173/` links to all combinations.
 
 ## Production build + preview
 
@@ -33,9 +33,9 @@ npm run preview
 Each jamboree and locale is accessed via URL path:
 
 ```
-/jamboree_1_en/       → Jamboree 1, English (US/USD)
-/jamboree_3_fr/       → Jamboree 3, French (FR/EUR)
-/jamboree_9_nl/       → Jamboree 9, Dutch (NL/EUR)
+/jamboree_1/en-us-usd/       → Jamboree 1, English (US/USD)
+/jamboree_3/fr-fr-eur/       → Jamboree 3, French (FR/EUR)
+/jamboree_9/nl-nl-eur/       → Jamboree 9, Dutch (NL/EUR)
 ```
 
 Within a jamboree, switching locale is instant (no page reload). Switching tracking ID (jamboree) navigates to a new URL.

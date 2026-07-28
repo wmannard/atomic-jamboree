@@ -22,8 +22,8 @@ export default defineConfig({
 
           if (!isHtmlRequest) return next();
 
-          // Rewrite /jamboree_X_locale/... paths (including sub-routes) to app.html
-          if (/^\/jamboree_\d+_(en|fr|nl)(\/|$)/i.test(req.url)) {
+          // Rewrite /jamboree_X/locale/... paths (including sub-routes) to app.html
+          if (/^\/jamboree_\d+\/[a-z]{2}-[a-z]{2}-[a-z]{3}(\/|$)/i.test(req.url)) {
             req.url = "/app.html";
           }
 
@@ -37,8 +37,8 @@ export default defineConfig({
 
           if (!isHtmlRequest) return next();
 
-          // Rewrite /jamboree_X_locale/... paths (including sub-routes) to app.html
-          if (/^\/jamboree_\d+_(en|fr|nl)(\/|$)/i.test(req.url)) {
+          // Rewrite /jamboree_X/locale/... paths (including sub-routes) to app.html
+          if (/^\/jamboree_\d+\/[a-z]{2}-[a-z]{2}-[a-z]{3}(\/|$)/i.test(req.url)) {
             req.url = "/app.html";
           }
 

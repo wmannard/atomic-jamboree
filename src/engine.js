@@ -1,7 +1,7 @@
 import { buildCommerceEngine } from "@coveo/headless/commerce";
 import { buildContext } from "@coveo/headless/commerce";
 import { buildRecommendations } from "@coveo/headless/commerce";
-import { getEnvValue, getJamboree, setLocale } from "./configHelper";
+import { getEnvValue, getLocaleContext, setLocaleSlug, parseLocaleSlug } from "./configHelper";
 
 const {
   VITE_ORGANIZATION_ID,
@@ -15,9 +15,7 @@ const LOGGED_IN = localStorage.getItem("logged-in") === "true";
 const ACCESS_TOKEN = LOGGED_IN ? VITE_SEARCH_TOKEN : VITE_NEW_ACCESS_TOKEN;
 
 const TRACKING_ID = getEnvValue("TRACKING_ID");
-const LANGUAGE = getEnvValue("LANGUAGE");
-const COUNTRY = getEnvValue("COUNTRY");
-const CURRENCY = getEnvValue("CURRENCY");
+const { language: LANGUAGE, country: COUNTRY, currency: CURRENCY } = getLocaleContext();
 
 export const commerceEngine = buildCommerceEngine({
   configuration: {
@@ -62,22 +60,15 @@ export function setViewUrl(url) {
 
 /**
  * Switch the locale without a page reload.
- * Reads the target locale's language/country/currency directly from env vars,
+ * Parses language/country/currency from the locale slug,
  * then calls updateLocale on the Atomic interface to batch the context + i18n change.
- * @param {string} newLocale - Lowercase locale code (e.g. "fr", "nl", "en")
+ * @param {string} newSlug - Locale slug (e.g. "fr-fr-eur", "en-us-usd")
  */
-export function switchLocale(newLocale) {
-  const loc = newLocale.toUpperCase();
-  const j = getJamboree();
+export function switchLocale(newSlug) {
+  const { language, country, currency } = parseLocaleSlug(newSlug);
 
-  // Read target locale values directly from the env var object
-  const env = import.meta.env;
-  const language = env[`VITE_${j}_${loc}_LANGUAGE`] ?? env[`VITE_${j}_LANGUAGE`];
-  const country = env[`VITE_${j}_${loc}_COUNTRY`] ?? env[`VITE_${j}_COUNTRY`];
-  const currency = env[`VITE_${j}_${loc}_CURRENCY`] ?? env[`VITE_${j}_CURRENCY`];
-
-  // Update configHelper's locale for any subsequent getEnvValue calls
-  setLocale(loc);
+  // Update configHelper's locale for any subsequent getLocaleContext calls
+  setLocaleSlug(newSlug);
 
   // Call updateLocale which atomically updates engine context + i18n
   const iface = document.querySelector("atomic-commerce-interface");

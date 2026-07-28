@@ -54,9 +54,9 @@ document.querySelector("#nav-bar").innerHTML = `
     <span class="d-inline-flex align-items-center ms-3">
       <label for="locale-dropdown" class="me-2 fs-6">Locale:</label>
       <select id="locale-dropdown" class="form-select form-select-sm w-auto">
-        <option value="en">EN-US-USD</option>
-        <option value="fr">FR-FR-EUR</option>
-        <option value="nl">NL-NL-EUR</option>
+        <option value="en-us-usd">EN-US-USD</option>
+        <option value="fr-fr-eur">FR-FR-EUR</option>
+        <option value="nl-nl-eur">NL-NL-EUR</option>
       </select>
     </span>
     <span class="d-inline-flex align-items-center ms-3">
@@ -417,11 +417,11 @@ export function enableNavDropdowns() {
 
 // Helper to parse current jamboree and locale from path
 function getCurrentJamboreeAndLocale() {
-  const match = window.location.pathname.match(/jamboree_(\d+)_(en|fr|nl)\//);
+  const match = window.location.pathname.match(/jamboree_(\d+)\/([a-z]{2}-[a-z]{2}-[a-z]{3})\//i);
   if (match) {
-    return { jamboree: `jamboree_${match[1]}`, locale: match[2] };
+    return { jamboree: `jamboree_${match[1]}`, locale: match[2].toLowerCase() };
   }
-  return { jamboree: "jamboree_1", locale: "en" };
+  return { jamboree: "jamboree_1", locale: "en-us-usd" };
 }
 
 // Set dropdowns to current page
@@ -432,8 +432,8 @@ if (localeDropdown && locale) localeDropdown.value = locale;
 function goToJamboreePage(newJamboree, newLocale) {
   if (!newJamboree || !newLocale) return;
   const currentPath = window.location.pathname;
-  const regex = /\/jamboree_\d+_(en|fr|nl)\//;
-  const newBase = `/${newJamboree}_${newLocale}/`;
+  const regex = /\/jamboree_\d+\/[a-z]{2}-[a-z]{2}-[a-z]{3}\//i;
+  const newBase = `/${newJamboree}/${newLocale}/`;
   let newPath;
   if (regex.test(currentPath)) {
     newPath = currentPath.replace(regex, newBase);
@@ -456,22 +456,22 @@ localeDropdown?.addEventListener("change", (e) => {
 
   // Update the URL to reflect the new locale
   const currentPath = window.location.pathname;
-  const regex = /\/jamboree_(\d+)_(en|fr|nl)\//;
+  const regex = /\/jamboree_(\d+)\/([a-z]{2}-[a-z]{2}-[a-z]{3})\//i;
   const match = currentPath.match(regex);
 
   // PDP doesn't use atomic-commerce-interface, so a locale switch requires a reload
   const isOnPdp = window.location.pathname.includes("/pdp");
   if (isOnPdp && match) {
-    const newPath = currentPath.replace(regex, `/jamboree_${match[1]}_${selectedLocale}/`);
+    const newPath = currentPath.replace(regex, `/jamboree_${match[1]}/${selectedLocale}/`);
     window.location.href = newPath + window.location.search;
     return;
   }
 
-  // Switch locale in-place without page reload (works for search/listing/recs)
+  // Map expanded locale slug to short code for the engine's switchLocale
   switchLocale(selectedLocale);
 
   if (match) {
-    const newPath = currentPath.replace(regex, `/jamboree_${match[1]}_${selectedLocale}/`);
+    const newPath = currentPath.replace(regex, `/jamboree_${match[1]}/${selectedLocale}/`);
     history.replaceState(null, "", newPath + window.location.search);
   }
 });

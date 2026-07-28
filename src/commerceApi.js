@@ -1,6 +1,6 @@
 // This helper is for direct calls to the search API that bypass the atomic engine. Used for the PDP product retrieval.
 
-import { getEnvValue } from "./configHelper";
+import { getEnvValue, getLocaleContext } from "./configHelper";
 import { navUrls } from "./components/navbar";
 
 const {
@@ -15,9 +15,6 @@ const LOGGED_IN = localStorage.getItem("logged-in") === "true";
 const ACCESS_TOKEN = LOGGED_IN ? VITE_SEARCH_TOKEN : VITE_NEW_ACCESS_TOKEN;
 
 const TRACKING_ID = getEnvValue('TRACKING_ID');
-const LANGUAGE = getEnvValue('LANGUAGE');
-const COUNTRY = getEnvValue('COUNTRY');
-const CURRENCY = getEnvValue('CURRENCY');
 
 const generateClientId = () => {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
@@ -28,6 +25,7 @@ const generateClientId = () => {
 };
 
 export const searchProduct = async (productId, options = {}) => {
+  const { language, country, currency } = getLocaleContext();
   const baseUrl =
     VITE_ENVIRONMENT === "prod"
       ? "https://platform.cloud.coveo.com"
@@ -37,9 +35,9 @@ export const searchProduct = async (productId, options = {}) => {
 
   const body = {
     trackingId: TRACKING_ID,
-    language: LANGUAGE,
-    country: COUNTRY,
-    currency: CURRENCY,
+    language,
+    country,
+    currency,
     clientId: generateClientId(),
     page: 0,
     perPage: options.perPage || 10,
@@ -77,13 +75,14 @@ export const searchProduct = async (productId, options = {}) => {
   return {
     ...result,
     product, // The matched product
-    language: LANGUAGE,
-    country: COUNTRY,
-    currency: CURRENCY,
+    language,
+    country,
+    currency,
   };
 };
 
 export const fetchBadges = async (productId, placementIds) => {
+  const { language, country, currency } = getLocaleContext();
   const baseUrl =
     VITE_ENVIRONMENT === "prod"
       ? "https://platform.cloud.coveo.com"
@@ -92,9 +91,9 @@ export const fetchBadges = async (productId, placementIds) => {
   const url = `${baseUrl}/rest/organizations/${VITE_ORGANIZATION_ID}/commerce/v2/tracking-ids/${TRACKING_ID}/badges`;
 
   const body = {
-    language: LANGUAGE,
-    country: COUNTRY,
-    currency: CURRENCY,
+    language,
+    country,
+    currency,
     placementIds: placementIds.filter(Boolean),
     context: {
       user: {
