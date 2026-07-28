@@ -2,6 +2,7 @@ import { searchProduct, fetchBadges } from "../commerceApi.js";
 import { initBadgePlacements, PLACEMENT_CONFIGS } from "../shared/initBadgePlacements.js";
 import { mountInfoBanner } from "../components/infoBanner.js";
 import { getEnvValue } from "../configHelper.js";
+import pdpTemplate from "./templates/pdp.html?raw";
 
 export const pdpPage = {
   title: "Product Detail Page",
@@ -19,18 +20,7 @@ export const pdpPage = {
       productId = params.get("0") || params.toString().replace("=", "");
     }
 
-    container.innerHTML = `
-      <div id="info-banner"></div>
-      <div class="container my-5">
-        <div id="product-container">
-          <div class="d-flex justify-content-center align-items-center" style="min-height:50vh">
-            <div class="spinner-border text-primary" style="width:3rem;height:3rem" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
+    container.innerHTML = pdpTemplate;
 
     initBadgePlacements(PLACEMENT_CONFIGS.PDP);
     mountInfoBanner({ visitorPath: "/pdp" });
