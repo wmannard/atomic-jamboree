@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "npx vite",
     "preview": "npx vite preview",
-    "build": "node ./scripts/copyResources.mjs && npx vite build && node ./scripts/generateDistIndex.mjs",
-    "start": "npm run build && npx vite preview"
+    "build": "npx vite build",
+    "postinstall": "node ./scripts/copyResources.mjs"
   },
   "dependencies": {
     "@coveo/atomic": "^3.60.0",
