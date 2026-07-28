@@ -1,4 +1,4 @@
-import { switchLocale } from "./engine.js";
+import { switchLocale } from "../engine.js";
 
 export const navUrls = {
   Search: {

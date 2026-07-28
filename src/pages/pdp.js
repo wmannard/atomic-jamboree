@@ -1,6 +1,6 @@
 import { searchProduct, fetchBadges } from "../commerceApi.js";
 import { initBadgePlacements, PLACEMENT_CONFIGS } from "../shared/initBadgePlacements.js";
-import { mountInfoBanner } from "../infoBanner.js";
+import { mountInfoBanner } from "../components/infoBanner.js";
 import { getEnvValue } from "../configHelper.js";
 
 export const pdpPage = {

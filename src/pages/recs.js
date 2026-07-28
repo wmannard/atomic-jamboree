@@ -1,7 +1,7 @@
 import { commerceEngine } from "../engine.js";
 import { initAtomicRecommendations } from "../shared/initAtomicRecommendations.js";
 import { getEnvValue } from "../configHelper.js";
-import { mountInfoBanner } from "../infoBanner.js";
+import { mountInfoBanner } from "../components/infoBanner.js";
 import { getPdpHrefTemplate } from "../router.js";
 
 export const recs1Page = {

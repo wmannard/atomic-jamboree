@@ -1,5 +1,5 @@
 import { setViewUrl } from "./engine.js";
-import { navUrls, updateNavHighlight } from "./navbar.js";
+import { navUrls, updateNavHighlight } from "./components/navbar.js";
 
 /**
  * Simple hash-based router for the single-entry app.

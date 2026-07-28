@@ -1,5 +1,7 @@
+import "./qa-info.js";
 import "./shared/initAtomicLoader.js";
-import "./customComponents/badgePlacement.js";
+import "./components/badgePlacement.js";
+import "./components/navbar.js";
 import { registerRoute, initRouter } from "./router.js";
 import { searchPage } from "./pages/search.js";
 import { listing1Page, listing2Page, listing3Page } from "./pages/listing.js";

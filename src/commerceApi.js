@@ -1,7 +1,7 @@
 // This helper is for direct calls to the search API that bypass the atomic engine. Used for the PDP product retrieval.
 
 import { getEnvValue } from "./configHelper";
-import { navUrls } from "./navbar";
+import { navUrls } from "./components/navbar";
 
 const {
   VITE_ORGANIZATION_ID,

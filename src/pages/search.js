@@ -1,7 +1,7 @@
 import { commerceEngine } from "../engine.js";
 import { initAtomicCommerce } from "../shared/initAtomicCommerce.js";
 import { initBadgePlacements, PLACEMENT_CONFIGS } from "../shared/initBadgePlacements.js";
-import { mountInfoBanner } from "../infoBanner.js";
+import { mountInfoBanner } from "../components/infoBanner.js";
 import { getPdpHrefTemplate } from "../router.js";
 
 export const searchPage = {
