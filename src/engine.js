@@ -1,7 +1,7 @@
 import { buildCommerceEngine } from "@coveo/headless/commerce";
 import { buildContext } from "@coveo/headless/commerce";
 import { buildRecommendations } from "@coveo/headless/commerce";
-import { getEnvValue, getLocaleContext, setLocaleSlug, parseLocaleSlug } from "./configHelper";
+import { getJamboree, getLocaleContext, setLocaleSlug, parseLocaleSlug } from "./configHelper";
 
 const {
   VITE_ORGANIZATION_ID,
@@ -14,7 +14,7 @@ const {
 const LOGGED_IN = localStorage.getItem("logged-in") === "true";
 const ACCESS_TOKEN = LOGGED_IN ? VITE_SEARCH_TOKEN : VITE_NEW_ACCESS_TOKEN;
 
-const TRACKING_ID = getEnvValue("TRACKING_ID");
+const TRACKING_ID = `jamboree_${getJamboree()}`;
 const { language: LANGUAGE, country: COUNTRY, currency: CURRENCY } = getLocaleContext();
 
 export const commerceEngine = buildCommerceEngine({

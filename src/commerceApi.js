@@ -1,6 +1,6 @@
 // This helper is for direct calls to the search API that bypass the atomic engine. Used for the PDP product retrieval.
 
-import { getEnvValue, getLocaleContext } from "./configHelper";
+import { getEnvValue, getJamboree, getLocaleContext } from "./configHelper";
 import { navUrls } from "./components/navbar";
 
 const {
@@ -14,7 +14,7 @@ const {
 const LOGGED_IN = localStorage.getItem("logged-in") === "true";
 const ACCESS_TOKEN = LOGGED_IN ? VITE_SEARCH_TOKEN : VITE_NEW_ACCESS_TOKEN;
 
-const TRACKING_ID = getEnvValue('TRACKING_ID');
+const TRACKING_ID = `jamboree_${getJamboree()}`;
 
 const generateClientId = () => {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
