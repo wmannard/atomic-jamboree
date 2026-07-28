@@ -42,7 +42,7 @@ export default defineConfig({
     outDir: "dist",
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "index.html"),
+        app: resolve(__dirname, "app.html"),
       },
     },
   },
@@ -63,9 +63,24 @@ export default defineConfig({
             return;
           }
 
-          // Rewrite /jamboree_X_locale/ paths to serve the app's index.html
+          // Rewrite /jamboree_X_locale/ paths to serve the app's app.html
           if (/^\/jamboree_\d+_(en|fr|nl)(\/|$)/i.test(req.url)) {
-            req.url = "/index.html";
+            req.url = "/app.html";
+          }
+
+          next();
+        });
+      },
+      configurePreviewServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const accept = req.headers.accept || "";
+          const isHtmlRequest = accept.includes("text/html");
+
+          if (!isHtmlRequest) return next();
+
+          // Rewrite /jamboree_X_locale/ paths to serve app.html (mirrors netlify.toml)
+          if (/^\/jamboree_\d+_(en|fr|nl)(\/|$)/i.test(req.url)) {
+            req.url = "/app.html";
           }
 
           next();

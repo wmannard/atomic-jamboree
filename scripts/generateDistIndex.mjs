@@ -1,6 +1,5 @@
-import { readFile, writeFile, rename } from "fs/promises";
+import { writeFile } from "fs/promises";
 import { join } from "path";
-import { existsSync } from "fs";
 
 const distDir = "./dist";
 
@@ -12,7 +11,7 @@ const links = jamborees
     const localeLinks = locales
       .map(
         (l) =>
-          `<a href="./jamboree_${j}_${l}/" class="locale-link">${l.toUpperCase()}</a>`
+          `<a href="/jamboree_${j}_${l}/" class="locale-link">${l.toUpperCase()}</a>`
       )
       .join(" ");
     return `<li>📁 <strong>jamboree_${j}</strong> — ${localeLinks}</li>`;
@@ -41,15 +40,9 @@ const html = `<!DOCTYPE html>
 </html>
 `;
 
-// Move the Vite-built index.html (the actual app) to app.html
-// so we can use index.html as the landing/navigation page
-const appHtml = join(distDir, "app.html");
+// Write the landing/navigation page as dist/index.html.
+// Vite already outputs the SPA entry as dist/app.html (from the source app.html).
 const indexHtml = join(distDir, "index.html");
-
-if (existsSync(indexHtml)) {
-  await rename(indexHtml, appHtml);
-}
-
 await writeFile(indexHtml, html);
 
-console.log("Generated dist/index.html (landing page) and preserved app at dist/app.html");
+console.log("Generated dist/index.html (landing page). SPA entry is dist/app.html.");
