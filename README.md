@@ -1,41 +1,69 @@
 # atomic-jamboree
 
-A test environment for Commerce jamborees
+A QA/test environment for [Coveo Atomic](https://docs.coveo.com/en/atomic/latest/) commerce interfaces. The app provides 9 isolated tracking IDs so multiple testers can use the same org without their tests affecting each other. Each tracking ID is available in 3 locales (EN, FR, NL).
 
-## Start
-
-Copy `.env.local.example` to `.env.local` and provide a token.
-
-### Mac/Linux:
+## Setup
 
 ```sh
 npm install
-npm run start
+cp .env.local.example .env.local
 ```
 
-Set environment variable `BUILD_ONE=1` to just build the english/jamboree_1 pages
-for faster debugging:
+Edit `.env.local` and set your Coveo access token. You can get a short-lived superuser token at https://platformdev.cloud.coveo.com/token, or generate an anonymous search API key in the platform.
+
+`npm install` automatically copies Atomic language and asset files into `public/` via the postinstall hook.
+
+## Development
 
 ```sh
-BUILD_ONE=1 npm run start
+npm run dev
 ```
 
-### Windows:
+Navigate to any jamboree/locale path, e.g. `http://localhost:5173/jamboree_1/en-us-usd/`. The landing page at `http://localhost:5173/` links to all combinations.
 
-```bat
-npm install
-npm run start-on-windows
+## Production build + preview
+
+```sh
+npm run build
+npm run preview
 ```
 
-For faster debugging, set `BUILD_ONE=1`:
+## URL structure
 
-```bat
-set BUILD_ONE=1
-npm run start-on-windows
+Each jamboree and locale is accessed via URL path:
+
+```
+/jamboree_1/en-us-usd/       → Jamboree 1, English (US/USD)
+/jamboree_3/fr-fr-eur/       → Jamboree 3, French (FR/EUR)
+/jamboree_9/nl-nl-eur/       → Jamboree 9, Dutch (NL/EUR)
 ```
 
-## Note
+Within a jamboree, switching locale is instant (no page reload). Switching tracking ID (jamboree) navigates to a new URL.
 
-The interactive (live) Vite environment won't work since the various pages are copied at build time by the `build-all` script.
-You need a build before running the preview. This could be improved by consolidating the multiple HTML entry points into a 
-single-entry app with programmatic Atomic engine resets instead of page navigations.
+## Project structure
+
+```
+app.html              ← SPA entry point
+index.html            ← Landing page (jamboree picker)
+vite.config.js        ← Build config + dev/preview rewrite middleware
+scripts/              ← Build tooling (resource copying)
+public/               ← Static assets (gitignored, populated by postinstall)
+src/
+├── main.js           ← App entry, routing setup
+├── router.js         ← Hash-based SPA router
+├── engine.js         ← Coveo commerce engine singleton
+├── configHelper.js   ← Env var resolution (jamboree/locale from URL)
+├── commerceApi.js    ← Direct API calls (product detail page)
+├── components/       ← Navbar, info banner, badge custom element
+├── pages/            ← Route handlers (search, listing, recs, product detail)
+│   └── templates/    ← HTML templates (imported as strings at build time)
+└── shared/           ← Atomic component initialization helpers
+```
+
+## How it works
+
+- Single Vite build — all env vars for all 9 jamborees × 3 locales are inlined into one bundle
+- `configHelper.js` parses the jamboree number and locale from the URL path at runtime
+- Netlify rewrites serve the same built `app.html` for all `/jamboree_*/` paths
+- The Vite dev/preview server includes middleware that does the same rewriting locally
+- Page markup lives in `src/pages/templates/*.html` and is inlined into the JS bundle at build time

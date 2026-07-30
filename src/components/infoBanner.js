@@ -25,8 +25,12 @@ export function mountInfoBanner(
   const mountEl = document.querySelector(mountSelector);
   if (!mountEl) return;
   mountEl.innerHTML = renderInfoBanner({ visitorPath });
+
+  // Respect the current QA info toggle state
+  const qaToggle = document.getElementById("qa-info-toggle");
+  if (!qaToggle || !qaToggle.checked) {
+    mountEl.style.display = "none";
+  }
 }
 
-// Auto-mount banner when module is loaded (customize visitorPath as needed)
-const defaultVisitorPath = "/plp/accessories/surf-accessories";
-mountInfoBanner({ visitorPath: defaultVisitorPath });
+// Pages call mountInfoBanner() explicitly with the correct visitorPath.

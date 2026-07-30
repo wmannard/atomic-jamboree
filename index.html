@@ -1,179 +1,28 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="QA test page for Atomic Jamboree." />
-    <meta name="keywords" content="atomic, jamboree, qa, test" />
-    <link rel="stylesheet" href="./qa-info.css" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <title>Search</title>
-    <script type="module" src="/shared/initAtomicLoader.js"></script>
-
-    <script type="module">
-      import { commerceEngine } from "./engine.js";
-      import { initAtomicCommerce } from "./shared/initAtomicCommerce.js";
-      initAtomicCommerce(commerceEngine);
-    </script>
-
-    <script type="module">
-      import { initBadgePlacements, PLACEMENT_CONFIGS } from './shared/initBadgePlacements.js';
-      initBadgePlacements(PLACEMENT_CONFIGS.SEARCH);
-    </script>
+    <meta charset="utf-8">
+    <title>Jamboree Builds</title>
+    <style>
+      body { font-family: sans-serif; max-width: 600px; margin: 2em auto; }
+      ul { list-style: none; padding: 0; }
+      li { margin: 0.75em 0; font-size: 1.1em; }
+      .locale-link { margin-left: 0.5em; padding: 0.2em 0.6em; background: #e8f0fe; border-radius: 4px; text-decoration: none; color: #1a73e8; font-size: 0.85em; }
+      .locale-link:hover { background: #d2e3fc; }
+    </style>
   </head>
   <body>
-    <div id="nav-bar"></div>
-    <div id="info-banner"></div>
-    <h2 class="text-center my-4">Search</h2>
-    <atomic-commerce-interface
-      type="search"
-      fields-to-include='["badgePlacements"]'
-    >
-      <atomic-commerce-layout>
-        <atomic-layout-section section="search">
-          <atomic-commerce-search-box>
-            <atomic-commerce-search-box-recent-queries></atomic-commerce-search-box-recent-queries>
-            <atomic-commerce-search-box-query-suggestions></atomic-commerce-search-box-query-suggestions>
-            <atomic-commerce-search-box-instant-products image-size="small">
-              <atomic-product-template>
-                <template>
-                  <atomic-product-section-name>
-                    <atomic-product-link
-                      class="font-bold"
-                      href-template="${window.location.origin}${window.location.pathname}pdp/?${permanentid}"
-                    ></atomic-product-link>
-                  </atomic-product-section-name>
-                  <atomic-product-section-visual>
-                    <atomic-product-field-condition if-defined="ec_thumbnails">
-                      <atomic-product-image
-                        field="ec_thumbnails"
-                      ></atomic-product-image>
-                    </atomic-product-field-condition>
-                  </atomic-product-section-visual>
-                  <atomic-product-section-metadata>
-                    <atomic-product-field-condition
-                      must-match-query-pinned="true"
-                    >
-                      <span class="text-2xl">💵</span>
-                      <span class="font-bold">Sponsored Product</span>
-                    </atomic-product-field-condition>
-                    <atomic-product-field-condition if-defined="ec_brand">
-                      <atomic-product-text
-                        field="ec_brand"
-                        class="text-neutral-dark block"
-                      ></atomic-product-text>
-                    </atomic-product-field-condition>
-                    <atomic-product-field-condition if-defined="ec_rating">
-                      <atomic-product-rating
-                        field="ec_rating"
-                      ></atomic-product-rating>
-                    </atomic-product-field-condition>
-                  </atomic-product-section-metadata>
-                  <atomic-product-section-emphasized>
-                    <atomic-product-price currency="USD"></atomic-product-price>
-                  </atomic-product-section-emphasized>
-                  <atomic-product-section-children>
-                    <atomic-product-children></atomic-product-children>
-                  </atomic-product-section-children>
-                </template>
-              </atomic-product-template>
-            </atomic-commerce-search-box-instant-products>
-          </atomic-commerce-search-box>
-        </atomic-layout-section>
-        <atomic-layout-section section="facets"
-          ><atomic-commerce-facets></atomic-commerce-facets
-        ></atomic-layout-section>
-        <atomic-layout-section section="main">
-          <atomic-layout-section section="status">
-            <atomic-commerce-breadbox></atomic-commerce-breadbox>
-            <atomic-commerce-sort-dropdown></atomic-commerce-sort-dropdown>
-            <atomic-commerce-query-summary></atomic-commerce-query-summary>
-            <atomic-commerce-refine-toggle></atomic-commerce-refine-toggle>
-          </atomic-layout-section>
-          <atomic-layout-section section="products">
-            <atomic-commerce-product-list
-              density="compact"
-            >
-              <atomic-product-template>
-                <template slot="link">
-                  <atomic-product-link
-                      href-template="${window.location.origin}${window.location.pathname}pdp/?${permanentid}"
-                    ></atomic-product-link>
-                </template>
-                <template>
-                  <atomic-product-section-name>
-                    <badge-placement
-                      data-placement-key="SEARCH_TOP_LEFT"
-                    >
-                    </badge-placement>
-                    <atomic-product-link
-                      class="font-bold"
-                      href-template="${window.location.origin}${window.location.pathname}pdp/?${permanentid}"
-                    ></atomic-product-link>
-                  </atomic-product-section-name>
-                  <atomic-product-section-visual>
-                    <atomic-product-field-condition if-defined="ec_thumbnails">
-                      <atomic-product-image
-                        field="ec_thumbnails"
-                      ></atomic-product-image>
-                    </atomic-product-field-condition>
-                  </atomic-product-section-visual>
-                  <atomic-product-section-metadata>
-                    <atomic-product-field-condition
-                      must-match-query-pinned="true"
-                    >
-                      <span class="text-2xl">💵</span>
-                      <span class="font-bold">Sponsored Product</span>
-                    </atomic-product-field-condition>
-                    <atomic-product-field-condition if-defined="ec_brand">
-                      <atomic-product-text
-                        field="ec_brand"
-                        class="text-neutral-dark block"
-                      ></atomic-product-text>
-                    </atomic-product-field-condition>
-                    <atomic-product-field-condition if-defined="ec_rating">
-                      <atomic-product-rating
-                        field="ec_rating"
-                      ></atomic-product-rating>
-                    </atomic-product-field-condition>
-                  </atomic-product-section-metadata>
-                  <atomic-product-section-emphasized>
-                    <atomic-product-price currency="USD"></atomic-product-price>
-                  </atomic-product-section-emphasized>
-                  <atomic-product-section-description>
-                    <atomic-product-description></atomic-product-description>
-                  </atomic-product-section-description>
-                  <atomic-product-section-children>
-                    <badge-placement
-                      data-placement-key="SEARCH_BOTTOM_LEFT"
-                    >
-                    </badge-placement>
-                    <atomic-product-children></atomic-product-children>
-                  </atomic-product-section-children>
-                </template>
-              </atomic-product-template>
-            </atomic-commerce-product-list>
-            <atomic-commerce-query-error></atomic-commerce-query-error>
-            <atomic-commerce-no-products></atomic-commerce-no-products>
-          </atomic-layout-section>
-          <atomic-layout-section section="pagination">
-            <atomic-commerce-load-more-products
-              ><atomic-commerce-products-per-page></atomic-commerce-products-per-page
-            ></atomic-commerce-load-more-products>
-          </atomic-layout-section>
-        </atomic-layout-section>
-      </atomic-commerce-layout>
-    </atomic-commerce-interface>
-    <script type="module" src="/navbar.js"></script>
-    <script type="module" src="/customComponents/badgePlacement.js"></script>
-    <script type="module">
-      import { mountInfoBanner } from "./infoBanner.js";
-      mountInfoBanner({ visitorPath: "/search" });
-    </script>
-    <script type="module" src="./qa-info.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <h1>Jamboree Builds</h1>
+    <ul>
+      <li>📁 <strong>jamboree_1</strong> — <a href="/search?tracking_id=jamboree_1&locale=en-us-usd" class="locale-link">EN-US-USD</a> <a href="/search?tracking_id=jamboree_1&locale=fr-fr-eur" class="locale-link">FR-FR-EUR</a> <a href="/search?tracking_id=jamboree_1&locale=nl-nl-eur" class="locale-link">NL-NL-EUR</a></li>
+      <li>📁 <strong>jamboree_2</strong> — <a href="/search?tracking_id=jamboree_2&locale=en-us-usd" class="locale-link">EN-US-USD</a> <a href="/search?tracking_id=jamboree_2&locale=fr-fr-eur" class="locale-link">FR-FR-EUR</a> <a href="/search?tracking_id=jamboree_2&locale=nl-nl-eur" class="locale-link">NL-NL-EUR</a></li>
+      <li>📁 <strong>jamboree_3</strong> — <a href="/search?tracking_id=jamboree_3&locale=en-us-usd" class="locale-link">EN-US-USD</a> <a href="/search?tracking_id=jamboree_3&locale=fr-fr-eur" class="locale-link">FR-FR-EUR</a> <a href="/search?tracking_id=jamboree_3&locale=nl-nl-eur" class="locale-link">NL-NL-EUR</a></li>
+      <li>📁 <strong>jamboree_4</strong> — <a href="/search?tracking_id=jamboree_4&locale=en-us-usd" class="locale-link">EN-US-USD</a> <a href="/search?tracking_id=jamboree_4&locale=fr-fr-eur" class="locale-link">FR-FR-EUR</a> <a href="/search?tracking_id=jamboree_4&locale=nl-nl-eur" class="locale-link">NL-NL-EUR</a></li>
+      <li>📁 <strong>jamboree_5</strong> — <a href="/search?tracking_id=jamboree_5&locale=en-us-usd" class="locale-link">EN-US-USD</a> <a href="/search?tracking_id=jamboree_5&locale=fr-fr-eur" class="locale-link">FR-FR-EUR</a> <a href="/search?tracking_id=jamboree_5&locale=nl-nl-eur" class="locale-link">NL-NL-EUR</a></li>
+      <li>📁 <strong>jamboree_6</strong> — <a href="/search?tracking_id=jamboree_6&locale=en-us-usd" class="locale-link">EN-US-USD</a> <a href="/search?tracking_id=jamboree_6&locale=fr-fr-eur" class="locale-link">FR-FR-EUR</a> <a href="/search?tracking_id=jamboree_6&locale=nl-nl-eur" class="locale-link">NL-NL-EUR</a></li>
+      <li>📁 <strong>jamboree_7</strong> — <a href="/search?tracking_id=jamboree_7&locale=en-us-usd" class="locale-link">EN-US-USD</a> <a href="/search?tracking_id=jamboree_7&locale=fr-fr-eur" class="locale-link">FR-FR-EUR</a> <a href="/search?tracking_id=jamboree_7&locale=nl-nl-eur" class="locale-link">NL-NL-EUR</a></li>
+      <li>📁 <strong>jamboree_8</strong> — <a href="/search?tracking_id=jamboree_8&locale=en-us-usd" class="locale-link">EN-US-USD</a> <a href="/search?tracking_id=jamboree_8&locale=fr-fr-eur" class="locale-link">FR-FR-EUR</a> <a href="/search?tracking_id=jamboree_8&locale=nl-nl-eur" class="locale-link">NL-NL-EUR</a></li>
+      <li>📁 <strong>jamboree_9</strong> — <a href="/search?tracking_id=jamboree_9&locale=en-us-usd" class="locale-link">EN-US-USD</a> <a href="/search?tracking_id=jamboree_9&locale=fr-fr-eur" class="locale-link">FR-FR-EUR</a> <a href="/search?tracking_id=jamboree_9&locale=nl-nl-eur" class="locale-link">NL-NL-EUR</a></li>
+    </ul>
   </body>
 </html>

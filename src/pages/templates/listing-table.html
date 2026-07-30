@@ -1,0 +1,101 @@
+<div id="info-banner"></div>
+<h2 class="text-center my-4"></h2>
+<div id="atomic-loader" class="d-flex justify-content-center align-items-center" style="min-height:50vh">
+  <div class="spinner-border text-primary" style="width:3rem;height:3rem" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+<atomic-commerce-interface
+  type="product-listing"
+  language-assets-path="/lang"
+  icon-assets-path="/assets"
+  fields-to-include='["badgePlacements"]'
+  style="display:none"
+>
+  <atomic-commerce-layout>
+    <atomic-layout-section section="search">
+      <atomic-commerce-search-box redirection-url="#/">
+        <atomic-commerce-search-box-recent-queries></atomic-commerce-search-box-recent-queries>
+        <atomic-commerce-search-box-query-suggestions></atomic-commerce-search-box-query-suggestions>
+        <atomic-commerce-search-box-instant-products image-size="small">
+          <atomic-product-template>
+            <template>
+              <atomic-product-section-name>
+                <atomic-product-link class="font-bold"></atomic-product-link>
+              </atomic-product-section-name>
+              <atomic-product-section-visual>
+                <atomic-product-image field="ec_images"></atomic-product-image>
+              </atomic-product-section-visual>
+              <atomic-product-section-metadata>
+                <atomic-product-field-condition must-match-query-pinned="true">
+                  <span class="text-2xl">💵</span>
+                  <span class="font-bold">Sponsored Product</span>
+                </atomic-product-field-condition>
+                <atomic-product-text field="ec_brand" class="block text-neutral-dark"></atomic-product-text>
+                <atomic-product-rating field="ec_rating"></atomic-product-rating>
+              </atomic-product-section-metadata>
+              <atomic-product-section-emphasized>
+                <atomic-product-price currency="USD"></atomic-product-price>
+              </atomic-product-section-emphasized>
+              <atomic-product-section-children>
+                <atomic-product-children field="ec_images"></atomic-product-children>
+              </atomic-product-section-children>
+            </template>
+          </atomic-product-template>
+        </atomic-commerce-search-box-instant-products>
+      </atomic-commerce-search-box>
+    </atomic-layout-section>
+    <atomic-layout-section section="facets">
+      <atomic-commerce-facets></atomic-commerce-facets>
+    </atomic-layout-section>
+    <atomic-layout-section section="main">
+      <atomic-layout-section section="status">
+        <atomic-commerce-breadbox></atomic-commerce-breadbox>
+        <atomic-commerce-sort-dropdown></atomic-commerce-sort-dropdown>
+        <atomic-commerce-query-summary></atomic-commerce-query-summary>
+        <atomic-commerce-refine-toggle></atomic-commerce-refine-toggle>
+      </atomic-layout-section>
+      <atomic-layout-section section="products">
+        <atomic-commerce-product-list display="table" density="compact" image-size="icon">
+          <atomic-product-template>
+            <template slot="link">
+              <atomic-product-link></atomic-product-link>
+            </template>
+            <template>
+              <atomic-table-element label="Image">
+                <atomic-product-image field="ec_images"></atomic-product-image>
+              </atomic-table-element>
+              <atomic-table-element label="Name">
+                <badge-placement data-placement-key="PLP_TOP_LEFT"></badge-placement>
+                <atomic-product-field-condition must-match-query-pinned="true">
+                  <span>💵</span>
+                  <span class="font-bold text-sm">Sponsored Product</span>
+                </atomic-product-field-condition>
+                <br />
+                <atomic-product-link class="font-bold"></atomic-product-link>
+              </atomic-table-element>
+              <atomic-table-element label="Brand">
+                <atomic-product-text field="ec_brand"></atomic-product-text>
+              </atomic-table-element>
+              <atomic-table-element label="Rating">
+                <atomic-product-rating field="ec_rating"></atomic-product-rating>
+              </atomic-table-element>
+              <atomic-table-element label="Price">
+                <atomic-product-price currency="USD"></atomic-product-price>
+              </atomic-table-element>
+              <atomic-table-element label="Description">
+                <badge-placement data-placement-key="PLP_BOTTOM_LEFT"></badge-placement>
+                <atomic-product-description></atomic-product-description>
+              </atomic-table-element>
+            </template>
+          </atomic-product-template>
+        </atomic-commerce-product-list>
+        <atomic-commerce-query-error></atomic-commerce-query-error>
+        <atomic-commerce-no-products></atomic-commerce-no-products>
+      </atomic-layout-section>
+      <atomic-layout-section section="pagination">
+        <atomic-commerce-load-more-products></atomic-commerce-load-more-products>
+      </atomic-layout-section>
+    </atomic-layout-section>
+  </atomic-commerce-layout>
+</atomic-commerce-interface>

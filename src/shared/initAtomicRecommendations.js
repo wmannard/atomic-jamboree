@@ -1,3 +1,5 @@
+import { enableNavDropdowns } from "../components/navbar.js";
+
 /**
  * Initialize Atomic Commerce Recommendation Interfaces with the given engine
  * @param {Object} commerceEngine - The commerce engine to initialize with
@@ -10,5 +12,10 @@ export async function initAtomicRecommendations(commerceEngine) {
 
   for (const recommendationInterface of recommendationInterfaces) {
     await recommendationInterface.initializeWithEngine(commerceEngine);
+    recommendationInterface.style.display = "";
   }
+
+  const loader = document.getElementById("atomic-loader");
+  if (loader) loader.remove();
+  enableNavDropdowns();
 }

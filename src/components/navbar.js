@@ -1,3 +1,6 @@
+import { switchLocale } from "../engine.js";
+import { navigate } from "../router.js";
+
 export const navUrls = {
   Search: {
     url: import.meta.env.VITE_SEARCH_URL,
@@ -22,8 +25,6 @@ export const navUrls = {
   },
 };
 
-const base = import.meta.env.BASE_URL || "/";
-
 document.querySelector("#nav-bar").innerHTML = `
   <div id="navbar-container" class="d-flex justify-content-center align-items-center w-100 py-2 border-bottom mb-3" style="font-family: var(--atomic-font-family);">
     <div class="dropdown me-3">
@@ -31,12 +32,12 @@ document.querySelector("#nav-bar").innerHTML = `
         Navigation
       </button>
       <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
-        <li><a class="dropdown-item" href="${base}">Search</a></li>
-        <li><a class="dropdown-item" href="${base}listing1/">Surf Accessories</a></li>
-        <li><a class="dropdown-item" href="${base}listing2/">Pants</a></li>
-        <li><a class="dropdown-item" href="${base}listing3/">Towels</a></li>
-        <li><a class="dropdown-item" href="${base}recs1/">Recs</a></li>
-        <li><a class="dropdown-item" href="${base}recs2/">Cart Recs</a></li>
+        <li><a class="dropdown-item" data-route="/search">Search</a></li>
+        <li><a class="dropdown-item" data-route="/listing1">Surf Accessories</a></li>
+        <li><a class="dropdown-item" data-route="/listing2">Pants</a></li>
+        <li><a class="dropdown-item" data-route="/listing3">Towels</a></li>
+        <li><a class="dropdown-item" data-route="/recs1">Recs</a></li>
+        <li><a class="dropdown-item" data-route="/recs2">Cart Recs</a></li>
       </ul>
     </div>
     <span class="vr mx-4"></span>
@@ -53,9 +54,9 @@ document.querySelector("#nav-bar").innerHTML = `
     <span class="d-inline-flex align-items-center ms-3">
       <label for="locale-dropdown" class="me-2 fs-6">Locale:</label>
       <select id="locale-dropdown" class="form-select form-select-sm w-auto">
-        <option value="en">EN-US-USD</option>
-        <option value="fr">FR-FR-EUR</option>
-        <option value="nl">NL-NL-EUR</option>
+        <option value="en-us-usd">EN-US-USD</option>
+        <option value="fr-fr-eur">FR-FR-EUR</option>
+        <option value="nl-nl-eur">NL-NL-EUR</option>
       </select>
     </span>
     <span class="d-inline-flex align-items-center ms-3">
@@ -280,17 +281,37 @@ document.getElementById('badge-config-clear')?.addEventListener('click', clearBa
 // Load saved values when modal opens
 document.getElementById('badgeConfigModal')?.addEventListener('show.bs.modal', loadBadgeConfig);
 
-// Highlight the current page in the dropdown (run after navbar is rendered)
-const currentPath = window.location.pathname;
-let currentItemText = "Navigation";
-document.querySelectorAll(".dropdown-item").forEach((item) => {
-  if (item.getAttribute("href") === currentPath) {
-    item.classList.add("active");
-    item.setAttribute("aria-current", "page");
-    currentItemText = item.textContent;
-  }
+// Highlight the current page in the dropdown.
+// Accepts the rendered route path (e.g. "/", "/listing1") so that it works
+// with pathname-based routing.
+export function updateNavHighlight(routePath) {
+  const currentRoute = routePath || "/";
+  let currentItemText = "Navigation";
+  document.querySelectorAll(".dropdown-item[data-route]").forEach((item) => {
+    const route = item.getAttribute("data-route");
+    if (route === currentRoute) {
+      item.classList.add("active");
+      item.setAttribute("aria-current", "page");
+      currentItemText = item.textContent;
+    } else {
+      item.classList.remove("active");
+      item.removeAttribute("aria-current");
+    }
+  });
+  document.getElementById("pagesDropdown").innerText = currentItemText;
+}
+
+// Run on initial load
+updateNavHighlight();
+
+// Wire up navigation dropdown items to use SPA routing
+document.querySelectorAll(".dropdown-item[data-route]").forEach((item) => {
+  const route = item.getAttribute("data-route");
+  item.addEventListener("click", (e) => {
+    e.preventDefault();
+    navigate(route);
+  });
 });
-document.getElementById("pagesDropdown").innerText = currentItemText;
 
 const navbarContainer = document.querySelector("#navbar-container");
 // Sponsored Products input logic
@@ -380,13 +401,26 @@ if (loggedInToggle) {
 const propertyDropdown = document.getElementById("property-dropdown");
 const localeDropdown = document.getElementById("locale-dropdown");
 
-// Helper to parse current jamboree and locale from path
+// Lock dropdowns until the interface is initialized to prevent race conditions
+// where a locale switch fires before the engine is ready.
+if (localeDropdown) localeDropdown.disabled = true;
+if (propertyDropdown) propertyDropdown.disabled = true;
+
+/**
+ * Unlock the locale and property dropdowns.
+ * Called by initAtomicCommerce once the interface is ready.
+ */
+export function enableNavDropdowns() {
+  if (localeDropdown) localeDropdown.disabled = false;
+  if (propertyDropdown) propertyDropdown.disabled = false;
+}
+
+// Helper to parse current jamboree and locale from query params
 function getCurrentJamboreeAndLocale() {
-  const match = window.location.pathname.match(/jamboree_(\d+)_(en|fr|nl)\//);
-  if (match) {
-    return { jamboree: `jamboree_${match[1]}`, locale: match[2] };
-  }
-  return { jamboree: "jamboree_1", locale: "en" };
+  const params = new URLSearchParams(window.location.search);
+  const jamboree = params.get("tracking_id") || "jamboree_1";
+  const locale = (params.get("locale") || "en-us-usd").toLowerCase();
+  return { jamboree, locale };
 }
 
 // Set dropdowns to current page
@@ -396,17 +430,8 @@ if (localeDropdown && locale) localeDropdown.value = locale;
 
 function goToJamboreePage(newJamboree, newLocale) {
   if (!newJamboree || !newLocale) return;
-  const currentPath = window.location.pathname;
-  const regex = /\/jamboree_\d+_(en|fr|nl)\//;
-  const newBase = `/${newJamboree}_${newLocale}/`;
-  let newPath;
-  if (regex.test(currentPath)) {
-    newPath = currentPath.replace(regex, newBase);
-  } else {
-    newPath = newBase;
-  }
-  // Preserve query params and hash
-  window.location.href = newPath + window.location.search + window.location.hash;
+  const pathname = window.location.pathname;
+  window.location.href = `${pathname}?tracking_id=${newJamboree}&locale=${newLocale}`;
 }
 
 propertyDropdown?.addEventListener("change", (e) => {
@@ -418,7 +443,21 @@ propertyDropdown?.addEventListener("change", (e) => {
 localeDropdown?.addEventListener("change", (e) => {
   const selectedLocale = e.target.value;
   if (!selectedLocale) return;
-  goToJamboreePage(propertyDropdown.value || jamboree, selectedLocale);
+
+  const params = new URLSearchParams(window.location.search);
+  params.set("locale", selectedLocale);
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+
+  // PDP doesn't use atomic-commerce-interface, so a locale switch requires a reload
+  const isOnPdp = window.location.pathname.startsWith("/pdp");
+  if (isOnPdp) {
+    window.location.href = newUrl;
+    return;
+  }
+
+  // Update URL in place and switch locale without reload
+  switchLocale(selectedLocale);
+  history.replaceState(null, "", newUrl);
 });
 
 navbarContainer.style.display = "flex";

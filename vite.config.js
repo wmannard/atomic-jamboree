@@ -1,24 +1,66 @@
 import { resolve } from "path";
+import { defineConfig } from "vite";
 
-const jamboree = process.env.VITE_JAMBOREE;
-const locale = process.env.VITE_LOCALE;
-const base =
-  jamboree && locale ? `/jamboree_${jamboree}_${locale.toLowerCase()}/` : "/";
-
-export default {
-  base,
+export default defineConfig({
+  base: "/",
   build: {
     outDir: "dist",
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "index.html"),
-        listing1: resolve(__dirname, "listing1/index.html"),
-        listing2: resolve(__dirname, "listing2/index.html"),
-        listing3: resolve(__dirname, "listing3/index.html"),
-        recs1: resolve(__dirname, "recs1/index.html"),
-        recs2: resolve(__dirname, "recs2/index.html"),
-        pdp: resolve(__dirname, "pdp/index.html"),
+        app: resolve(__dirname, "app.html"),
+        index: resolve(__dirname, "index.html"),
       },
     },
   },
-};
+  plugins: [
+    {
+      name: "app-rewrite",
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const accept = req.headers.accept || "";
+          const isHtmlRequest = accept.includes("text/html");
+
+          if (!isHtmlRequest) return next();
+
+          const url = req.url || "";
+          const pathname = url.split("?")[0];
+
+          // Rewrite app routes to app.html
+          if (/^\/(search|listing\d*|pdp|recs\d*)(\/|$)/.test(pathname)) {
+            req.url = "/app.html";
+          }
+
+          // Backwards compat: rewrite old /jamboree_X/locale/... paths to app.html
+          if (/^\/jamboree_\d+\/[a-z]{2}-[a-z]{2}-[a-z]{3}(\/|$)/i.test(pathname)) {
+            req.url = "/app.html";
+          }
+
+          next();
+        });
+      },
+      configurePreviewServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const accept = req.headers.accept || "";
+          const isHtmlRequest = accept.includes("text/html");
+
+          if (!isHtmlRequest) return next();
+
+          const url = req.url || "";
+          const pathname = url.split("?")[0];
+
+          // Rewrite app routes to app.html
+          if (/^\/(search|listing\d*|pdp|recs\d*)(\/|$)/.test(pathname)) {
+            req.url = "/app.html";
+          }
+
+          // Backwards compat: rewrite old /jamboree_X/locale/... paths to app.html
+          if (/^\/jamboree_\d+\/[a-z]{2}-[a-z]{2}-[a-z]{3}(\/|$)/i.test(pathname)) {
+            req.url = "/app.html";
+          }
+
+          next();
+        });
+      },
+    },
+  ],
+});
