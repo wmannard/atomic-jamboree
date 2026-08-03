@@ -430,6 +430,10 @@ if (localeDropdown && locale) localeDropdown.value = locale;
 
 function goToJamboreePage(newJamboree, newLocale) {
   if (!newJamboree || !newLocale) return;
+  // Store the current tracking ID before navigation so the next page load
+  // can detect a tracking ID change and reset the visitId.
+  const currentTrackingId = getCurrentJamboreeAndLocale().jamboree;
+  sessionStorage.setItem('_coveo_last_tracking_id', currentTrackingId);
   const pathname = window.location.pathname;
   window.location.href = `${pathname}?tracking_id=${newJamboree}&locale=${newLocale}`;
 }

@@ -2,6 +2,7 @@ import { buildCommerceEngine } from "@coveo/headless/commerce";
 import { buildContext } from "@coveo/headless/commerce";
 import { buildRecommendations } from "@coveo/headless/commerce";
 import { getJamboree, getLocaleContext, setLocaleSlug, parseLocaleSlug } from "./configHelper";
+import { resetVisitIfTrackingIdChanged } from "./visitReset.js";
 
 const {
   VITE_ORGANIZATION_ID,
@@ -16,6 +17,9 @@ const ACCESS_TOKEN = LOGGED_IN ? VITE_SEARCH_TOKEN : VITE_NEW_ACCESS_TOKEN;
 
 const TRACKING_ID = `jamboree_${getJamboree()}`;
 const { language: LANGUAGE, country: COUNTRY, currency: CURRENCY } = getLocaleContext();
+
+// Clear stored visitId if tracking ID changed since last page load
+resetVisitIfTrackingIdChanged();
 
 export const commerceEngine = buildCommerceEngine({
   configuration: {
