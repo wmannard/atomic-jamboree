@@ -430,7 +430,12 @@ if (localeDropdown && locale) localeDropdown.value = locale;
 
 function goToJamboreePage(newJamboree, newLocale) {
   if (!newJamboree || !newLocale) return;
+  const { jamboree: currentTrackingId } = getCurrentJamboreeAndLocale();
   const pathname = window.location.pathname;
+  if (newJamboree !== currentTrackingId && window.location.hostname === "localhost") {
+    localStorage.removeItem("visitorId");
+    document.cookie = "coveo_visitorId=; Max-Age=0; Path=/; SameSite=Lax";
+  }
   window.location.href = `${pathname}?tracking_id=${newJamboree}&locale=${newLocale}`;
 }
 
