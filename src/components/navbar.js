@@ -36,8 +36,8 @@ document.querySelector("#nav-bar").innerHTML = `
         <li><a class="dropdown-item" data-route="/listing1">Surf Accessories</a></li>
         <li><a class="dropdown-item" data-route="/listing2">Pants</a></li>
         <li><a class="dropdown-item" data-route="/listing3">Towels</a></li>
-        <li><a class="dropdown-item" data-route="/recs1">Recs</a></li>
-        <li><a class="dropdown-item" data-route="/recs2">Cart Recs</a></li>
+        <li><a class="dropdown-item" data-route="/recs1">Recommendations</a></li>
+        <li><a class="dropdown-item" data-route="/recs2">🛒 Shopping Cart</a></li>
       </ul>
     </div>
     <span class="vr mx-4"></span>
