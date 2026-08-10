@@ -5,8 +5,9 @@ import { getEnvValue } from "../configHelper.js";
 import { getPdpProductId } from "../router.js";
 import { enableNavDropdowns } from "../components/navbar.js";
 import pdpTemplate from "./templates/pdp.html?raw";
-import { buildProductView, buildCart } from "@coveo/headless/commerce";
+import { buildProductView } from "@coveo/headless/commerce";
 import { commerceEngine } from "../engine.js";
+import { getCart, saveCart, getCartController, renderCartWidget } from "../components/cartWidget.js";
 
 let lastViewedProductId = null;
 
@@ -73,13 +74,12 @@ export const pdpPage = {
 
     // Instantiate analytics controllers (non-critical — failures are swallowed)
     let productViewController = null;
-    let cartController = null;
     try {
       productViewController = buildProductView(commerceEngine);
-      cartController = buildCart(commerceEngine);
     } catch (e) {
       console.warn("Failed to initialize analytics controllers:", e);
     }
+    const cartController = getCartController();
 
     const productContainer = document.getElementById("product-container");
 
@@ -207,9 +207,6 @@ export const pdpPage = {
             <button class="btn btn-primary btn-lg" id="add-to-cart-btn" ${!product.ec_in_stock ? "disabled" : ""}>
               ${translations.addToCart}
             </button>
-            <button class="btn btn-warning btn-lg ms-2" id="buy-now-btn" ${!product.ec_in_stock ? "disabled" : ""}>
-              ${translations.buyNow}
-            </button>
             <div class="mt-4 text-muted small">
               <p>${translations.productId}: ${product.permanentid}</p>
             </div>
@@ -217,6 +214,7 @@ export const pdpPage = {
               🛒 ${translations.inCart}
             </div>
             <div id="event-banners" class="mt-3"></div>
+            <div id="cart-card" class="card mt-4" style="display:none;"></div>
           </div>
         </div>
       `;
@@ -232,31 +230,18 @@ export const pdpPage = {
       }
 
       const addToCartBtn = document.getElementById("add-to-cart-btn");
-      const buyNowBtn = document.getElementById("buy-now-btn");
       const inCartBanner = document.getElementById("in-cart-banner");
+      const cartCardEl = document.getElementById("cart-card");
 
-      // localStorage cart helpers
-      function getCart() {
-        try { return JSON.parse(localStorage.getItem("pdp-cart") || "[]"); } catch { return []; }
-      }
-      function saveCart(cart) {
-        localStorage.setItem("pdp-cart", JSON.stringify(cart));
-      }
-      function isInCart() {
-        return getCart().includes(product.permanentid);
-      }
       function updateCartUI() {
-        if (isInCart()) {
-          addToCartBtn.textContent = translations.removeFromCart;
-          addToCartBtn.classList.remove("btn-primary");
-          addToCartBtn.classList.add("btn-danger");
+        const cartItem = getCart().find(item => item.id === product.permanentid);
+        if (cartItem) {
           inCartBanner.style.display = "block";
+          inCartBanner.textContent = `🛒 ${cartItem.quantity} ${translations.inCart}`;
         } else {
-          addToCartBtn.textContent = translations.addToCart;
-          addToCartBtn.classList.remove("btn-danger");
-          addToCartBtn.classList.add("btn-primary");
           inCartBanner.style.display = "none";
         }
+        renderCartWidget(cartCardEl, { currencyFormatter, onUpdate: updateCartUI });
       }
 
       // Initialize UI state from localStorage
@@ -264,60 +249,27 @@ export const pdpPage = {
 
       if (addToCartBtn && product.ec_in_stock) {
         addToCartBtn.addEventListener("click", () => {
-          if (isInCart()) {
-            // Remove from cart
-            const cart = getCart().filter(id => id !== product.permanentid);
-            saveCart(cart);
-            if (cartController) {
-              try {
-                cartController.updateItemQuantity({ ...buildCartItem(product), quantity: 0 });
-              } catch (e) {
-                console.error("Failed to emit cart remove event:", e);
-              }
-            }
+          const cart = getCart();
+          const existing = cart.find(item => item.id === product.permanentid);
+          if (existing) {
+            existing.quantity++;
           } else {
-            // Add to cart
-            const cart = getCart();
-            cart.push(product.permanentid);
-            saveCart(cart);
-            if (cartController) {
-              try {
-                cartController.updateItemQuantity(buildCartItem(product));
-              } catch (e) {
-                console.error("Failed to emit add-to-cart event:", e);
-              }
+            cart.push({ id: product.permanentid, name: product.ec_name, price: buildCartItem(product).price, quantity: 1 });
+          }
+          saveCart(cart);
+          const cartController = getCartController();
+          if (cartController) {
+            try {
+              const item = cart.find(i => i.id === product.permanentid);
+              cartController.updateItemQuantity({ productId: item.id, name: item.name, price: item.price, quantity: item.quantity });
+            } catch (e) {
+              console.error("Failed to emit add-to-cart event:", e);
             }
           }
           updateCartUI();
         });
       }
 
-      if (buyNowBtn && product.ec_in_stock) {
-        buyNowBtn.addEventListener("click", () => {
-          // Remove from cart list
-          const cart = getCart().filter(id => id !== product.permanentid);
-          saveCart(cart);
-          if (cartController) {
-            try {
-              // Ensure item is in cart state before purchasing
-              cartController.updateItemQuantity(buildCartItem(product));
-              cartController.purchase({
-                id: crypto.randomUUID(),
-                revenue: buildCartItem(product).price,
-              });
-            } catch (e) {
-              console.error("Failed to emit purchase event:", e);
-            }
-          }
-          updateCartUI();
-          // Show dismissible purchase banner
-          const bannerContainer = document.getElementById("event-banners");
-          const banner = document.createElement("div");
-          banner.className = "alert alert-success alert-dismissible fade show mt-2";
-          banner.innerHTML = `🎉 Purchased <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-          bannerContainer.appendChild(banner);
-        });
-      }
     } catch (error) {
       console.error("Failed to fetch product:", error);
       productContainer.innerHTML = `
