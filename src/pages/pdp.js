@@ -86,18 +86,27 @@ export const pdpPage = {
     const lang = {
       en: {
         addToCart: "Add to Cart",
+        removeFromCart: "Remove from Cart",
+        buyNow: "Buy Now",
+        inCart: "In Cart",
         inStock: "In Stock",
         outOfStock: "Out of Stock",
         productId: "Product ID",
       },
       fr: {
         addToCart: "Ajouter au panier",
+        removeFromCart: "Retirer du panier",
+        buyNow: "Acheter maintenant",
+        inCart: "Dans le panier",
         inStock: "En stock",
         outOfStock: "Rupture de stock",
         productId: "ID du produit",
       },
       nl: {
         addToCart: "In winkelwagen",
+        removeFromCart: "Uit winkelwagen",
+        buyNow: "Nu kopen",
+        inCart: "In winkelwagen",
         inStock: "Op voorraad",
         outOfStock: "Niet op voorraad",
         productId: "Product-ID",
@@ -198,9 +207,16 @@ export const pdpPage = {
             <button class="btn btn-primary btn-lg" id="add-to-cart-btn" ${!product.ec_in_stock ? "disabled" : ""}>
               ${translations.addToCart}
             </button>
+            <button class="btn btn-warning btn-lg ms-2" id="buy-now-btn" ${!product.ec_in_stock ? "disabled" : ""}>
+              ${translations.buyNow}
+            </button>
             <div class="mt-4 text-muted small">
               <p>${translations.productId}: ${product.permanentid}</p>
             </div>
+            <div id="in-cart-banner" class="alert alert-info mt-3" style="display:none;">
+              🛒 ${translations.inCart}
+            </div>
+            <div id="event-banners" class="mt-3"></div>
           </div>
         </div>
       `;
@@ -216,16 +232,90 @@ export const pdpPage = {
       }
 
       const addToCartBtn = document.getElementById("add-to-cart-btn");
+      const buyNowBtn = document.getElementById("buy-now-btn");
+      const inCartBanner = document.getElementById("in-cart-banner");
+
+      // localStorage cart helpers
+      function getCart() {
+        try { return JSON.parse(localStorage.getItem("pdp-cart") || "[]"); } catch { return []; }
+      }
+      function saveCart(cart) {
+        localStorage.setItem("pdp-cart", JSON.stringify(cart));
+      }
+      function isInCart() {
+        return getCart().includes(product.permanentid);
+      }
+      function updateCartUI() {
+        if (isInCart()) {
+          addToCartBtn.textContent = translations.removeFromCart;
+          addToCartBtn.classList.remove("btn-primary");
+          addToCartBtn.classList.add("btn-danger");
+          inCartBanner.style.display = "block";
+        } else {
+          addToCartBtn.textContent = translations.addToCart;
+          addToCartBtn.classList.remove("btn-danger");
+          addToCartBtn.classList.add("btn-primary");
+          inCartBanner.style.display = "none";
+        }
+      }
+
+      // Initialize UI state from localStorage
+      updateCartUI();
+
       if (addToCartBtn && product.ec_in_stock) {
         addToCartBtn.addEventListener("click", () => {
-          if (cartController) {
-            try {
-              cartController.updateItemQuantity(buildCartItem(product));
-            } catch (e) {
-              console.error("Failed to emit add-to-cart event:", e);
+          if (isInCart()) {
+            // Remove from cart
+            const cart = getCart().filter(id => id !== product.permanentid);
+            saveCart(cart);
+            if (cartController) {
+              try {
+                cartController.updateItemQuantity({ ...buildCartItem(product), quantity: 0 });
+              } catch (e) {
+                console.error("Failed to emit cart remove event:", e);
+              }
+            }
+          } else {
+            // Add to cart
+            const cart = getCart();
+            cart.push(product.permanentid);
+            saveCart(cart);
+            if (cartController) {
+              try {
+                cartController.updateItemQuantity(buildCartItem(product));
+              } catch (e) {
+                console.error("Failed to emit add-to-cart event:", e);
+              }
             }
           }
-          alert("Cart coming soon — add to cart event dispatched");
+          updateCartUI();
+        });
+      }
+
+      if (buyNowBtn && product.ec_in_stock) {
+        buyNowBtn.addEventListener("click", () => {
+          // Remove from cart list
+          const cart = getCart().filter(id => id !== product.permanentid);
+          saveCart(cart);
+          if (cartController) {
+            try {
+              // Ensure item is in cart state before purchasing
+              cartController.updateItemQuantity(buildCartItem(product));
+              cartController.purchase({
+                id: crypto.randomUUID(),
+                revenue: buildCartItem(product).price,
+              });
+            } catch (e) {
+              console.error("Failed to emit purchase event:", e);
+            }
+          }
+          updateCartUI();
+          // Show dismissible purchase banner
+          const bannerContainer = document.getElementById("event-banners");
+          const banner = document.createElement("div");
+          banner.className = "alert alert-success alert-dismissible fade show mt-2";
+          banner.innerHTML = `🎉 Purchased <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+          bannerContainer.appendChild(banner);
         });
       }
     } catch (error) {
