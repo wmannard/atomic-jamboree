@@ -5,6 +5,53 @@ import { getEnvValue } from "../configHelper.js";
 import { getPdpProductId } from "../router.js";
 import { enableNavDropdowns } from "../components/navbar.js";
 import pdpTemplate from "./templates/pdp.html?raw";
+import { buildProductView, buildCart } from "@coveo/headless/commerce";
+import { commerceEngine } from "../engine.js";
+
+let lastViewedProductId = null;
+
+/**
+ * Maps Commerce API product data to the Headless Product interface.
+ * @param {object} product - The product object from searchProduct()
+ * @param {string} searchId - The searchId from the API response (top-level)
+ * @returns {object} Product-shaped object for view()
+ */
+export function buildProductData(product, searchId) {
+  const data = {
+    permanentid: product.permanentid,
+    ec_name: product.ec_name,
+    responseId: searchId,
+  };
+
+  if (product.ec_promo_price != null && product.ec_promo_price < product.ec_price) {
+    data.ec_promo_price = product.ec_promo_price;
+  } else if (product.ec_price != null) {
+    data.ec_price = product.ec_price;
+  }
+
+  return data;
+}
+
+/**
+ * Builds a CartItem for updateItemQuantity.
+ * @param {object} product - The product object from searchProduct()
+ * @returns {object} CartItem-shaped object { productId, name, price, quantity }
+ */
+export function buildCartItem(product) {
+  let price = 0;
+  if (product.ec_promo_price != null && product.ec_promo_price < product.ec_price) {
+    price = product.ec_promo_price;
+  } else if (product.ec_price != null) {
+    price = product.ec_price;
+  }
+
+  return {
+    productId: product.permanentid,
+    name: product.ec_name,
+    price,
+    quantity: 1,
+  };
+}
 
 export const pdpPage = {
   title: "Product Detail Page",
@@ -20,6 +67,19 @@ export const pdpPage = {
 
     initBadgePlacements(PLACEMENT_CONFIGS.PDP);
     mountInfoBanner({ visitorPath: "/pdp" });
+
+    // Reset dedup guard on each fresh render call
+    lastViewedProductId = null;
+
+    // Instantiate analytics controllers (non-critical — failures are swallowed)
+    let productViewController = null;
+    let cartController = null;
+    try {
+      productViewController = buildProductView(commerceEngine);
+      cartController = buildCart(commerceEngine);
+    } catch (e) {
+      console.warn("Failed to initialize analytics controllers:", e);
+    }
 
     const productContainer = document.getElementById("product-container");
 
@@ -145,10 +205,27 @@ export const pdpPage = {
         </div>
       `;
 
+      // Emit product view event after successful render
+      if (productViewController && lastViewedProductId !== product.permanentid) {
+        try {
+          productViewController.view(buildProductData(product, result.searchId));
+          lastViewedProductId = product.permanentid;
+        } catch (e) {
+          console.error("Failed to emit product view event:", e);
+        }
+      }
+
       const addToCartBtn = document.getElementById("add-to-cart-btn");
       if (addToCartBtn && product.ec_in_stock) {
         addToCartBtn.addEventListener("click", () => {
-          alert("Cart coming soon");
+          if (cartController) {
+            try {
+              cartController.updateItemQuantity(buildCartItem(product));
+            } catch (e) {
+              console.error("Failed to emit add-to-cart event:", e);
+            }
+          }
+          alert("Cart coming soon — add to cart event dispatched");
         });
       }
     } catch (error) {
