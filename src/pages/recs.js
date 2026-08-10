@@ -63,10 +63,10 @@ export const recs2Page = {
     await initAtomicRecommendations(commerceEngine);
     mountInfoBanner({ visitorPath: "/plp/accessories/towels" });
 
-    // Render shared cart widget
+    // Render shared cart widget (show empty state on this page, purchase mode)
     const cartCardEl = document.getElementById("cart-card");
     if (cartCardEl) {
-      renderCartWidget(cartCardEl);
+      renderCartWidget(cartCardEl, { showEmpty: true, mode: "purchase" });
     }
   },
 };

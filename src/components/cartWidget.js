@@ -1,6 +1,7 @@
 import { buildCart } from "@coveo/headless/commerce";
 import { commerceEngine } from "../engine.js";
 import { getJamboree, getLocaleContext } from "../configHelper.js";
+import { navigate } from "../router.js";
 
 /**
  * Shared cart widget backed by localStorage, scoped by tracking ID.
@@ -46,8 +47,16 @@ export function renderCartWidget(containerEl, options = {}) {
   const cart = getCart();
 
   if (cart.length === 0) {
-    containerEl.style.display = "none";
-    containerEl.innerHTML = "";
+    if (options.showEmpty) {
+      containerEl.style.display = "block";
+      containerEl.innerHTML = `
+        <div class="card-header"><strong>🛒 Cart</strong></div>
+        <div class="card-body text-center text-muted py-4">Nothing in your cart</div>
+      `;
+    } else {
+      containerEl.style.display = "none";
+      containerEl.innerHTML = "";
+    }
     return;
   }
 
@@ -66,6 +75,15 @@ export function renderCartWidget(containerEl, options = {}) {
   ).join("");
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  const checkoutLabels = {
+    en: { checkout: "Checkout", pay: "Pay Now" },
+    fr: { checkout: "Commander", pay: "Payer" },
+    nl: { checkout: "Afrekenen", pay: "Nu betalen" },
+  };
+  const cartLang = checkoutLabels[language] || checkoutLabels.en;
+  const mode = options.mode || "redirect"; // "redirect" = go to cart page, "purchase" = fire purchase event
+  const checkoutLabel = mode === "purchase" ? cartLang.pay : cartLang.checkout;
+
   containerEl.innerHTML = `
     <div class="card-header d-flex justify-content-between align-items-center">
       <strong>🛒 Cart (${cart.reduce((s, i) => s + i.quantity, 0)})</strong>
@@ -73,7 +91,7 @@ export function renderCartWidget(containerEl, options = {}) {
     </div>
     <ul class="list-group list-group-flush">${itemsHtml}</ul>
     <div class="card-body">
-      <button class="btn btn-warning btn-sm" id="cart-widget-checkout-btn">Checkout</button>
+      <button class="btn btn-warning btn-sm" id="cart-widget-checkout-btn">${checkoutLabel}</button>
       <button class="btn btn-outline-secondary btn-sm ms-2" id="cart-widget-clear-btn">Clear</button>
     </div>
   `;
@@ -129,6 +147,12 @@ export function renderCartWidget(containerEl, options = {}) {
   });
 
   containerEl.querySelector("#cart-widget-checkout-btn")?.addEventListener("click", () => {
+    if (mode === "redirect") {
+      navigate("/recs2");
+      return;
+    }
+
+    // "purchase" mode — fire purchase event and clear cart
     if (cartController) {
       try {
         for (const item of cart) {

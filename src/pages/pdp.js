@@ -214,7 +214,7 @@ export const pdpPage = {
               🛒 ${translations.inCart}
             </div>
             <div id="event-banners" class="mt-3"></div>
-            <div id="cart-card" class="card mt-4" style="display:none;"></div>
+            <div id="cart-card" class="card mt-4 mx-auto" style="display:none; max-width:1080px;"></div>
           </div>
         </div>
       `;
