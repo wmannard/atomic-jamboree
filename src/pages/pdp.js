@@ -1,7 +1,6 @@
 import { searchProduct, fetchBadges } from "../commerceApi.js";
 import { initBadgePlacements, PLACEMENT_CONFIGS } from "../shared/initBadgePlacements.js";
 import { mountInfoBanner } from "../components/infoBanner.js";
-import { getEnvValue } from "../configHelper.js";
 import { getPdpProductId } from "../router.js";
 import { enableNavDropdowns } from "../components/navbar.js";
 import pdpTemplate from "./templates/pdp.html?raw";
@@ -18,19 +17,18 @@ let lastViewedProductId = null;
  * @returns {object} Product-shaped object for view()
  */
 export function buildProductData(product, searchId) {
-  const data = {
-    permanentid: product.permanentid,
-    ec_name: product.ec_name,
-    responseId: searchId,
-  };
-
+  let price = 0;
   if (product.ec_promo_price != null && product.ec_promo_price < product.ec_price) {
-    data.ec_promo_price = product.ec_promo_price;
+    price = product.ec_promo_price;
   } else if (product.ec_price != null) {
-    data.ec_price = product.ec_price;
+    price = product.ec_price;
   }
 
-  return data;
+  return {
+    productId: product.ec_product_id || product.permanentid,
+    name: product.ec_name,
+    price,
+  };
 }
 
 /**
