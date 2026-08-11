@@ -14,7 +14,7 @@
 >
   <atomic-commerce-layout>
     <atomic-layout-section section="search">
-      <atomic-commerce-search-box redirection-url="#/">
+      <atomic-commerce-search-box redirection-url="/search">
         <atomic-commerce-search-box-recent-queries></atomic-commerce-search-box-recent-queries>
         <atomic-commerce-search-box-query-suggestions></atomic-commerce-search-box-query-suggestions>
         <atomic-commerce-search-box-instant-products image-size="small">
@@ -67,7 +67,9 @@
                 <atomic-product-link class="font-bold"></atomic-product-link>
               </atomic-product-section-name>
               <atomic-product-section-visual>
-                <atomic-product-image field="ec_images"></atomic-product-image>
+                <atomic-product-link>
+                  <atomic-product-image field="ec_images"></atomic-product-image>
+                </atomic-product-link>
               </atomic-product-section-visual>
               <atomic-product-section-children>
                 <badge-placement data-placement-key="PLP_BOTTOM_LEFT"></badge-placement>

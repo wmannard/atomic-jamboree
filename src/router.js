@@ -184,7 +184,6 @@ function handleLinkClick(e, anchor) {
   if (!routes[routePath]) return;
 
   e.preventDefault();
-  e.stopPropagation();
 
   // Preserve our query params (tracking_id, locale) from the current URL
   const dest = url.pathname + window.location.search;

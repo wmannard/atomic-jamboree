@@ -1,92 +1,104 @@
-<h2 class="text-center my-4">Recommendations</h2>
-<div id="atomic-loader" class="d-flex justify-content-center align-items-center" style="min-height:50vh">
-  <div class="spinner-border text-primary" style="width:3rem;height:3rem" role="status">
-    <span class="visually-hidden">Loading...</span>
+<div style="max-width:1080px; margin:0 auto;">
+  <h2 class="text-center my-4">Recommendations</h2>
+  <div id="atomic-loader" class="d-flex justify-content-center align-items-center" style="min-height:50vh">
+    <div class="spinner-border text-primary" style="width:3rem;height:3rem" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
   </div>
+  <atomic-commerce-recommendation-interface language-assets-path="/lang" style="display:none">
+    <atomic-commerce-layout>
+      <atomic-layout-section section="main">
+        <atomic-commerce-recommendation-list
+          id="popular_bought"
+          slot-id=""
+          products-per-page="5"
+          image-size="small"
+          display="grid"
+          style="--atomic-recs-number-of-columns: 5;"
+        >
+          <atomic-product-template>
+            <template slot="link">
+              <atomic-product-link></atomic-product-link>
+            </template>
+            <template>
+              <atomic-product-section-name>
+                <atomic-product-link class="font-bold"></atomic-product-link>
+              </atomic-product-section-name>
+              <atomic-product-section-visual>
+                <atomic-product-link>
+                  <atomic-product-image field="ec_images"></atomic-product-image>
+                </atomic-product-link>
+              </atomic-product-section-visual>
+              <atomic-product-section-metadata>
+                <atomic-product-field-condition must-match-query-pinned="true">
+                  <span class="text-2xl">💵</span>
+                  <span class="font-bold">Sponsored Product</span>
+                </atomic-product-field-condition>
+                <atomic-product-field-condition if-defined="ec_brand">
+                  <atomic-product-text field="ec_brand" class="text-neutral-dark block"></atomic-product-text>
+                </atomic-product-field-condition>
+                <atomic-product-field-condition if-defined="ec_brand">
+                  <atomic-product-rating field="ec_rating"></atomic-product-rating>
+                </atomic-product-field-condition>
+              </atomic-product-section-metadata>
+              <atomic-product-section-emphasized>
+                <atomic-product-price></atomic-product-price>
+              </atomic-product-section-emphasized>
+              <atomic-product-section-children>
+                <atomic-product-children field="ec_images"></atomic-product-children>
+              </atomic-product-section-children>
+            </template>
+          </atomic-product-template>
+        </atomic-commerce-recommendation-list>
+      </atomic-layout-section>
+    </atomic-commerce-layout>
+  </atomic-commerce-recommendation-interface>
+  <atomic-commerce-recommendation-interface language-assets-path="/lang" style="display:none">
+    <atomic-commerce-layout>
+      <atomic-layout-section section="main">
+        <atomic-commerce-recommendation-list
+          id="popular_viewed"
+          slot-id=""
+          products-per-page="5"
+          image-size="small"
+          display="grid"
+          style="--atomic-recs-number-of-columns: 5;"
+        >
+          <atomic-product-template>
+            <template slot="link">
+              <atomic-product-link></atomic-product-link>
+            </template>
+            <template>
+              <atomic-product-section-name>
+                <atomic-product-link class="font-bold"></atomic-product-link>
+              </atomic-product-section-name>
+              <atomic-product-section-visual>
+                <atomic-product-link>
+                  <atomic-product-image field="ec_images"></atomic-product-image>
+                </atomic-product-link>
+              </atomic-product-section-visual>
+              <atomic-product-section-metadata>
+                <atomic-product-field-condition must-match-query-pinned="true">
+                  <span class="text-2xl">💵</span>
+                  <span class="font-bold">Sponsored Product</span>
+                </atomic-product-field-condition>
+                <atomic-product-field-condition if-defined="ec_brand">
+                  <atomic-product-text field="ec_brand" class="text-neutral-dark block"></atomic-product-text>
+                </atomic-product-field-condition>
+                <atomic-product-field-condition if-defined="ec_brand">
+                  <atomic-product-rating field="ec_rating"></atomic-product-rating>
+                </atomic-product-field-condition>
+              </atomic-product-section-metadata>
+              <atomic-product-section-emphasized>
+                <atomic-product-price></atomic-product-price>
+              </atomic-product-section-emphasized>
+              <atomic-product-section-children>
+                <atomic-product-children field="ec_images"></atomic-product-children>
+              </atomic-product-section-children>
+            </template>
+          </atomic-product-template>
+        </atomic-commerce-recommendation-list>
+      </atomic-layout-section>
+    </atomic-commerce-layout>
+  </atomic-commerce-recommendation-interface>
 </div>
-<atomic-commerce-recommendation-interface language-assets-path="/lang" style="display:none">
-  <atomic-commerce-layout>
-    <atomic-layout-section section="main">
-      <atomic-commerce-recommendation-list
-        id="popular_bought"
-        slot-id=""
-        products-per-page="3"
-      >
-        <atomic-product-template>
-          <template slot="link">
-            <atomic-product-link></atomic-product-link>
-          </template>
-          <template>
-            <atomic-product-section-name>
-              <atomic-product-link class="font-bold"></atomic-product-link>
-            </atomic-product-section-name>
-            <atomic-product-section-visual>
-              <atomic-product-image field="ec_images"></atomic-product-image>
-            </atomic-product-section-visual>
-            <atomic-product-section-metadata>
-              <atomic-product-field-condition must-match-query-pinned="true">
-                <span class="text-2xl">💵</span>
-                <span class="font-bold">Sponsored Product</span>
-              </atomic-product-field-condition>
-              <atomic-product-field-condition if-defined="ec_brand">
-                <atomic-product-text field="ec_brand" class="text-neutral-dark block"></atomic-product-text>
-              </atomic-product-field-condition>
-              <atomic-product-field-condition if-defined="ec_brand">
-                <atomic-product-rating field="ec_rating"></atomic-product-rating>
-              </atomic-product-field-condition>
-            </atomic-product-section-metadata>
-            <atomic-product-section-emphasized>
-              <atomic-product-price></atomic-product-price>
-            </atomic-product-section-emphasized>
-            <atomic-product-section-children>
-              <atomic-product-children field="ec_images"></atomic-product-children>
-            </atomic-product-section-children>
-          </template>
-        </atomic-product-template>
-      </atomic-commerce-recommendation-list>
-    </atomic-layout-section>
-  </atomic-commerce-layout>
-</atomic-commerce-recommendation-interface>
-<atomic-commerce-recommendation-interface language-assets-path="/lang" style="display:none">
-  <atomic-commerce-layout>
-    <atomic-layout-section section="main">
-      <atomic-commerce-recommendation-list
-        id="popular_viewed"
-        slot-id=""
-        products-per-page="3"
-      >
-        <atomic-product-template>
-          <template slot="link">
-            <atomic-product-link></atomic-product-link>
-          </template>
-          <template>
-            <atomic-product-section-name>
-              <atomic-product-link class="font-bold"></atomic-product-link>
-            </atomic-product-section-name>
-            <atomic-product-section-visual>
-              <atomic-product-image field="ec_images"></atomic-product-image>
-            </atomic-product-section-visual>
-            <atomic-product-section-metadata>
-              <atomic-product-field-condition must-match-query-pinned="true">
-                <span class="text-2xl">💵</span>
-                <span class="font-bold">Sponsored Product</span>
-              </atomic-product-field-condition>
-              <atomic-product-field-condition if-defined="ec_brand">
-                <atomic-product-text field="ec_brand" class="text-neutral-dark block"></atomic-product-text>
-              </atomic-product-field-condition>
-              <atomic-product-field-condition if-defined="ec_brand">
-                <atomic-product-rating field="ec_rating"></atomic-product-rating>
-              </atomic-product-field-condition>
-            </atomic-product-section-metadata>
-            <atomic-product-section-emphasized>
-              <atomic-product-price></atomic-product-price>
-            </atomic-product-section-emphasized>
-            <atomic-product-section-children>
-              <atomic-product-children field="ec_images"></atomic-product-children>
-            </atomic-product-section-children>
-          </template>
-        </atomic-product-template>
-      </atomic-commerce-recommendation-list>
-    </atomic-layout-section>
-  </atomic-commerce-layout>
-</atomic-commerce-recommendation-interface>

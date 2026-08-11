@@ -14,7 +14,7 @@
 >
   <atomic-commerce-layout>
     <atomic-layout-section section="search">
-      <atomic-commerce-search-box redirection-url="#/">
+      <atomic-commerce-search-box redirection-url="/search">
         <atomic-commerce-search-box-recent-queries></atomic-commerce-search-box-recent-queries>
         <atomic-commerce-search-box-query-suggestions></atomic-commerce-search-box-query-suggestions>
         <atomic-commerce-search-box-instant-products image-size="small">
@@ -62,30 +62,40 @@
               <atomic-product-link></atomic-product-link>
             </template>
             <template>
-              <atomic-table-element label="Image">
-                <atomic-product-image field="ec_images"></atomic-product-image>
-              </atomic-table-element>
-              <atomic-table-element label="Name">
+              <atomic-table-element label="Product">
                 <badge-placement data-placement-key="PLP_TOP_LEFT"></badge-placement>
                 <atomic-product-field-condition must-match-query-pinned="true">
                   <span>💵</span>
                   <span class="font-bold text-sm">Sponsored Product</span>
                 </atomic-product-field-condition>
+                <atomic-product-link class="font-bold text-xl"></atomic-product-link>
                 <br />
-                <atomic-product-link class="font-bold"></atomic-product-link>
+                <atomic-product-text field="ec_brand" class="text-neutral-dark"></atomic-product-text>
+                <br />
+                <atomic-product-link>
+                  <div style="max-width: 300px;">
+                    <atomic-product-image field="ec_images"></atomic-product-image>
+                  </div>
+                </atomic-product-link>
               </atomic-table-element>
-              <atomic-table-element label="Brand">
-                <atomic-product-text field="ec_brand"></atomic-product-text>
+              <atomic-table-element label="Variants">
+                <div style="max-width: 100px;">
+                  <atomic-product-children field="ec_images"></atomic-product-children>
+                </div>
               </atomic-table-element>
-              <atomic-table-element label="Rating">
-                <atomic-product-rating field="ec_rating"></atomic-product-rating>
+              <atomic-table-element label="Details">
+                <div style="max-width: 300px; overflow-wrap: break-word; white-space: normal;">
+                  <atomic-product-text field="ec_description"></atomic-product-text>
+                  <br />
+                  <br />
+                  <div style="display: inline-flex; align-items: center; gap: 0.25rem;">
+                    <span class="font-bold" style="text-transform: capitalize;"><atomic-commerce-text value="rating"></atomic-commerce-text></span>: <atomic-product-rating field="ec_rating"></atomic-product-rating>
+                  </div>
+                  <badge-placement data-placement-key="PLP_BOTTOM_LEFT"></badge-placement>
+                </div>
               </atomic-table-element>
               <atomic-table-element label="Price">
                 <atomic-product-price currency="USD"></atomic-product-price>
-              </atomic-table-element>
-              <atomic-table-element label="Description">
-                <badge-placement data-placement-key="PLP_BOTTOM_LEFT"></badge-placement>
-                <atomic-product-description></atomic-product-description>
               </atomic-table-element>
             </template>
           </atomic-product-template>
@@ -94,7 +104,11 @@
         <atomic-commerce-no-products></atomic-commerce-no-products>
       </atomic-layout-section>
       <atomic-layout-section section="pagination">
-        <atomic-commerce-load-more-products></atomic-commerce-load-more-products>
+        <atomic-commerce-pager></atomic-commerce-pager>
+        <atomic-commerce-products-per-page
+          initialChoice="4"
+          choices-displayed="4,10,20"
+        ></atomic-commerce-products-per-page>
       </atomic-layout-section>
     </atomic-layout-section>
   </atomic-commerce-layout>
