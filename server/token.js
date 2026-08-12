@@ -20,8 +20,8 @@ function getTokenEndpoint(orgId, environment) {
  */
 export async function generateToken(env) {
   const apiKey = env.COVEO_API_KEY;
-  const orgId = env.COVEO_ORG_ID;
-  const environment = env.COVEO_ENVIRONMENT || "dev";
+  const orgId = env.COVEO_ORG_ID || env.VITE_ORGANIZATION_ID;
+  const environment = env.COVEO_ENVIRONMENT || env.VITE_ENVIRONMENT || "dev";
 
   if (!apiKey) {
     return { ok: false, status: 500, error: "Missing COVEO_API_KEY" };
