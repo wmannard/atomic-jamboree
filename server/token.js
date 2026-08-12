@@ -46,6 +46,7 @@ export async function generateToken(env) {
           ec_colors: ["*"],
           ec_price: ["*"],
           ec_promo_price: ["*"],
+          ec_category: ["*"],
           cat_material: ["*"],
           multilingualbody: ["*"],
         },
