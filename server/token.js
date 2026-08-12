@@ -2,8 +2,16 @@
 // Used by both the Vite dev plugin and the Netlify serverless function.
 // No framework dependencies — pure ES module with fetch.
 
-const ORG_ID = "jamboreextqcrdy3";
-const TOKEN_ENDPOINT = `https://platformdev.cloud.coveo.com/rest/search/v2/token?organizationId=${ORG_ID}`;
+/**
+ * Get the token endpoint URL for the given org and environment.
+ */
+function getTokenEndpoint(orgId, environment) {
+  let base;
+  if (environment === "dev") base = "https://platformdev.cloud.coveo.com";
+  else if (environment === "stg") base = "https://platformstg.cloud.coveo.com";
+  else base = "https://platform.cloud.coveo.com";
+  return `${base}/rest/search/v2/token?organizationId=${orgId}`;
+}
 
 /**
  * Generate a short-lived anonymous Coveo search token.
@@ -12,13 +20,19 @@ const TOKEN_ENDPOINT = `https://platformdev.cloud.coveo.com/rest/search/v2/token
  */
 export async function generateToken(env) {
   const apiKey = env.COVEO_API_KEY;
+  const orgId = env.COVEO_ORG_ID;
+  const environment = env.COVEO_ENVIRONMENT || "dev";
 
   if (!apiKey) {
     return { ok: false, status: 500, error: "Missing COVEO_API_KEY" };
   }
 
+  if (!orgId) {
+    return { ok: false, status: 500, error: "Missing COVEO_ORG_ID" };
+  }
+
   try {
-    const response = await fetch(TOKEN_ENDPOINT, {
+    const response = await fetch(getTokenEndpoint(orgId, environment), {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,

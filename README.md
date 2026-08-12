@@ -89,7 +89,7 @@ The storefront uses **server-generated search tokens** instead of API keys direc
 
 ### Creating the API key
 
-In the [Coveo admin console](https://platformdev.cloud.coveo.com/) for org `jamboreextqcrdy3`:
+In the [Coveo admin console](https://platformdev.cloud.coveo.com/) for the org specified by `COVEO_ORG_ID` in `.env`:
 
 1. Go to **Organization** → **API Keys**
 2. Click **Add key**
