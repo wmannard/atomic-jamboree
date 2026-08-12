@@ -5,6 +5,32 @@ import { generateToken } from "./server/token.js";
 // Closure variable for the token plugin — shared between configResolved and configureServer
 let tokenEnv = {};
 
+// Shared middleware used by both dev and preview servers
+async function tokenMiddleware(req, res, next) {
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  if (url.pathname !== "/api/token") return next();
+
+  if (req.method !== "GET") {
+    res.statusCode = 405;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ error: "Method not allowed" }));
+    return;
+  }
+
+  const result = await generateToken(tokenEnv);
+
+  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Cache-Control", "no-store");
+
+  if (result.ok) {
+    res.statusCode = 200;
+    res.end(JSON.stringify({ token: result.token }));
+  } else {
+    res.statusCode = result.status;
+    res.end(JSON.stringify({ error: result.error }));
+  }
+}
+
 export default defineConfig({
   base: "/",
   build: {
@@ -74,30 +100,11 @@ export default defineConfig({
         tokenEnv = loadEnv(config.mode, config.root, "");
       },
       configureServer(server) {
-        server.middlewares.use(async (req, res, next) => {
-          const url = new URL(req.url, `http://${req.headers.host}`);
-          if (url.pathname !== "/api/token") return next();
-
-          if (req.method !== "GET") {
-            res.statusCode = 405;
-            res.setHeader("Content-Type", "application/json");
-            res.end(JSON.stringify({ error: "Method not allowed" }));
-            return;
-          }
-
-          const result = await generateToken(tokenEnv);
-
-          res.setHeader("Content-Type", "application/json");
-          res.setHeader("Cache-Control", "no-store");
-
-          if (result.ok) {
-            res.statusCode = 200;
-            res.end(JSON.stringify({ token: result.token }));
-          } else {
-            res.statusCode = result.status;
-            res.end(JSON.stringify({ error: result.error }));
-          }
-        });
+        const plugin = this;
+        server.middlewares.use(tokenMiddleware);
+      },
+      configurePreviewServer(server) {
+        server.middlewares.use(tokenMiddleware);
       },
     },
   ],

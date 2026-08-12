@@ -110,6 +110,10 @@ cp .env.local.example .env.local
 npm run dev
 ```
 
+For `COVEO_API_KEY` you can use either:
+- The dedicated "Jamboree search-token generation" API key (ask a teammate or create one per the instructions above)
+- A short-lived superuser token from https://platformdev.cloud.coveo.com/token — works fine for local dev since it has all privileges including Impersonate (expires after 4 hours)
+
 The Vite token plugin automatically exposes `/api/token` during dev. No separate server needed.
 
 ### Production setup (Netlify)
