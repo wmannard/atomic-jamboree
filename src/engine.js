@@ -2,52 +2,62 @@ import { buildCommerceEngine } from "@coveo/headless/commerce";
 import { buildContext } from "@coveo/headless/commerce";
 import { buildRecommendations } from "@coveo/headless/commerce";
 import { getJamboree, getLocaleContext, setLocaleSlug, parseLocaleSlug } from "./configHelper";
+import { fetchToken } from "./tokenClient.js";
 
-const {
-  VITE_ORGANIZATION_ID,
-  VITE_ENVIRONMENT,
-  VITE_NEW_ACCESS_TOKEN,
-  VITE_SEARCH_TOKEN,
-} = import.meta.env;
-
-// Use VITE_SEARCH_TOKEN if 'logged-in' is true in localStorage
-const LOGGED_IN = localStorage.getItem("logged-in") === "true";
-const ACCESS_TOKEN = LOGGED_IN ? VITE_SEARCH_TOKEN : VITE_NEW_ACCESS_TOKEN;
+const { VITE_ORGANIZATION_ID, VITE_ENVIRONMENT } = import.meta.env;
 
 const TRACKING_ID = `jamboree_${getJamboree()}`;
 const { language: LANGUAGE, country: COUNTRY, currency: CURRENCY } = getLocaleContext();
 
-export const commerceEngine = buildCommerceEngine({
-  configuration: {
-    organizationId: VITE_ORGANIZATION_ID,
-    environment: VITE_ENVIRONMENT,
-    accessToken: ACCESS_TOKEN,
-    analytics: {
-      trackingId: TRACKING_ID,
-    },
-    context: {
-      language: LANGUAGE,
-      country: COUNTRY,
-      currency: CURRENCY,
-      view: {
-        url: window.location.href,
+/**
+ * Initialize the commerce engine with a fresh search token.
+ * Exported as a Promise so consumers can `await engineReady`.
+ */
+export const engineReady = initEngine();
+
+/** Mutable reference to the resolved engine instance. */
+export let commerceEngine = null;
+
+async function initEngine() {
+  const token = await fetchToken();
+
+  const engine = buildCommerceEngine({
+    configuration: {
+      organizationId: VITE_ORGANIZATION_ID,
+      environment: VITE_ENVIRONMENT,
+      accessToken: token,
+      renewAccessToken: () => fetchToken(),
+      analytics: {
+        trackingId: TRACKING_ID,
+      },
+      context: {
+        language: LANGUAGE,
+        country: COUNTRY,
+        currency: CURRENCY,
+        view: {
+          url: window.location.href,
+        },
+      },
+      preprocessRequest: (request) => {
+        const body = request.body ? JSON.parse(request.body) : {};
+        if (request.url && request.url.includes("/listing")) {
+          const sponsoredProducts =
+            JSON.parse(localStorage.getItem("sponsored-products") || "{}") || {};
+          body.pinnedProducts = sponsoredProducts?.sponsored || [];
+        }
+        request.body = JSON.stringify(body);
+        return request;
       },
     },
-    preprocessRequest: (request) => {
-      const body = request.body ? JSON.parse(request.body) : {};
-      if (request.url && request.url.includes("/listing")) {
-        const sponsoredProducts =
-          JSON.parse(localStorage.getItem("sponsored-products") || "{}") || {};
-        body.pinnedProducts = sponsoredProducts?.sponsored || [];
-      }
-      request.body = JSON.stringify(body);
-      return request;
-    },
-  },
-});
+  });
 
-// Context controller for updating view URL on navigation
-const contextController = buildContext(commerceEngine);
+  commerceEngine = engine;
+  window.__commerceEngine = engine; // Expose for devtools debugging
+  return engine;
+}
+
+// Context controller — created lazily after engine resolves
+let contextController = null;
 
 /**
  * Update the engine's view URL when navigating between pages.
@@ -55,6 +65,10 @@ const contextController = buildContext(commerceEngine);
  * @param {string} url - The URL corresponding to the current page/view
  */
 export function setViewUrl(url) {
+  if (!commerceEngine) return;
+  if (!contextController) {
+    contextController = buildContext(commerceEngine);
+  }
   contextController.setView({ url });
 }
 

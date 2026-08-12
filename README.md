@@ -9,7 +9,7 @@ npm install
 cp .env.local.example .env.local
 ```
 
-Edit `.env.local` and set your Coveo access token. You can get a short-lived superuser token at https://platformdev.cloud.coveo.com/token, or generate an anonymous search API key in the platform.
+Edit `.env.local` and set your `COVEO_API_KEY`. See the [Search Token Service](#search-token-service) section below for how to create this key.
 
 `npm install` automatically copies Atomic language and asset files into `public/` via the postinstall hook.
 
@@ -45,13 +45,20 @@ Within a jamboree, switching locale is instant (no page reload). Switching track
 ```
 app.html              ← SPA entry point
 index.html            ← Landing page (jamboree picker)
-vite.config.js        ← Build config + dev/preview rewrite middleware
+vite.config.js        ← Build config + dev/preview rewrite + token plugin
+netlify.toml          ← Netlify deploy config + /api/token redirect
 scripts/              ← Build tooling (resource copying)
+server/
+└── token.js          ← Shared token generation logic (used by Vite plugin + Netlify function)
+netlify/
+└── functions/
+    └── token.js      ← Netlify serverless function wrapper
 public/               ← Static assets (gitignored, populated by postinstall)
 src/
-├── main.js           ← App entry, routing setup
-├── router.js         ← Hash-based SPA router
-├── engine.js         ← Coveo commerce engine singleton
+├── main.js           ← App entry, routing setup (awaits engine)
+├── router.js         ← Pathname-based SPA router
+├── engine.js         ← Coveo commerce engine (async init + token renewal)
+├── tokenClient.js    ← Client-side token fetch with retry
 ├── configHelper.js   ← Env var resolution (jamboree/locale from URL)
 ├── commerceApi.js    ← Direct API calls (product detail page)
 ├── components/       ← Navbar, info banner, badge custom element
@@ -67,3 +74,52 @@ src/
 - Netlify rewrites serve the same built `app.html` for all `/jamboree_*/` paths
 - The Vite dev/preview server includes middleware that does the same rewriting locally
 - Page markup lives in `src/pages/templates/*.html` and is inlined into the JS bundle at build time
+
+## Search Token Service
+
+The storefront uses **server-generated search tokens** instead of API keys directly in the browser. This is required because API keys do not support [dictionary field retrieval](https://docs.coveo.com/en/2036/), which is needed for multi-language pricing and product data.
+
+### How it works
+
+1. The browser calls `GET /api/token` (handled by the Vite plugin in dev, Netlify function in prod)
+2. The server uses the `COVEO_API_KEY` to call the Coveo platform's `/rest/search/v2/token` endpoint
+3. The platform returns a short-lived JWT search token (≤24h validity, `ey...` format)
+4. The browser uses this token for all search/listing/recommendation requests
+5. When the token expires, the Headless engine's `renewAccessToken` callback automatically fetches a fresh one — no manual intervention needed
+
+### Creating the API key
+
+In the [Coveo admin console](https://platformdev.cloud.coveo.com/) for org `jamboreextqcrdy3`:
+
+1. Go to **Organization** → **API Keys**
+2. Click **Add key**
+3. Select the **"Authenticated Search"** template
+4. This grants only the **"Impersonate"** privilege — the minimum required to mint search tokens
+
+The resulting key:
+- **Can** generate anonymous search tokens (which support dictionary fields)
+- **Cannot** execute queries directly, read/write indexed content, or perform any administrative operations
+
+This key is the only secret in the project. It lives server-side and never reaches the browser bundle.
+
+### Local development setup
+
+```sh
+cp .env.local.example .env.local
+# Edit .env.local and paste your COVEO_API_KEY value
+npm run dev
+```
+
+The Vite token plugin automatically exposes `/api/token` during dev. No separate server needed.
+
+### Production setup (Netlify)
+
+Add `COVEO_API_KEY` as an environment variable in the Netlify site settings:
+- Site dashboard → **Site configuration** → **Environment variables** → **Add a variable**
+- Key: `COVEO_API_KEY`, Value: your authenticated search API key
+
+The Netlify function at `netlify/functions/token.js` handles token generation in production.
+
+### Token renewal
+
+Token renewal is fully automatic. The Coveo Headless engine detects expired tokens (HTTP 419) and calls the `renewAccessToken` callback, which fetches a fresh token from `/api/token`. This happens transparently — no page reload or user action required. Long QA sessions (>24h) work without interruption.

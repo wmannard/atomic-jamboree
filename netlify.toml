@@ -1,3 +1,10 @@
+# Token service — Netlify Functions v2 handles routing via config.path,
+# but this redirect serves as a fallback.
+[[redirects]]
+  from = "/api/token"
+  to = "/.netlify/functions/token"
+  status = 200
+
 # Rewrite app routes to the single-build app.
 # The app resolves its config from query params at runtime.
 
