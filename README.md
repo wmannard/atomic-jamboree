@@ -118,9 +118,16 @@ The Vite token plugin automatically exposes `/api/token` during dev. No separate
 
 ### Production setup (Netlify)
 
-Add `COVEO_API_KEY` as an environment variable in the Netlify site settings:
+Add the following environment variables in the Netlify site settings:
 - Site dashboard → **Site configuration** → **Environment variables** → **Add a variable**
-- Key: `COVEO_API_KEY`, Value: your authenticated search API key
+
+| Variable | Value |
+|----------|-------|
+| `COVEO_API_KEY` | Your authenticated search API key |
+| `COVEO_ORG_ID` | The Coveo organization ID (must match `VITE_ORGANIZATION_ID` in `.env`) |
+| `COVEO_ENVIRONMENT` | The platform environment: `dev`, `stg`, or `prod` (must match `VITE_ENVIRONMENT` in `.env`) |
+
+These are the same variables listed in `.env.local.example`. If the org or environment changes, update both the `.env` file (for the client bundle) and the Netlify env vars (for the serverless function).
 
 The Netlify function at `netlify/functions/token.js` handles token generation in production.
 
