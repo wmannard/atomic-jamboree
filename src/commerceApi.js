@@ -1,20 +1,46 @@
-// This helper is for direct calls to the search API that bypass the atomic engine. Used for the PDP product retrieval.
+// This helper is for direct calls to the search API that bypass the atomic engine.
+// Used for PDP product retrieval and badge fetching.
 
 import { getEnvValue, getJamboree, getLocaleContext } from "./configHelper";
 import { navUrls } from "./components/navbar";
+import { fetchToken } from "./tokenClient.js";
 
-const {
-  VITE_ORGANIZATION_ID,
-  VITE_ENVIRONMENT,
-  VITE_NEW_ACCESS_TOKEN,
-  VITE_SEARCH_TOKEN,
-} = import.meta.env;
-
-// VITE_NEW_ACCESS_TOKEN is a transitional name — revert to VITE_ACCESS_TOKEN when ready
-const LOGGED_IN = localStorage.getItem("logged-in") === "true";
-const ACCESS_TOKEN = LOGGED_IN ? VITE_SEARCH_TOKEN : VITE_NEW_ACCESS_TOKEN;
+const { VITE_ORGANIZATION_ID, VITE_ENVIRONMENT } = import.meta.env;
 
 const TRACKING_ID = `jamboree_${getJamboree()}`;
+
+// Token cache for direct API calls
+let cachedToken = null;
+
+async function getToken() {
+  if (!cachedToken) {
+    cachedToken = await fetchToken();
+  }
+  return cachedToken;
+}
+
+/**
+ * Fetch wrapper that adds Authorization header and retries on token expiry (401/419).
+ */
+async function authenticatedFetch(url, options = {}) {
+  let token = await getToken();
+  let res = await fetch(url, {
+    ...options,
+    headers: { ...options.headers, Authorization: `Bearer ${token}` },
+  });
+
+  // Token expired — refresh and retry once
+  if (res.status === 401 || res.status === 419) {
+    cachedToken = null;
+    token = await getToken();
+    res = await fetch(url, {
+      ...options,
+      headers: { ...options.headers, Authorization: `Bearer ${token}` },
+    });
+  }
+
+  return res;
+}
 
 const generateClientId = () => {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
@@ -50,10 +76,9 @@ export const searchProduct = async (productId, options = {}) => {
     },
   };
 
-  const response = await fetch(url, {
+  const response = await authenticatedFetch(url, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
@@ -118,10 +143,9 @@ export const fetchBadges = async (productId, placementIds) => {
     clientId: generateClientId(),
   };
 
-  const response = await fetch(url, {
+  const response = await authenticatedFetch(url, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
