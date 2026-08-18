@@ -1,7 +1,5 @@
-import { buildCommerceEngine } from "@coveo/headless/commerce";
-import { buildContext } from "@coveo/headless/commerce";
-import { buildRecommendations } from "@coveo/headless/commerce";
-import { getJamboree, getLocaleContext, setLocaleSlug, parseLocaleSlug } from "./configHelper";
+import { buildCommerceEngine, buildContext, buildRecommendations } from "@coveo/headless/commerce";
+import { getJamboree, getLocaleContext, parseLocaleSlug, setLocaleSlug } from "./configHelper";
 import { fetchToken } from "./tokenClient.js";
 
 const { VITE_ORGANIZATION_ID, VITE_ENVIRONMENT } = import.meta.env;
@@ -40,7 +38,10 @@ async function initEngine() {
       },
       preprocessRequest: (request) => {
         const body = request.body ? JSON.parse(request.body) : {};
-        if (request.url && request.url.includes("/listing")) {
+        if (
+          request.url &&
+          (request.url.includes("/listing") || request.url.includes("/search"))
+        ) {
           const sponsoredProducts =
             JSON.parse(localStorage.getItem("sponsored-products") || "{}") || {};
           body.pinnedProducts = sponsoredProducts?.sponsored || [];
