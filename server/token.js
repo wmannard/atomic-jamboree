@@ -49,6 +49,7 @@ export async function generateToken(env) {
           ec_category: ["*"],
           cat_material: ["*"],
           multilingualbody: ["*"],
+          ec_date_added: ["*"],
         },
       }),
       signal: AbortSignal.timeout(10_000),

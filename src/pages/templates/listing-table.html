@@ -9,7 +9,7 @@
   type="product-listing"
   language-assets-path="/lang"
   icon-assets-path="/assets"
-  fields-to-include='["badgePlacements"]'
+  fields-to-include='["badgePlacements", "ec_date_added"]'
   style="display:none"
 >
   <atomic-commerce-layout>
@@ -72,6 +72,9 @@
                 <br />
                 <atomic-product-text field="ec_brand" class="text-neutral-dark"></atomic-product-text>
                 <br />
+                <atomic-product-field-condition if-defined="ec_date_added">
+                  <qa-product-field class="qa-product-field" field="ec_date_added" data-qa-field="ec_date_added"></qa-product-field>
+                </atomic-product-field-condition>
                 <atomic-product-link>
                   <div style="max-width: 300px;">
                     <atomic-product-image field="ec_images"></atomic-product-image>
