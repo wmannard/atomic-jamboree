@@ -367,6 +367,7 @@ document
 const qaInfoToggle = document.getElementById("qa-info-toggle");
 
 function setQAInfoVisibility(visible) {
+  document.documentElement.toggleAttribute("data-show-qa-info", visible);
   document.querySelectorAll(".qa-info").forEach((el) => {
     el.style.visibility = visible ? "visible" : "hidden";
   });
@@ -382,6 +383,7 @@ qaInfoToggle?.addEventListener("change", (e) => {
 
 // Ensure initial state: box unchecked, tags hidden
 if (qaInfoToggle) qaInfoToggle.checked = false;
+document.documentElement.removeAttribute("data-show-qa-info");
 setQAInfoVisibility(false);
 
 // --- Dropdown logic ---

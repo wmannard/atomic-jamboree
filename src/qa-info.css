@@ -25,3 +25,19 @@
   justify-content: flex-start !important;
   text-align: left !important;
 }
+
+.qa-product-field {
+  display: none !important;
+  background: #d3d3d3;
+  color: #0078d4;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+html[data-show-qa-info] .qa-product-field {
+  display: block !important;
+}
